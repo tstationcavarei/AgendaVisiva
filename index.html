@@ -359,43 +359,53 @@ html[data-tablet=on] .vmain{
 html[data-tablet=on] .vspacer{
   display:block;
   flex:0 0 auto;
-  width:min(48vh,88%);
+  width:min(33.6vh,82%);
   visibility:hidden;
 }
 
 html[data-tablet=on] .vimgbl{
-  /* Roughly 3× the previous tablet size, capped so it always stays
-     fully on screen regardless of how much vertical space exists */
+  /* 30% smaller than before (58vh × 0.7 ≈ 40.6vh), lifted a bit above
+     the dock instead of sitting flush with the bottom of the area */
   flex:0 0 auto;
-  width:auto;height:min(58vh,94%);
+  width:auto;height:min(40.6vh,88%);
   aspect-ratio:1/1;
-  margin:0;
-  border-width:8px;
-  padding:14px 20px;
+  margin:0 0 3%;
+  border-width:7px;
+  padding:12px 18px;
 }
-html[data-tablet=on] .vtxt{font-size:clamp(1.3rem,4.6vh,2.3rem);}
-html[data-tablet=on] .vnm{font-size:clamp(.8rem,2vh,1.15rem);}
+html[data-tablet=on] .vtxt{font-size:clamp(1.1rem,3.6vh,1.9rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.72rem,1.7vh,1rem);}
 
 html[data-tablet=on] .vtimer{
-  /* Roughly 3× the previous tablet size */
+  /* 30% smaller than before (48vh × 0.7 ≈ 33.6vh) */
   flex:0 0 auto;
   align-self:flex-end;           /* sits low, right where the dock begins */
-  width:auto;height:min(48vh,88%);
+  width:auto;height:min(33.6vh,82%);
   aspect-ratio:1/1;
   margin:0;
-  /* Merge visually with the controls dock: same color, square bottom
-     corners so there's no seam where the two meet */
+  /* Merge with the dock below (same background, square bottom
+     corners, no gap) but keep a clear border + shadow so the panel
+     still reads as its own distinct area against the page background */
   background:#fff;
-  border:none;
+  border:3px solid #4A9EDB;
+  border-bottom:none;            /* the seam into the dock stays open */
   border-radius:22px 22px 0 0;
-  box-shadow:none;
+  box-shadow:0 -4px 16px rgba(74,158,219,.18);
   padding-bottom:0;
 }
-html[data-tablet=on] .vtimer::before{top:14px;font-size:.85rem;}
-html[data-tablet=on] .vtimer > .tw,html[data-tablet=on] .vtimer > .done-wrap{margin-top:26px;}
+html[data-tablet=on] .vtimer::before{top:14px;font-size:.8rem;}
+html[data-tablet=on] .vtimer > .tw,html[data-tablet=on] .vtimer > .done-wrap{margin-top:24px;}
 /* The controls dock right below picks up the same background so the
-   timer panel reads as one continuous piece with it */
-html[data-tablet=on] .vctrl{background:#fff;border-top:none;padding-top:10px;}
+   timer panel reads as one continuous piece with it, plus its own
+   top border/shadow so the dock itself stands out from the page too */
+html[data-tablet=on] .vctrl{
+  background:#fff;
+  border-top:3px solid #d0dce8;
+  box-shadow:0 -3px 12px rgba(0,0,0,.08);
+  padding-top:10px;
+  justify-content:flex-start;    /* nav buttons shift left, away from the timer above-right */
+  padding-left:24px;
+}
 
 .vseq{
   flex-shrink:0;
@@ -567,9 +577,17 @@ html[data-tablet=on] .vctrl{background:#fff;border-top:none;padding-top:10px;}
 [data-theme=dark] .cw-t{color:#0f172a;}
 [data-theme=dark] .vctrl{background:#1a2438;border-color:#31415e;}
 /* Tablet mode + dark theme: the docked timer panel must match the
-   dark controls bar it merges into, not stay light */
-html[data-tablet=on][data-theme=dark] .vtimer{background:#1a2438;box-shadow:none;}
-html[data-tablet=on][data-theme=dark] .vctrl{border-top:none;}
+   dark controls bar it merges into, while keeping a visible border
+   and shadow so it still stands out from the darker page background */
+html[data-tablet=on][data-theme=dark] .vtimer{
+  background:#1a2438;
+  border-color:#4A9EDB;
+  box-shadow:0 -4px 16px rgba(0,0,0,.35);
+}
+html[data-tablet=on][data-theme=dark] .vctrl{
+  border-top:3px solid #31415e;
+  box-shadow:0 -3px 12px rgba(0,0,0,.35);
+}
 [data-theme=dark] .cb.st,[data-theme=dark] .cb.pv{background:#233754;color:#a8bcd8;border-color:#31415e;}
 [data-theme=dark] .cb.rs{background:#3a2e12;color:#e0b84a;border-color:#8a6a1a;}
 [data-theme=dark] .cb.nx:disabled{background:#233754;color:#5a6f8c;}
@@ -699,7 +717,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{border-top:none;}
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.0.5</div>
+  <div class="home-ver" id="tb-ver">v1.0.6</div>
 </div>
 
 <!-- USERS -->
@@ -2011,7 +2029,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.5';
+const APP_VERSION='1.0.6';
 let swReg=null;
 
 function initVersionDisplay(){
