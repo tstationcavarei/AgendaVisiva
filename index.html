@@ -77,6 +77,39 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 }
 .tb-logo{font-size:1.05rem;font-weight:900;color:var(--acc);}
 .tb-logo span{color:var(--grn);}
+/* ── COLLAPSIBLE INSTRUCTIONS PANEL ── */
+.instr{
+  flex-shrink:0;
+  margin:0 clamp(12px,3vw,28px);
+  border:2px solid var(--brd);border-radius:12px;
+  background:var(--card);
+  overflow:hidden;
+  max-height:34%;              /* collapsed or expanded, never eats the main buttons' space */
+  display:flex;flex-direction:column;
+}
+.instr-h{
+  flex-shrink:0;
+  width:100%;background:var(--bg2);border:none;
+  display:flex;align-items:center;gap:8px;
+  padding:9px 14px;cursor:pointer;
+  font-family:inherit;font-weight:800;font-size:.82rem;color:var(--acc);
+}
+.instr-h-ico{font-size:1rem;}
+.instr-h-txt{flex:1;text-align:left;}
+.instr-h-arrow{font-size:.72rem;color:var(--mut);transition:transform .2s;}
+.instr.open .instr-h-arrow{transform:rotate(180deg);}
+.instr-body{
+  overflow-y:auto;padding:12px 16px 16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.instr-sect{display:flex;flex-direction:column;gap:4px;}
+.instr-sect-t{font-weight:900;font-size:.8rem;color:var(--acc);}
+.instr-sect p{font-size:.74rem;line-height:1.5;color:var(--txt);font-weight:600;}
+.instr-sect p b{color:var(--acc);font-weight:800;}
+html[data-tablet=on] .instr-h{font-size:1.05rem;padding:12px 18px;}
+html[data-tablet=on] .instr-sect-t{font-size:1rem;}
+html[data-tablet=on] .instr-sect p{font-size:.92rem;}
+
 .home-ver{
   flex-shrink:0;text-align:center;
   font-size:.68rem;font-weight:700;color:var(--mut);
@@ -494,7 +527,7 @@ html[data-tablet=on] .vctrl{
   flex-shrink:0;
 }
 .vtimer > .tw, .vtimer > .tdone, .vtimer > .done-wrap{ margin-top:0; }
-.tdone{font-size:clamp(.7rem,2.4vh,1.1rem);font-weight:900;color:#e03050;letter-spacing:1px;}
+.tdone{font-size:clamp(.7rem,2.4vh,1.1rem);font-weight:900;color:#04a87e;letter-spacing:1px;}
 .tdone-play{
   width:min(52%,26vh);aspect-ratio:1/1;border-radius:50%;
   background:#06D6A0;border:4px solid #04a87e;
@@ -737,7 +770,39 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.1.2</div>
+  <div class="instr" id="instr">
+    <button class="instr-h" onclick="toggleInstr()">
+      <span class="instr-h-ico">📖</span>
+      <span class="instr-h-txt">Istruzioni</span>
+      <span class="instr-h-arrow" id="instr-arrow">▾</span>
+    </button>
+    <div class="instr-body hidden" id="instr-body">
+      <div class="instr-sect">
+        <div class="instr-sect-t">👤 1 · Utenti</div>
+        <p>Crea un profilo per ogni persona che userà l'agenda. Ogni utente ha un nome e un colore identificativo. Da qui puoi anche modificare nome/colore di un utente esistente o eliminarlo (verrà chiesta conferma, ed elimina anche tutte le sue agende).</p>
+      </div>
+      <div class="instr-sect">
+        <div class="instr-sect-t">📋 2 · Agende</div>
+        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Apri un'agenda con "✏️ Modifica" per entrare nell'editor degli step.</p>
+      </div>
+      <div class="instr-sect">
+        <div class="instr-sect-t">✏️ Editor degli step</div>
+        <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare (con conferma, copia identica senza scritte aggiuntive), <b>⠿</b> per trascinare e riordinare gli step.</p>
+        <p>Nel form di modifica puoi scegliere se lo step mostra immagine, testo o entrambi, caricare un'immagine dal dispositivo o cercarla su ARASAAC, scrivere un testo e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto.</p>
+      </div>
+      <div class="instr-sect">
+        <div class="instr-sect-t">▶️ 3 · Usa Agenda</div>
+        <p>Scegli utente e agenda, poi premi "Avvia". Si apre una schermata con tutti gli step: premi il pulsante ▶ verde per iniziare. Durante l'uso, lo step corrente appare grande al centro con un bordo verde; gli step successivi scorrono in alto. Tocca l'immagine attuale, oppure la tessera successiva nella striscia in alto, per avanzare.</p>
+        <p>Se uno step ha un timer attivo, appare nel pannello a destra. <b>Mentre il timer è in corso non puoi passare allo step successivo</b> con un tocco normale (il pannello lampeggerà per avvisarti) — puoi comunque forzare l'avanzamento tenendo premuto per 2 secondi i pulsanti "Avanti"/"Indietro". Quando il timer scade, suona un allarme e poi appare la scritta "AVANTI" (o "FINE" se è l'ultimo step) con un pulsante ▶ per proseguire.</p>
+        <p>In fondo trovi sempre: <b>✕ Chiudi</b> (esce e torna alla Home), <b>◀ Indietro</b>, <b>↺ Ripristina</b> (torna alla schermata di lancio dell'agenda), <b>Avanti ▶</b>.</p>
+      </div>
+      <div class="instr-sect">
+        <div class="instr-sect-t">⚙️ Impostazioni</div>
+        <p><b>Aspetto</b>: tema chiaro/scuro, colore accento, e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi (usa la tastiera di sistema invece di quella integrata). <b>Suono</b>: tipo di suoneria e durata dell'allarme di fine timer. <b>Dati</b>: esporta/importa un backup completo in JSON, oppure cancella tutto. <b>Info</b>: versione installata e pulsante per controllare aggiornamenti.</p>
+      </div>
+    </div>
+  </div>
+  <div class="home-ver" id="tb-ver">v1.2.0</div>
 </div>
 
 <!-- USERS -->
@@ -1088,6 +1153,11 @@ function rHome(){
   set('hb-a',na?na+' agenda'+(na!==1?'e':''):'Nessuna agenda');
   set('hb-s',na?'Pronto ✓':'Crea prima un\u2019agenda');
 }
+function toggleInstr(){
+  const box=el('instr'), body=el('instr-body');
+  const open=box.classList.toggle('open');
+  body.classList.toggle('hidden',!open);
+}
 
 // ═══ USERS ═══
 function rUsers(){
@@ -1330,7 +1400,6 @@ function dupStep(i){
     const a2=ga();if(!a2)return;
     const copy=JSON.parse(JSON.stringify(a2.steps[i]));
     copy.id=uid();
-    copy.label=copy.label+' (copia)';
     a2.steps.splice(i+1,0,copy);
     save();rEd();
   },'Duplica');
@@ -1674,12 +1743,17 @@ function startTi(step){
 
       setTimeout(()=>{
         // Phase 2: alarm finished. Remove the pulse, hide every timer
-        // widget completely, and show ONLY "FINE" + the play triangle,
-        // centred alone in the panel with nothing else sharing it.
+        // widget completely, and show ONLY the label + the play
+        // triangle, centred alone in the panel with nothing else
+        // sharing it. The label reads "AVANTI" unless this is the
+        // very last step, in which case it reads "FINE" — both in
+        // the same green color used throughout the done-state UI.
         vtb.classList.remove('pulse-green');
         ['tw-ring','tw-digi','tw-bar','tw-circ'].forEach(id=>el(id).classList.add('hidden'));
         vtb.classList.add('done-only');
+        const isLast = VS.idx >= VS.steps.length - 1;
         el('v-done-wrap').classList.remove('hidden');
+        el('v-done').textContent = isLast ? 'FINE' : 'AVANTI';
         el('v-done').classList.remove('hidden');
         el('v-done').classList.add('blink');
         if(step.timer.auto){
@@ -2049,7 +2123,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.1.2';
+const APP_VERSION='1.2.0';
 let swReg=null;
 
 function initVersionDisplay(){
