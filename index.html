@@ -342,41 +342,60 @@ html[data-tablet=on] .vsq-b{
 html[data-tablet=on] .vsq-l{font-size:15px;}
 html[data-tablet=on] .vsq-n{font-size:14px;padding:2px 5px;}
 
-/* Main area: current activity centred at the bottom, timer pinned to
-   the far right edge of the screen. Sizes use min() so they are
-   whichever is SMALLER between a vh-based target and a % of the
-   actual space in .vmain — this guarantees neither block can ever
-   grow past what's really available and get clipped off-screen. */
+/* Main area: current activity truly centred in the available space,
+   timer pinned to the bottom-right and visually merged with the
+   controls dock below it (same background, shared rounded corners
+   only at the top, no gap/border seam between the two). */
 html[data-tablet=on] .vmain{
-  padding:10px 20px 14px;
-  align-items:flex-end;          /* both blocks sit low, toward the bottom */
-  justify-content:space-between; /* activity centred, timer pinned right */
-  gap:12px;
+  padding:14px 20px 0;           /* no bottom padding: timer panel touches the dock */
+  align-items:center;            /* activity truly centred vertically */
+  justify-content:center;
+  gap:26px;
+  position:relative;
 }
-html[data-tablet=on] .vspacer{display:none;}
+/* Mirror spacer keeps the activity card centred in the TRUE middle of
+   the screen, not just centred between itself and the timer — same
+   width as the timer panel so both sides balance out. */
+html[data-tablet=on] .vspacer{
+  display:block;
+  flex:0 0 auto;
+  width:min(48vh,88%);
+  visibility:hidden;
+}
 
 html[data-tablet=on] .vimgbl{
-  /* Exactly 1.3× the 13vh thumbnail size (16.9vh ≈ 17vh), capped to
-     92% of the available height so it can never overflow the screen */
+  /* Roughly 3× the previous tablet size, capped so it always stays
+     fully on screen regardless of how much vertical space exists */
   flex:0 0 auto;
-  width:auto;height:min(17vh,92%);
-  aspect-ratio:1/1;
-  margin:0 auto;                 /* centred in the remaining space */
-  border-width:6px;
-  padding:8px 12px;
-}
-html[data-tablet=on] .vtxt{font-size:clamp(.8rem,2.4vh,1.2rem);}
-html[data-tablet=on] .vnm{font-size:clamp(.56rem,1.2vh,.74rem);}
-
-html[data-tablet=on] .vtimer{
-  /* Pinned to the far right edge, capped to 78% of the available
-     height so it always stays fully visible above the controls bar */
-  flex:0 0 auto;
-  width:auto;height:min(15vh,78%);
+  width:auto;height:min(58vh,94%);
   aspect-ratio:1/1;
   margin:0;
-  border-radius:20px;
+  border-width:8px;
+  padding:14px 20px;
 }
+html[data-tablet=on] .vtxt{font-size:clamp(1.3rem,4.6vh,2.3rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.8rem,2vh,1.15rem);}
+
+html[data-tablet=on] .vtimer{
+  /* Roughly 3× the previous tablet size */
+  flex:0 0 auto;
+  align-self:flex-end;           /* sits low, right where the dock begins */
+  width:auto;height:min(48vh,88%);
+  aspect-ratio:1/1;
+  margin:0;
+  /* Merge visually with the controls dock: same color, square bottom
+     corners so there's no seam where the two meet */
+  background:#fff;
+  border:none;
+  border-radius:22px 22px 0 0;
+  box-shadow:none;
+  padding-bottom:0;
+}
+html[data-tablet=on] .vtimer::before{top:14px;font-size:.85rem;}
+html[data-tablet=on] .vtimer > .tw,html[data-tablet=on] .vtimer > .done-wrap{margin-top:26px;}
+/* The controls dock right below picks up the same background so the
+   timer panel reads as one continuous piece with it */
+html[data-tablet=on] .vctrl{background:#fff;border-top:none;padding-top:10px;}
 
 .vseq{
   flex-shrink:0;
@@ -547,6 +566,10 @@ html[data-tablet=on] .vtimer{
 [data-theme=dark] .bar-t{color:#9db3cf;}
 [data-theme=dark] .cw-t{color:#0f172a;}
 [data-theme=dark] .vctrl{background:#1a2438;border-color:#31415e;}
+/* Tablet mode + dark theme: the docked timer panel must match the
+   dark controls bar it merges into, not stay light */
+html[data-tablet=on][data-theme=dark] .vtimer{background:#1a2438;box-shadow:none;}
+html[data-tablet=on][data-theme=dark] .vctrl{border-top:none;}
 [data-theme=dark] .cb.st,[data-theme=dark] .cb.pv{background:#233754;color:#a8bcd8;border-color:#31415e;}
 [data-theme=dark] .cb.rs{background:#3a2e12;color:#e0b84a;border-color:#8a6a1a;}
 [data-theme=dark] .cb.nx:disabled{background:#233754;color:#5a6f8c;}
@@ -676,7 +699,7 @@ html[data-tablet=on] .vtimer{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.0.4</div>
+  <div class="home-ver" id="tb-ver">v1.0.5</div>
 </div>
 
 <!-- USERS -->
@@ -1988,7 +2011,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.4';
+const APP_VERSION='1.0.5';
 let swReg=null;
 
 function initVersionDisplay(){
