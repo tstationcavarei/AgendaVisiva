@@ -359,12 +359,12 @@ html[data-tablet=on] .vmain{
 html[data-tablet=on] .vspacer{display:none;}
 
 html[data-tablet=on] .vimgbl{
-  /* 15% smaller than before (40.6vh × 0.85 ≈ 34.5vh), lowered a
-     touch more toward the bottom */
+  /* 15% smaller than before (40.6vh × 0.85 ≈ 34.5vh), lowered closer
+     to the dock but with a small gap remaining, not flush against it */
   flex:0 0 auto;
   width:auto;height:min(34.5vh,88%);
   aspect-ratio:1/1;
-  margin:0 0 1.5%;
+  margin:0 0 0.6%;
   border-width:7px;
   padding:12px 18px;
 }
@@ -437,38 +437,50 @@ html[data-tablet=on] .vctrl{
 /* Current step in the sequence row: same family, just a touch bigger + green ring */
 
 
-/* ── MAIN: current step (moderate size, clearly framed) + timer (big, distinct) ── */
-.vmain{flex:1;min-height:0;display:flex;align-items:stretch;overflow:visible;padding:6px 12px;position:relative;z-index:1;}
-/* Left spacer mirrors the timer's width so the activity card
-   stays visually centred in the remaining space, with the
-   timer panel pinned to the far right */
-.vspacer{flex:0 0 clamp(100px,22%,190px);}
+/* ── MAIN: current step (square, centred) + timer (pinned to the
+   right edge, merged with the controls dock below) ──
+   Same architecture as tablet mode, at phone-appropriate proportions:
+   - .vimgbl is a true square (aspect-ratio, not stretched to fill)
+   - .vtimer is taken out of the flex flow and pinned flush against
+     the right edge of the screen, visually continuous with .vctrl
+*/
+.vmain{
+  flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+  overflow:visible;padding:6px 0 0;position:relative;z-index:1;
+}
+.vspacer{display:none;} /* no longer needed: timer is pinned absolutely, activity centres on its own */
 .vimgbl{
-  flex:1;min-width:0;min-height:0;
+  flex:0 0 auto;
+  width:auto;height:min(30vh,88%);
+  aspect-ratio:1/1;                          /* always a true square, never stretched */
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   background:#fff;border-radius:16px;
   border:6px solid #06D6A0;                 /* thick, saturated green = "this is now" */
   box-shadow:0 0 0 3px rgba(6,214,160,.2), 0 3px 14px rgba(6,214,160,.22);
   padding:6px 12px;cursor:pointer;
   position:relative;
-  margin:0 40px 0 10px;                     /* extra right margin nudges it away from the timer */
+  margin:0 0 3%;
 }
 .vimgbl:active{opacity:.9;}
 .vimg{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:9px;display:block;background:#fff;}
 .vtxt{font-size:clamp(.82rem,3.4vh,1.4rem);font-weight:900;color:#1a2340;text-align:center;line-height:1.2;flex-shrink:0;}
 .vnm{font-size:clamp(.56rem,1.4vh,.74rem);font-weight:700;color:#6a82a0;text-align:center;flex-shrink:0;}
 
-/* Timer area: takes ALL remaining space to the right of the image,
-   tightly framed so there's no dead space around it */
+/* Timer: pinned flush against the right edge of the screen, merged
+   with the controls dock below it (same border/background, square
+   bottom corners, no visible seam) — mirrors tablet-mode styling. */
 .vtimer{
-  flex:0 0 clamp(100px,22%,190px);min-height:0;
+  position:absolute;right:0;bottom:0;
+  width:auto;height:min(24vh,80%);
+  aspect-ratio:1/1;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  background:#eef5fb;
-  border:3px solid #4A9EDB;
-  border-radius:18px;
-  box-shadow:0 0 0 3px rgba(74,158,219,.14), 0 3px 14px rgba(74,158,219,.2);
-  overflow:hidden;padding:8px;
-  position:relative;
+  background:#fff;
+  border:3px solid #d0dce8;
+  border-right:none;              /* flush against the screen edge */
+  border-bottom:none;             /* the seam into the dock stays open */
+  border-radius:18px 0 0 0;
+  box-shadow:0 -4px 16px rgba(0,0,0,.08);
+  overflow:hidden;padding:8px;padding-bottom:0;
   z-index:10; /* renders above the sequence strip when the pulse grows past its box */
 }
 /* Clock icon label so it unmistakably reads as "timer", never as a task image */
@@ -536,7 +548,7 @@ html[data-tablet=on] .vctrl{
 .cw{position:relative;width:min(70%,38vh);height:min(70%,38vh);aspect-ratio:1/1;}
 .cw svg{width:100%;height:100%;}
 .cw-t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(.85rem,3.4vh,1.6rem);font-weight:900;color:#1a2340;text-shadow:0 1px 2px rgba(255,255,255,.7);}
-.vctrl{flex-shrink:0;background:#fff;border-top:2px solid #d0dce8;display:flex;align-items:center;justify-content:center;gap:7px;padding:5px 8px;min-height:44px;}
+.vctrl{flex-shrink:0;background:#fff;border-top:3px solid #d0dce8;box-shadow:0 -3px 12px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;gap:7px;padding:5px 8px;min-height:44px;}
 .cb{border:none;border-radius:10px;padding:7px clamp(9px,2vh,17px);font-family:inherit;font-weight:800;font-size:clamp(.68rem,2vh,.85rem);cursor:pointer;white-space:nowrap;}
 .cb.st{background:#e8eef4;color:#4a6080;border:2px solid #c0d0e0;}
 .cb.pv{background:#e8eef4;color:#4a6080;border:2px solid #c0d0e0;}
@@ -567,7 +579,7 @@ html[data-tablet=on] .vctrl{
 [data-theme=dark] .vimgbl{background:#1a2438;box-shadow:0 0 0 3px rgba(6,214,160,.28),0 3px 14px rgba(6,214,160,.3);}
 [data-theme=dark] .vtxt{color:#e2eaf8;}
 [data-theme=dark] .vnm{color:#9db3cf;}
-[data-theme=dark] .vtimer{background:#16283d;border-color:#4A9EDB;box-shadow:0 0 0 3px rgba(74,158,219,.22),0 3px 14px rgba(74,158,219,.3);}
+[data-theme=dark] .vtimer{background:#1a2438;border-color:#31415e;box-shadow:0 -4px 16px rgba(0,0,0,.3);}
 [data-theme=dark] .vtimer::before{color:#7bbce8;}
 [data-theme=dark] .rbg{stroke:#233754;}
 [data-theme=dark] .rtxt{color:#e2eaf8;}
@@ -575,7 +587,7 @@ html[data-tablet=on] .vctrl{
 [data-theme=dark] .bar-w{background:#233754;}
 [data-theme=dark] .bar-t{color:#9db3cf;}
 [data-theme=dark] .cw-t{color:#0f172a;}
-[data-theme=dark] .vctrl{background:#1a2438;border-color:#31415e;}
+[data-theme=dark] .vctrl{background:#1a2438;border-color:#31415e;box-shadow:0 -3px 12px rgba(0,0,0,.3);}
 /* Tablet mode + dark theme: the docked timer panel must match the
    dark controls bar it merges into, including the SAME border color
    as the dock's top border, so the seam disappears here too */
@@ -717,7 +729,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.0.8</div>
+  <div class="home-ver" id="tb-ver">v1.0.9</div>
 </div>
 
 <!-- USERS -->
@@ -2029,7 +2041,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.8';
+const APP_VERSION='1.0.9';
 let swReg=null;
 
 function initVersionDisplay(){
