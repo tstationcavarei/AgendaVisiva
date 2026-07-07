@@ -42,7 +42,7 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#000;}
 html{font-size:16px;}
 /* Tablet mode: scale up every rem-based size across the whole app */
-html[data-tablet=on]{font-size:21px;}
+html[data-tablet=on]{font-size:22px;}
 body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 
 /* ── STAGE: always landscape ── */
@@ -87,14 +87,51 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 .spacer{flex:1;}
 
 /* ── TABLET MODE: enlarge fixed-px chrome that rem-scaling doesn't reach ── */
-html[data-tablet=on] .tbar{height:58px;}
-html[data-tablet=on] .ib{width:46px;height:46px;}
-html[data-tablet=on] .hc-n{width:34px;height:34px;}
-html[data-tablet=on] .uc-av{width:50px;height:50px;}
-html[data-tablet=on] .sc-n{width:23px;height:23px;}
-html[data-tablet=on] .sc-x{width:24px;height:24px;}
-html[data-tablet=on] .sc-h{width:34px;height:34px;}
-html[data-tablet=on] .sc-dup{width:29px;height:29px;}
+html[data-tablet=on] .tbar{height:64px;}
+html[data-tablet=on] .ib{width:50px;height:50px;font-size:1.15rem;}
+html[data-tablet=on] .hc-n{width:38px;height:38px;font-size:1rem;}
+/* User cards: was a fixed 180px box that clipped the name/status text
+   once the tablet font-size made them wider — now flexible width with
+   a sane minimum, so text always fits inside the card. */
+html[data-tablet=on] .ucard{width:auto;min-width:230px;max-width:280px;padding:16px 18px;gap:11px;}
+html[data-tablet=on] .uc-av{width:56px;height:56px;font-size:1.35rem;}
+html[data-tablet=on] .uc-nm{font-size:1.15rem;}
+html[data-tablet=on] .uc-st{font-size:.82rem;}
+html[data-tablet=on] .uc-acts{gap:8px;}
+html[data-tablet=on] .bsm{padding:7px 13px;font-size:.9rem;border-radius:9px;}
+/* Agenda cards: same fixed-width overflow issue */
+html[data-tablet=on] .acard{width:auto;min-width:200px;max-width:250px;padding:14px 16px;gap:9px;}
+html[data-tablet=on] .acard-n{font-size:1.05rem;}
+html[data-tablet=on] .acard-m{font-size:.8rem;}
+/* Step editor cards */
+html[data-tablet=on] .sc-n{width:29px;height:29px;font-size:.78rem;}
+html[data-tablet=on] .sc-x{width:30px;height:30px;font-size:.85rem;}
+html[data-tablet=on] .sc-h{width:42px;height:42px;font-size:1.25rem;}
+html[data-tablet=on] .sc-dup{width:36px;height:36px;font-size:.9rem;}
+html[data-tablet=on] .sc-l{font-size:.92rem;}
+/* Editor mini-strip and timer picker chips */
+html[data-tablet=on] .mn{width:60px;}
+html[data-tablet=on] .mn-b,html[data-tablet=on] .mn-add{width:58px;height:50px;font-size:1.3rem;}
+html[data-tablet=on] .mn-l{font-size:.72rem;}
+html[data-tablet=on] .tsel{width:auto;min-width:74px;padding:8px 10px;font-size:1.05rem;}
+html[data-tablet=on] .ttb{min-width:78px;padding:7px 11px;font-size:.82rem;}
+html[data-tablet=on] .iprev{width:96px;height:82px;font-size:1.8rem;}
+html[data-tablet=on] .ar-img{width:70px;height:70px;}
+html[data-tablet=on] .tog{width:46px;height:26px;}
+html[data-tablet=on] .tog::after{width:20px;height:20px;}
+html[data-tablet=on] .sw{width:30px;height:30px;}
+/* Home cards + play button */
+html[data-tablet=on] .vplay{width:80px;height:80px;}
+html[data-tablet=on] .vplay svg{width:34px;height:34px;}
+/* Launch grid tiles (upcoming activities before starting) */
+html[data-tablet=on] .vlc{width:clamp(80px,11%,120px);}
+html[data-tablet=on] .vlc-l{font-size:.72rem;}
+html[data-tablet=on] .vlc-n{font-size:.68rem;padding:1px 4px;}
+/* Prevent any residual text overflow app-wide as a safety net */
+html[data-tablet=on] .uc-nm,html[data-tablet=on] .acard-n,html[data-tablet=on] .vsq-l,
+html[data-tablet=on] .vlc-l,html[data-tablet=on] .sc-l{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+}
 
 /* ── HOME ── */
 #s-home .body{flex:1;display:flex;align-items:center;justify-content:center;gap:clamp(10px,2.5vw,26px);padding:12px 18px;overflow:hidden;}
@@ -275,33 +312,60 @@ html[data-tablet=on] .sc-dup{width:29px;height:29px;}
    Cards shrink to fit any count, stay close, always readable. */
 /* ── TABLET MODE: viewer layout ──
    - Sequence strip gets much more room and wraps into 2 rows when
-     there are many upcoming steps (cards stay the same size, just
-     wrap instead of scrolling in a single line).
-   - The current activity card shrinks to free up that space.
+     there are many upcoming steps (cards are bigger and stay close
+     together, wrapping instead of scrolling in a single line).
+   - The current activity becomes a SQUARE card, centred toward the
+     bottom-left of the remaining space.
+   - The timer becomes a SQUARE panel of its own, shifted further
+     right, clearly separated from the activity card.
 */
 html[data-tablet=on] .vseq{
-  height:46%;min-height:150px;max-height:260px;
+  height:44%;min-height:170px;max-height:280px;
   flex-wrap:wrap;align-content:flex-start;align-items:flex-start;
-  padding:10px 14px;gap:10px 12px;
+  padding:12px 16px;gap:12px 14px;
 }
 html[data-tablet=on] .vsq{height:auto;}
 html[data-tablet=on] .vsq-b{
-  height:auto;width:11vh;max-width:120px;aspect-ratio:1/1;
+  /* Bigger thumbnails for upcoming activities — there's room now */
+  height:auto;width:15vh;max-width:150px;aspect-ratio:1/1;
 }
-html[data-tablet=on] .vsq-l{font-size:14px;}
-html[data-tablet=on] .vsq-n{font-size:13px;padding:1px 4px;}
-html[data-tablet=on] .vmain{padding:10px 18px;}
+html[data-tablet=on] .vsq-l{font-size:15px;}
+html[data-tablet=on] .vsq-n{font-size:14px;padding:2px 5px;}
+
+/* Main area: no longer a stretched row — the activity card and the
+   timer are independent, self-sized, vertically-centred blocks with
+   real space between them instead of filling all available width. */
+html[data-tablet=on] .vmain{
+  padding:14px 26px;
+  align-items:center;         /* vertical centring instead of stretch */
+  justify-content:center;
+  gap:0;                      /* spacing handled by margins below for finer control */
+}
+html[data-tablet=on] .vspacer{display:none;}  /* no longer needed: real gap replaces the mirrored spacer trick */
+
 html[data-tablet=on] .vimgbl{
-  flex:0 1 42%;               /* current activity: noticeably smaller */
-  margin:0 30px 0 10px;
-  border-width:5px;
-  padding:8px 14px;
+  /* Square card, sized from the available height, not stretched */
+  flex:0 0 auto;
+  width:min(52vh,52%);
+  aspect-ratio:1/1;
+  height:auto;
+  align-self:flex-end;        /* sits low, toward the bottom */
+  margin:0 34px 4% 4%;         /* nudged left, small gap from the bottom edge */
+  border-width:6px;
+  padding:10px 16px;
 }
-html[data-tablet=on] .vtxt{font-size:clamp(.9rem,3vh,1.5rem);}
-html[data-tablet=on] .vnm{font-size:clamp(.6rem,1.4vh,.82rem);}
-html[data-tablet=on] .vtimer,
-html[data-tablet=on] .vspacer{
-  flex:0 0 clamp(120px,20%,220px);
+html[data-tablet=on] .vtxt{font-size:clamp(1rem,3.2vh,1.7rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.66rem,1.5vh,.9rem);}
+
+html[data-tablet=on] .vtimer{
+  /* Square panel, shifted further right and vertically centred */
+  flex:0 0 auto;
+  width:min(30vh,26%);
+  aspect-ratio:1/1;
+  height:auto;
+  align-self:center;
+  margin-right:4%;
+  border-radius:22px;
 }
 
 .vseq{
@@ -1772,8 +1836,13 @@ const K_SYM=[
 ];
 function kbdOpen(inp){
   if(CFG.tablet){
-    // Tablet mode: use the real system keyboard instead of the custom one
+    // Tablet mode: use the real system keyboard instead of the custom
+    // one. The native keyboard still covers part of the screen, so we
+    // scroll the field well above the fold as soon as it opens.
     inp.removeAttribute('inputmode');
+    setTimeout(()=>{
+      inp.scrollIntoView({behavior:'smooth',block:'start'});
+    },300); // wait for the OS keyboard animation to finish opening
     return;
   }
   kA=inp;kShift=false;kCaps=false;kLayer='txt';
@@ -1866,6 +1935,18 @@ function kDel(){
 document.addEventListener('focusin',e=>{
   if(e.target.classList&&e.target.classList.contains('inp'))kbdOpen(e.target);
 });
+// Tablet mode + native keyboard: visualViewport fires reliably when
+// the OS keyboard resizes the visible area — re-scroll the focused
+// field into view every time that happens, not just once on open.
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',()=>{
+    if(!CFG.tablet)return;
+    const a=document.activeElement;
+    if(a&&a.classList&&a.classList.contains('inp')){
+      setTimeout(()=>a.scrollIntoView({behavior:'smooth',block:'start'}),80);
+    }
+  });
+}
 // close keyboard on tap outside
 document.addEventListener('mousedown',e=>{
   const k=el('kbd');
@@ -1885,7 +1966,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.1';
+const APP_VERSION='1.0.2';
 let swReg=null;
 
 function initVersionDisplay(){
