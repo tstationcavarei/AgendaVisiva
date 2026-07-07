@@ -348,7 +348,7 @@ html[data-tablet=on] .vsq-n{font-size:14px;padding:2px 5px;}
    only at the top, no gap/border seam between the two). */
 html[data-tablet=on] .vmain{
   padding:14px 0 0;              /* no side padding on the right: timer sits flush against the edge */
-  align-items:center;            /* activity truly centred vertically */
+  align-items:flex-end;          /* activity sits low, near the dock, not vertically centred */
   justify-content:center;
   gap:0;
   position:relative;
@@ -359,12 +359,12 @@ html[data-tablet=on] .vmain{
 html[data-tablet=on] .vspacer{display:none;}
 
 html[data-tablet=on] .vimgbl{
-  /* 15% smaller than before (40.6vh × 0.85 ≈ 34.5vh), lowered closer
-     to the dock but with a small gap remaining, not flush against it */
+  /* 15% smaller than before (40.6vh × 0.85 ≈ 34.5vh). Sits near the
+     dock with a clear, deliberate gap — close but not touching. */
   flex:0 0 auto;
   width:auto;height:min(34.5vh,88%);
   aspect-ratio:1/1;
-  margin:0 0 0.6%;
+  margin:0 0 3.5%;
   border-width:7px;
   padding:12px 18px;
 }
@@ -445,7 +445,7 @@ html[data-tablet=on] .vctrl{
      the right edge of the screen, visually continuous with .vctrl
 */
 .vmain{
-  flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+  flex:1;min-height:0;display:flex;align-items:flex-end;justify-content:center;
   overflow:visible;padding:6px 0 0;position:relative;z-index:1;
 }
 .vspacer{display:none;} /* no longer needed: timer is pinned absolutely, activity centres on its own */
@@ -459,7 +459,7 @@ html[data-tablet=on] .vctrl{
   box-shadow:0 0 0 3px rgba(6,214,160,.2), 0 3px 14px rgba(6,214,160,.22);
   padding:6px 12px;cursor:pointer;
   position:relative;
-  margin:0 0 3%;
+  margin:0 0 5%;
 }
 .vimgbl:active{opacity:.9;}
 .vimg{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:9px;display:block;background:#fff;}
@@ -471,7 +471,7 @@ html[data-tablet=on] .vctrl{
    bottom corners, no visible seam) — mirrors tablet-mode styling. */
 .vtimer{
   position:absolute;right:0;bottom:0;
-  width:auto;height:min(24vh,80%);
+  width:auto;height:min(36vh,80%);
   aspect-ratio:1/1;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
   background:#fff;
@@ -503,6 +503,11 @@ html[data-tablet=on] .vctrl{
 .tdone-play svg{width:46%;height:46%;fill:#fff;margin-left:4%;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 .blink{animation:blink .7s step-end infinite;}
+/* Both pulse animations scale FROM THE TOP of the panel (not the
+   centre) so the growth only ever pushes upward, away from the dock
+   the timer is merged with — it can never visually overlap the
+   controls bar below, regardless of how much it grows. */
+.vtimer.pulse,.vtimer.pulse-green{transform-origin:top center;}
 /* Shown briefly when the user tries to skip while a timer is running:
    the panel flashes and grows slightly, signalling "wait for me" */
 @keyframes tpulse{
@@ -548,7 +553,7 @@ html[data-tablet=on] .vctrl{
 .cw{position:relative;width:min(70%,38vh);height:min(70%,38vh);aspect-ratio:1/1;}
 .cw svg{width:100%;height:100%;}
 .cw-t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(.85rem,3.4vh,1.6rem);font-weight:900;color:#1a2340;text-shadow:0 1px 2px rgba(255,255,255,.7);}
-.vctrl{flex-shrink:0;background:#fff;border-top:3px solid #d0dce8;box-shadow:0 -3px 12px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;gap:7px;padding:5px 8px;min-height:44px;}
+.vctrl{flex-shrink:0;background:#fff;border-top:3px solid #d0dce8;box-shadow:0 -3px 12px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:5px 8px 5px 16px;min-height:44px;}
 .cb{border:none;border-radius:10px;padding:7px clamp(9px,2vh,17px);font-family:inherit;font-weight:800;font-size:clamp(.68rem,2vh,.85rem);cursor:pointer;white-space:nowrap;}
 .cb.st{background:#e8eef4;color:#4a6080;border:2px solid #c0d0e0;}
 .cb.pv{background:#e8eef4;color:#4a6080;border:2px solid #c0d0e0;}
@@ -729,7 +734,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.0.9</div>
+  <div class="home-ver" id="tb-ver">v1.1.0</div>
 </div>
 
 <!-- USERS -->
@@ -2041,7 +2046,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.9';
+const APP_VERSION='1.1.0';
 let swReg=null;
 
 function initVersionDisplay(){
