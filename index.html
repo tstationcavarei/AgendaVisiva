@@ -347,57 +347,57 @@ html[data-tablet=on] .vsq-n{font-size:14px;padding:2px 5px;}
    controls dock below it (same background, shared rounded corners
    only at the top, no gap/border seam between the two). */
 html[data-tablet=on] .vmain{
-  padding:14px 20px 0;           /* no bottom padding: timer panel touches the dock */
+  padding:14px 0 0;              /* no side padding on the right: timer sits flush against the edge */
   align-items:center;            /* activity truly centred vertically */
   justify-content:center;
-  gap:26px;
+  gap:0;
   position:relative;
 }
-/* Mirror spacer keeps the activity card centred in the TRUE middle of
-   the screen, not just centred between itself and the timer — same
-   width as the timer panel so both sides balance out. */
-html[data-tablet=on] .vspacer{
-  display:block;
-  flex:0 0 auto;
-  width:min(33.6vh,82%);
-  visibility:hidden;
-}
+/* Spacer no longer needed: the timer is pinned with position:absolute
+   below, so it's fully out of the flex flow and the activity card
+   can simply centre itself in .vmain on its own. */
+html[data-tablet=on] .vspacer{display:none;}
 
 html[data-tablet=on] .vimgbl{
-  /* 30% smaller than before (58vh × 0.7 ≈ 40.6vh), lifted a bit above
-     the dock instead of sitting flush with the bottom of the area */
+  /* 15% smaller than before (40.6vh × 0.85 ≈ 34.5vh), lowered a
+     touch more toward the bottom */
   flex:0 0 auto;
-  width:auto;height:min(40.6vh,88%);
+  width:auto;height:min(34.5vh,88%);
   aspect-ratio:1/1;
-  margin:0 0 3%;
+  margin:0 0 1.5%;
   border-width:7px;
   padding:12px 18px;
 }
-html[data-tablet=on] .vtxt{font-size:clamp(1.1rem,3.6vh,1.9rem);}
-html[data-tablet=on] .vnm{font-size:clamp(.72rem,1.7vh,1rem);}
+html[data-tablet=on] .vtxt{font-size:clamp(1rem,3.3vh,1.75rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.68rem,1.6vh,.94rem);}
 
 html[data-tablet=on] .vtimer{
-  /* 30% smaller than before (48vh × 0.7 ≈ 33.6vh) */
-  flex:0 0 auto;
-  align-self:flex-end;           /* sits low, right where the dock begins */
+  /* 30% smaller than before (48vh × 0.7 ≈ 33.6vh).
+     Pinned with position:absolute so its right edge sits flush
+     against the true right edge of the app — not just "far right
+     within the flex row", but touching the actual screen border. */
+  position:absolute;
+  right:0;
+  bottom:0;
   width:auto;height:min(33.6vh,82%);
   aspect-ratio:1/1;
   margin:0;
-  /* Merge with the dock below (same background, square bottom
-     corners, no gap) but keep a clear border + shadow so the panel
-     still reads as its own distinct area against the page background */
+  /* Merge with the dock below: identical border color/width to the
+     dock's top border, so the seam between them disappears and the
+     whole thing reads as one continuous shape rather than two panels */
   background:#fff;
-  border:3px solid #4A9EDB;
+  border:3px solid #d0dce8;
+  border-right:none;             /* flush against the screen edge — no border needed there */
   border-bottom:none;            /* the seam into the dock stays open */
-  border-radius:22px 22px 0 0;
-  box-shadow:0 -4px 16px rgba(74,158,219,.18);
+  border-radius:22px 0 0 0;      /* only the top-left corner rounds now */
+  box-shadow:0 -4px 16px rgba(0,0,0,.08);
   padding-bottom:0;
 }
 html[data-tablet=on] .vtimer::before{top:14px;font-size:.8rem;}
 html[data-tablet=on] .vtimer > .tw,html[data-tablet=on] .vtimer > .done-wrap{margin-top:24px;}
-/* The controls dock right below picks up the same background so the
-   timer panel reads as one continuous piece with it, plus its own
-   top border/shadow so the dock itself stands out from the page too */
+/* The controls dock right below picks up the same background, and
+   the SAME border color/width as the timer panel above it, so the
+   two merge into a single continuous piece with no visible seam. */
 html[data-tablet=on] .vctrl{
   background:#fff;
   border-top:3px solid #d0dce8;
@@ -577,11 +577,11 @@ html[data-tablet=on] .vctrl{
 [data-theme=dark] .cw-t{color:#0f172a;}
 [data-theme=dark] .vctrl{background:#1a2438;border-color:#31415e;}
 /* Tablet mode + dark theme: the docked timer panel must match the
-   dark controls bar it merges into, while keeping a visible border
-   and shadow so it still stands out from the darker page background */
+   dark controls bar it merges into, including the SAME border color
+   as the dock's top border, so the seam disappears here too */
 html[data-tablet=on][data-theme=dark] .vtimer{
   background:#1a2438;
-  border-color:#4A9EDB;
+  border-color:#31415e;
   box-shadow:0 -4px 16px rgba(0,0,0,.35);
 }
 html[data-tablet=on][data-theme=dark] .vctrl{
@@ -717,7 +717,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.0.6</div>
+  <div class="home-ver" id="tb-ver">v1.0.8</div>
 </div>
 
 <!-- USERS -->
@@ -2029,7 +2029,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.6';
+const APP_VERSION='1.0.8';
 let swReg=null;
 
 function initVersionDisplay(){
