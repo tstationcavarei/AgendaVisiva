@@ -359,12 +359,12 @@ html[data-tablet=on] .vmain{
 html[data-tablet=on] .vspacer{display:none;}
 
 html[data-tablet=on] .vimgbl{
-  /* 15% smaller than before (40.6vh × 0.85 ≈ 34.5vh). Sits near the
-     dock with a clear, deliberate gap — close but not touching. */
+  /* Capped lower than before so the card visually sits close to the
+     dock, instead of stretching up to nearly fill the whole area */
   flex:0 0 auto;
-  width:auto;height:min(34.5vh,88%);
+  width:auto;height:min(24vh,60%);
   aspect-ratio:1/1;
-  margin:0 0 3.5%;
+  margin:0 0 2.5%;
   border-width:7px;
   padding:12px 18px;
 }
@@ -393,8 +393,7 @@ html[data-tablet=on] .vtimer{
   box-shadow:0 -4px 16px rgba(0,0,0,.08);
   padding-bottom:0;
 }
-html[data-tablet=on] .vtimer::before{top:14px;font-size:.8rem;}
-html[data-tablet=on] .vtimer > .tw,html[data-tablet=on] .vtimer > .done-wrap{margin-top:24px;}
+html[data-tablet=on] .vtimer::before{font-size:.8rem;}
 /* The controls dock right below picks up the same background, and
    the SAME border color/width as the timer panel above it, so the
    two merge into a single continuous piece with no visible seam. */
@@ -451,7 +450,7 @@ html[data-tablet=on] .vctrl{
 .vspacer{display:none;} /* no longer needed: timer is pinned absolutely, activity centres on its own */
 .vimgbl{
   flex:0 0 auto;
-  width:auto;height:min(30vh,88%);
+  width:auto;height:min(20vh,55%);
   aspect-ratio:1/1;                          /* always a true square, never stretched */
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   background:#fff;border-radius:16px;
@@ -459,7 +458,7 @@ html[data-tablet=on] .vctrl{
   box-shadow:0 0 0 3px rgba(6,214,160,.2), 0 3px 14px rgba(6,214,160,.22);
   padding:6px 12px;cursor:pointer;
   position:relative;
-  margin:0 0 5%;
+  margin:0 0 4%;
 }
 .vimgbl:active{opacity:.9;}
 .vimg{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:9px;display:block;background:#fff;}
@@ -480,17 +479,21 @@ html[data-tablet=on] .vctrl{
   border-bottom:none;             /* the seam into the dock stays open */
   border-radius:18px 0 0 0;
   box-shadow:0 -4px 16px rgba(0,0,0,.08);
-  overflow:hidden;padding:8px;padding-bottom:0;
+  overflow:hidden;padding:8px;
   z-index:10; /* renders above the sequence strip when the pulse grows past its box */
 }
-/* Clock icon label so it unmistakably reads as "timer", never as a task image */
+/* Clock icon label so it unmistakably reads as "timer", never as a
+   task image. Part of the normal flex flow (not absolutely positioned)
+   so it centres together with the timer widget below it as one
+   balanced group, instead of being pinned to the top while pushing
+   the widget off-centre underneath. */
 .vtimer::before{
   content:'⏱ TIMER';
-  position:absolute; top:8px; left:50%; transform:translateX(-50%);
   font-size:.62rem; font-weight:900; letter-spacing:1.5px;
   color:#4A9EDB; opacity:.7; line-height:1;
+  flex-shrink:0;
 }
-.vtimer > .tw, .vtimer > .tdone{ margin-top:16px; }
+.vtimer > .tw, .vtimer > .tdone, .vtimer > .done-wrap{ margin-top:0; }
 .tdone{font-size:clamp(.7rem,2.4vh,1.1rem);font-weight:900;color:#e03050;letter-spacing:1px;}
 .tdone-play{
   width:min(52%,26vh);aspect-ratio:1/1;border-radius:50%;
@@ -503,11 +506,11 @@ html[data-tablet=on] .vctrl{
 .tdone-play svg{width:46%;height:46%;fill:#fff;margin-left:4%;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 .blink{animation:blink .7s step-end infinite;}
-/* Both pulse animations scale FROM THE TOP of the panel (not the
-   centre) so the growth only ever pushes upward, away from the dock
-   the timer is merged with — it can never visually overlap the
-   controls bar below, regardless of how much it grows. */
-.vtimer.pulse,.vtimer.pulse-green{transform-origin:top center;}
+/* Both pulse animations scale FROM THE BOTTOM of the panel — the
+   bottom edge (flush against the dock) stays fixed in place, so all
+   growth pushes upward, away from the dock. Using "top" here would
+   do the opposite and grow the panel down INTO the controls bar. */
+.vtimer.pulse,.vtimer.pulse-green{transform-origin:bottom center;}
 /* Shown briefly when the user tries to skip while a timer is running:
    the panel flashes and grows slightly, signalling "wait for me" */
 @keyframes tpulse{
@@ -734,7 +737,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.1.0</div>
+  <div class="home-ver" id="tb-ver">v1.1.1</div>
 </div>
 
 <!-- USERS -->
@@ -2046,7 +2049,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.1.0';
+const APP_VERSION='1.1.1';
 let swReg=null;
 
 function initVersionDisplay(){
