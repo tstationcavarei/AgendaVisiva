@@ -40,6 +40,9 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+html{font-size:16px;}
+/* Tablet mode: scale up every rem-based size across the whole app */
+html[data-tablet=on]{font-size:21px;}
 body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 
 /* ── STAGE: always landscape ── */
@@ -74,6 +77,7 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 }
 .tb-logo{font-size:1.05rem;font-weight:900;color:var(--acc);}
 .tb-logo span{color:var(--grn);}
+.tb-ver{font-size:.62rem;font-weight:700;color:var(--mut);margin-left:8px;align-self:flex-end;margin-bottom:2px;}
 .tb-ttl{font-weight:800;font-size:.88rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .bk{background:var(--bg);border:2px solid var(--brd);border-radius:9px;padding:5px 11px;font-family:inherit;font-weight:700;font-size:.78rem;color:var(--txt);cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .bk:active{background:var(--brd);}
@@ -81,6 +85,16 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 .badd{background:var(--acc);border:none;border-radius:9px;padding:6px 13px;font-family:inherit;font-weight:800;font-size:.78rem;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .badd:active{background:var(--acc-d);}
 .spacer{flex:1;}
+
+/* ── TABLET MODE: enlarge fixed-px chrome that rem-scaling doesn't reach ── */
+html[data-tablet=on] .tbar{height:58px;}
+html[data-tablet=on] .ib{width:46px;height:46px;}
+html[data-tablet=on] .hc-n{width:34px;height:34px;}
+html[data-tablet=on] .uc-av{width:50px;height:50px;}
+html[data-tablet=on] .sc-n{width:23px;height:23px;}
+html[data-tablet=on] .sc-x{width:24px;height:24px;}
+html[data-tablet=on] .sc-h{width:34px;height:34px;}
+html[data-tablet=on] .sc-dup{width:29px;height:29px;}
 
 /* ── HOME ── */
 #s-home .body{flex:1;display:flex;align-items:center;justify-content:center;gap:clamp(10px,2.5vw,26px);padding:12px 18px;overflow:hidden;}
@@ -259,6 +273,37 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 /* ── TOP ROW: the full sequence, all steps close together.
    Every card (including current) lives HERE — no separate section.
    Cards shrink to fit any count, stay close, always readable. */
+/* ── TABLET MODE: viewer layout ──
+   - Sequence strip gets much more room and wraps into 2 rows when
+     there are many upcoming steps (cards stay the same size, just
+     wrap instead of scrolling in a single line).
+   - The current activity card shrinks to free up that space.
+*/
+html[data-tablet=on] .vseq{
+  height:46%;min-height:150px;max-height:260px;
+  flex-wrap:wrap;align-content:flex-start;align-items:flex-start;
+  padding:10px 14px;gap:10px 12px;
+}
+html[data-tablet=on] .vsq{height:auto;}
+html[data-tablet=on] .vsq-b{
+  height:auto;width:11vh;max-width:120px;aspect-ratio:1/1;
+}
+html[data-tablet=on] .vsq-l{font-size:14px;}
+html[data-tablet=on] .vsq-n{font-size:13px;padding:1px 4px;}
+html[data-tablet=on] .vmain{padding:10px 18px;}
+html[data-tablet=on] .vimgbl{
+  flex:0 1 42%;               /* current activity: noticeably smaller */
+  margin:0 30px 0 10px;
+  border-width:5px;
+  padding:8px 14px;
+}
+html[data-tablet=on] .vtxt{font-size:clamp(.9rem,3vh,1.5rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.6rem,1.4vh,.82rem);}
+html[data-tablet=on] .vtimer,
+html[data-tablet=on] .vspacer{
+  flex:0 0 clamp(120px,20%,220px);
+}
+
 .vseq{
   flex-shrink:0;
   background:#f0f4f8;
@@ -536,6 +581,7 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 <div class="scr on" id="s-home">
   <div class="tbar">
     <div class="tb-logo">Agenda <span>Visiva</span></div>
+    <div class="tb-ver" id="tb-ver">v1.0.1</div>
     <div class="spacer"></div>
     <button class="ib" onclick="toggleFS()">⛶</button>
     <button class="ib" onclick="go('s-set')">⚙️</button>
@@ -746,6 +792,12 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
           </div>
         </div>
       </div>
+      <div class="sect">
+        <div class="sect-t">📟 Dispositivo</div>
+        <div class="srow"><div><div class="slbl">Modalità tablet</div><div class="ssub">Interfaccia più grande, tastiera di sistema, più spazio per le attività successive</div></div>
+          <div class="tog" id="tablet-tog" onclick="toggleTablet()"></div>
+        </div>
+      </div>
     </div>
     <div class="pane" id="p-snd">
       <div class="sect">
@@ -857,7 +909,7 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 'use strict';
 // ═══ STATE ═══
 let ST={users:[],selU:null,selA:null,editIdx:null,lastT:'ring'};
-let CFG={theme:'light',acc:'blue',rt:'beep',sd:2};
+let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false};
 let VS={steps:[],idx:-1,iv:null,rem:0,tot:0,tt:'ring'};
 let pUC='#4A9EDB', agSel=null, dirty=false, cfCb=null;
 
@@ -1599,6 +1651,7 @@ function rSet(){
   el('s-rt').dataset.val=CFG.rt; set('s-rt-txt',rtLabel(CFG.rt));
   el('s-sd').dataset.val=String(CFG.sd); set('s-sd-txt',CFG.sd+'s');
   applyTheme();
+  applyTablet();
 }
 function saveSnd(){CFG.rt=el('s-rt').dataset.val;CFG.sd=parseInt(el('s-sd').dataset.val)||2;saveCfg();}
 function swTab(btn){
@@ -1607,6 +1660,24 @@ function swTab(btn){
 }
 function setTheme(t){CFG.theme=t;saveCfg();applyTheme();}
 function setAcc(a){CFG.acc=a;saveCfg();applyTheme();}
+function toggleTablet(){
+  CFG.tablet=!CFG.tablet;
+  saveCfg();
+  applyTablet();
+}
+function applyTablet(){
+  document.documentElement.setAttribute('data-tablet',CFG.tablet?'on':'off');
+  const t=el('tablet-tog');
+  if(t) t.classList.toggle('on',!!CFG.tablet);
+  // When switching back to phone mode, re-block the system keyboard
+  // on every text field so the custom keyboard takes over again;
+  // when switching to tablet mode, unblock them all immediately.
+  document.querySelectorAll('.inp').forEach(inp=>{
+    if(CFG.tablet) inp.removeAttribute('inputmode');
+    else inp.setAttribute('inputmode','none');
+  });
+  if(!CFG.tablet) kbdClose(); // close custom keyboard state isn't needed in tablet mode
+}
 function applyTheme(){
   document.documentElement.setAttribute('data-theme',CFG.theme);
   document.documentElement.setAttribute('data-acc',CFG.acc);
@@ -1700,6 +1771,11 @@ const K_SYM=[
   [{k:'SY'},{k:'SP'},{k:'OK'}]
 ];
 function kbdOpen(inp){
+  if(CFG.tablet){
+    // Tablet mode: use the real system keyboard instead of the custom one
+    inp.removeAttribute('inputmode');
+    return;
+  }
   kA=inp;kShift=false;kCaps=false;kLayer='txt';
   kbdBuild();
   const k=el('kbd'), stage=el('stage');
@@ -1809,11 +1885,12 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.0';
+const APP_VERSION='1.0.1';
 let swReg=null;
 
 function initVersionDisplay(){
   const l=el('app-ver-lbl'); if(l) l.textContent=APP_VERSION;
+  const t=el('tb-ver'); if(t) t.textContent='v'+APP_VERSION;
 }
 
 function registerSW(){
@@ -1879,7 +1956,7 @@ function checkForUpdate(){
 }
 
 // ═══ INIT ═══
-load();applyTheme();rHome();initVersionDisplay();registerSW();
+load();applyTheme();applyTablet();rHome();initVersionDisplay();registerSW();
 // try locking landscape globally at first user interaction
 document.addEventListener('click',function once(){
   try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{});}catch(e){}
