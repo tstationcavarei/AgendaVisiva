@@ -79,9 +79,10 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 .tb-logo span{color:var(--grn);}
 .home-ver{
   flex-shrink:0;text-align:center;
-  font-size:.62rem;font-weight:700;color:var(--mut);
-  padding:4px 0 8px;opacity:.7;
+  font-size:.68rem;font-weight:700;color:var(--mut);
+  padding:4px 0 8px;
 }
+html[data-tablet=on] .home-ver{font-size:.85rem;padding:6px 0 10px;}
 .tb-ttl{font-weight:800;font-size:.88rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .bk{background:var(--bg);border:2px solid var(--brd);border-radius:9px;padding:5px 11px;font-family:inherit;font-weight:700;font-size:.78rem;color:var(--txt);cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .bk:active{background:var(--brd);}
@@ -125,8 +126,9 @@ html[data-tablet=on] .tog{width:46px;height:26px;}
 html[data-tablet=on] .tog::after{width:20px;height:20px;}
 html[data-tablet=on] .sw{width:30px;height:30px;}
 /* Home cards + play button */
-html[data-tablet=on] .vplay{width:80px;height:80px;}
-html[data-tablet=on] .vplay svg{width:34px;height:34px;}
+html[data-tablet=on] .vl-p{padding:12px 0 18px;flex-shrink:0;}
+html[data-tablet=on] .vplay{width:100px;height:100px;border-width:5px;}
+html[data-tablet=on] .vplay svg{width:42px;height:42px;}
 /* Launch grid tiles (upcoming activities before starting) */
 html[data-tablet=on] .vlc{width:clamp(80px,11%,120px);}
 html[data-tablet=on] .vlc-l{font-size:.72rem;}
@@ -300,7 +302,7 @@ html[data-tablet=on] .vlc-l{
 #s-view .bk,#s-view .ib{background:#f0f4f8;border-color:#d0dce8;color:#4a6080;}
 /* launch */
 .vl{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
-.vl-g{flex:1;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
+.vl-g{flex:1;min-height:0;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
 .vlc{display:flex;flex-direction:column;align-items:center;gap:3px;width:clamp(58px,9%,92px);}
 .vlc-b{width:100%;aspect-ratio:1/1;background:#b8dff0;border:2px solid #7ab8d8;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:1.3rem;}
 .vlc-b img{width:100%;height:100%;object-fit:cover;}
@@ -326,52 +328,52 @@ html[data-tablet=on] .vlc-l{
      right, clearly separated from the activity card.
 */
 html[data-tablet=on] .vseq{
-  height:44%;min-height:170px;max-height:280px;
+  height:38%;min-height:150px;max-height:230px;
   flex-wrap:wrap;align-content:flex-start;align-items:flex-start;
   padding:12px 16px;gap:12px 14px;
 }
 html[data-tablet=on] .vsq{height:auto;}
 html[data-tablet=on] .vsq-b{
   /* Bigger thumbnails for upcoming activities — there's room now.
-     This 15vh size is the reference the current-activity card below
-     is deliberately kept close to (only ~20% bigger, not a jump). */
-  height:auto;width:15vh;max-width:150px;aspect-ratio:1/1;
+     This is the reference size (13vh) the current-activity card
+     below is deliberately kept at a precise 1.3x ratio to. */
+  height:auto;width:13vh;max-width:130px;aspect-ratio:1/1;
 }
 html[data-tablet=on] .vsq-l{font-size:15px;}
 html[data-tablet=on] .vsq-n{font-size:14px;padding:2px 5px;}
 
 /* Main area: current activity centred at the bottom, timer pinned to
-   the far right edge of the screen — the two are pushed apart with
-   justify-content:space-between instead of tight flex neighbours. */
+   the far right edge of the screen. Sizes use min() so they are
+   whichever is SMALLER between a vh-based target and a % of the
+   actual space in .vmain — this guarantees neither block can ever
+   grow past what's really available and get clipped off-screen. */
 html[data-tablet=on] .vmain{
-  padding:14px 22px;
+  padding:10px 20px 14px;
   align-items:flex-end;          /* both blocks sit low, toward the bottom */
-  justify-content:space-between; /* activity centred via auto margins, timer pinned right */
-  gap:0;
+  justify-content:space-between; /* activity centred, timer pinned right */
+  gap:12px;
 }
 html[data-tablet=on] .vspacer{display:none;}
 
 html[data-tablet=on] .vimgbl{
-  /* Only ~20% bigger than the 15vh upcoming-activity thumbnails
-     (15vh × 1.2 = 18vh), not a large independent block anymore. */
+  /* Exactly 1.3× the 13vh thumbnail size (16.9vh ≈ 17vh), capped to
+     92% of the available height so it can never overflow the screen */
   flex:0 0 auto;
-  width:18vh;max-width:180px;
+  width:auto;height:min(17vh,92%);
   aspect-ratio:1/1;
-  height:auto;
   margin:0 auto;                 /* centred in the remaining space */
-  border-width:5px;
-  padding:6px 10px;
+  border-width:6px;
+  padding:8px 12px;
 }
-html[data-tablet=on] .vtxt{font-size:clamp(.85rem,2.6vh,1.3rem);}
-html[data-tablet=on] .vnm{font-size:clamp(.58rem,1.3vh,.78rem);}
+html[data-tablet=on] .vtxt{font-size:clamp(.8rem,2.4vh,1.2rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.56rem,1.2vh,.74rem);}
 
 html[data-tablet=on] .vtimer{
-  /* Pinned to the far right edge of the screen, clearly separated
-     from the activity card by the space:between on .vmain. */
+  /* Pinned to the far right edge, capped to 78% of the available
+     height so it always stays fully visible above the controls bar */
   flex:0 0 auto;
-  width:16vh;max-width:160px;
+  width:auto;height:min(15vh,78%);
   aspect-ratio:1/1;
-  height:auto;
   margin:0;
   border-radius:20px;
 }
@@ -674,7 +676,7 @@ html[data-tablet=on] .vtimer{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.0.3</div>
+  <div class="home-ver" id="tb-ver">v1.0.4</div>
 </div>
 
 <!-- USERS -->
@@ -1986,7 +1988,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.0.3';
+const APP_VERSION='1.0.4';
 let swReg=null;
 
 function initVersionDisplay(){
