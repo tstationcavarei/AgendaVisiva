@@ -450,7 +450,7 @@ html[data-tablet=on] .vctrl{
 .vspacer{display:none;} /* no longer needed: timer is pinned absolutely, activity centres on its own */
 .vimgbl{
   flex:0 0 auto;
-  width:auto;height:min(20vh,55%);
+  width:auto;height:min(30vh,88%);
   aspect-ratio:1/1;                          /* always a true square, never stretched */
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   background:#fff;border-radius:16px;
@@ -458,7 +458,7 @@ html[data-tablet=on] .vctrl{
   box-shadow:0 0 0 3px rgba(6,214,160,.2), 0 3px 14px rgba(6,214,160,.22);
   padding:6px 12px;cursor:pointer;
   position:relative;
-  margin:0 0 4%;
+  margin:0 0 3%;
 }
 .vimgbl:active{opacity:.9;}
 .vimg{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:9px;display:block;background:#fff;}
@@ -737,7 +737,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="hc-b" id="hb-s">–</div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.1.1</div>
+  <div class="home-ver" id="tb-ver">v1.1.2</div>
 </div>
 
 <!-- USERS -->
@@ -2049,7 +2049,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.1.1';
+const APP_VERSION='1.1.2';
 let swReg=null;
 
 function initVersionDisplay(){
