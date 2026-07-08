@@ -856,7 +856,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.4.2</div>
+  <div class="home-ver" id="tb-ver">v1.4.3</div>
 </div>
 
 <!-- USERS -->
@@ -1984,21 +1984,27 @@ function animateStepChange(updateFn){
   const srcRect = nextThumb ? nextThumb.getBoundingClientRect() : null;
   const srcHTML = nextThumb ? nextThumb.innerHTML : null;
 
-  // Capture the big card's resting slot NOW, before the exit animation
-  // moves it — this slot never changes between steps, so grabbing it
-  // here (rather than after the CSS transform has shifted the card
-  // off-screen) is what makes the incoming clone travel in one
-  // straight line, instead of overshooting past its target and
-  // rising back up into place.
-  const dstRect = card.getBoundingClientRect();
-
+  // ── ANIMATION 1 of 2: exit ──
+  // The current activity card slides down and out (1s).
   card.classList.add('step-out');
 
   setTimeout(()=>{
-    // Card has fully exited. Hide the real card until the clone arrives.
+    // Hide the real card and immediately drop the exit animation so
+    // it snaps back to a neutral, untransformed state WHILE hidden —
+    // no visible jump, since nothing is shown yet.
     card.style.visibility='hidden';
+    card.classList.remove('step-out');
 
-    updateFn(); // re-renders VS.idx, strip, and the (hidden) big card
+    // Switch to the new step now. This can change the layout (e.g. a
+    // timer panel + spacer may appear or disappear), so the card's
+    // resting position/size can genuinely differ from the previous
+    // step. We deliberately measure the target AFTER this happens.
+    updateFn();
+
+    // NOW read the true, final resting slot for the new step — this
+    // is what makes the incoming clone travel in one straight line
+    // and land exactly where the real card will be, with no jump.
+    const dstRect = card.getBoundingClientRect();
 
     if(srcRect){
       const clone=document.createElement('div');
@@ -2010,11 +2016,11 @@ function animateStepChange(updateFn){
       clone.innerHTML=srcHTML||'';
       document.body.appendChild(clone);
 
-      // Animate position + size + border color together in one
-      // continuous physical motion from the strip thumbnail's real
-      // spot straight to the big card's real resting spot — the
-      // border colour eases from thumbnail-blue to activity-green so
-      // it visually "becomes" the current activity on arrival.
+      // ── ANIMATION 2 of 2: entrance ──
+      // One continuous straight-line motion from the thumbnail's real
+      // spot to the card's real final spot (2s). The border colour
+      // eases from thumbnail-blue to activity-green so it visually
+      // "becomes" the current activity on arrival.
       clone.animate([
         {left:srcRect.left+'px',top:srcRect.top+'px',width:srcRect.width+'px',height:srcRect.height+'px',borderColor:'#7ab8d8',borderWidth:'2px'},
         {left:dstRect.left+'px',top:dstRect.top+'px',width:dstRect.width+'px',height:dstRect.height+'px',borderColor:'#06D6A0',borderWidth:'6px'}
@@ -2022,7 +2028,7 @@ function animateStepChange(updateFn){
 
       setTimeout(()=>{
         clone.remove();
-        card.style.visibility='visible';
+        card.style.visibility='visible'; // reveals exactly at dstRect — no jump
       },2000);
     } else {
       // No thumbnail to animate from (e.g. last step) — just reveal
@@ -2401,7 +2407,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.4.2';
+const APP_VERSION='1.4.3';
 let swReg=null;
 
 function initVersionDisplay(){
