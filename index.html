@@ -143,7 +143,7 @@ html[data-tablet=on] .acard-m{font-size:.8rem;}
 /* Step editor cards */
 html[data-tablet=on] .sc-n{width:29px;height:29px;font-size:.78rem;}
 html[data-tablet=on] .sc-x{width:30px;height:30px;font-size:.85rem;}
-html[data-tablet=on] .sc-h{width:42px;height:42px;font-size:1.25rem;}
+html[data-tablet=on] .sc-h{width:34px;height:34px;font-size:1.05rem;}
 html[data-tablet=on] .sc-dup{width:36px;height:36px;font-size:.9rem;}
 html[data-tablet=on] .sc-l{font-size:.92rem;}
 /* Editor mini-strip and timer picker chips */
@@ -508,6 +508,21 @@ html[data-tablet=on] .vctrl{
 .vtxt{font-size:clamp(.82rem,3.4vh,1.4rem);font-weight:900;color:#1a2340;text-align:center;line-height:1.2;flex-shrink:0;}
 .vnm{font-size:clamp(.56rem,1.4vh,.74rem);font-weight:700;color:#6a82a0;text-align:center;flex-shrink:0;}
 
+/* ── STEP TRANSITION ANIMATION ──
+   On advancing to a new step, the outgoing activity card slides down
+   and out of view, then the incoming one slides down into place from
+   just above, mimicking "the next one takes its spot". */
+@keyframes stepOut{
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(120%);opacity:0;}
+}
+@keyframes stepIn{
+  0%{transform:translateY(-60%);opacity:0;}
+  100%{transform:translateY(0);opacity:1;}
+}
+.vimgbl.step-out{animation:stepOut .32s ease-in forwards;}
+.vimgbl.step-in{animation:stepIn .32s ease-out;}
+
 /* Timer: pinned flush against the right edge of the screen, merged
    with the controls dock below it (same border/background, square
    bottom corners, no visible seam) — mirrors tablet-mode styling. */
@@ -695,6 +710,19 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   padding:8px 12px;
   gap:6px;
 }
+/* Tablet mode uses the real system keyboard instead, which we can't
+   measure/dock against the same way. Instead, while a field is
+   focused, the modal is anchored flush against the bottom of the
+   topbar — as high up the screen as it can go — so the native
+   keyboard (which reserves space from the bottom) never reaches it. */
+#stage.tablet-kbd-open .mov{
+  align-items:flex-start;
+  padding-top:0;
+}
+#stage.tablet-kbd-open .mbox{
+  margin-top:0;
+  max-height:70vh;
+}
 /* Inside the compact bar, shrink title/labels/buttons so only the
    essentials show and the writing field gets priority */
 #stage.kbd-open .mttl{font-size:.8rem;}
@@ -821,7 +849,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.3.0</div>
+  <div class="home-ver" id="tb-ver">v1.4.0</div>
 </div>
 
 <!-- USERS -->
@@ -920,7 +948,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <div class="vseq" id="v-strip"></div>
     <div class="vmain">
       <div class="vspacer hidden" id="v-spacer"></div>
-      <div class="vimgbl" onclick="tryNav('next')">
+      <div class="vimgbl" id="v-card-outer" onclick="tryNav('next')">
         <img class="vimg hidden" id="v-img" src="" alt="">
         <div class="vtxt hidden" id="v-txt"></div>
         <div class="vnm" id="v-nm"></div>
@@ -1075,9 +1103,9 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 </div>
 <div class="mov hidden" id="m-ag">
   <div class="mbox">
-    <div class="mttl">📋 Nuova Agenda</div>
+    <div class="mttl" id="m-ag-ttl">📋 Nuova Agenda</div>
     <div class="fg"><label class="fl">Nome</label><input type="text" class="inp" id="ma-n" placeholder="es: Lunedì..." autocomplete="off" inputmode="none"></div>
-    <div class="macts"><button class="bm cn" onclick="closeM('m-ag')">Annulla</button><button class="bm ok" onclick="saveAgenda()">Crea</button></div>
+    <div class="macts"><button class="bm cn" onclick="closeM('m-ag')">Annulla</button><button class="bm ok" onclick="saveAgenda()">Salva</button></div>
   </div>
 </div>
 <div class="mov hidden" id="m-cf">
@@ -1277,18 +1305,41 @@ function rAgGrid(){
     const m=mk('div','acard-m');m.textContent=a.steps.length+' step'+(a.steps.length!==1?'s':'');
     const acts=mk('div','acard-a');
     const be=mk('button','bsm e');be.textContent='✏️ Modifica';be.onclick=()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();};
+    const br=mk('button','bsm e');br.textContent='✎ Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
     const bd=mk('button','bsm d');bd.textContent='🗑';bd.onclick=()=>delAgenda(u.id,a.id);
-    acts.appendChild(be);acts.appendChild(bd);
+    acts.appendChild(be);acts.appendChild(br);acts.appendChild(bd);
     c.appendChild(ic);c.appendChild(nm);c.appendChild(m);c.appendChild(acts);
     g.appendChild(c);
   });
 }
-function openAddAgenda(){if(!agSel)return;el('ma-n').value='';openM('m-ag');}
+let renamingAgendaId=null;
+function openAddAgenda(){
+  if(!agSel)return;
+  renamingAgendaId=null;
+  set('m-ag-ttl','📋 Nuova Agenda');
+  el('ma-n').value='';
+  openM('m-ag');
+}
+function openRenameAgenda(uid2,aid){
+  const u=gu(uid2), a=u?.agendas.find(x=>x.id===aid);
+  if(!a)return;
+  agSel=uid2;
+  renamingAgendaId=aid;
+  set('m-ag-ttl','✎ Rinomina Agenda');
+  el('ma-n').value=a.name;
+  openM('m-ag');
+}
 function saveAgenda(){
   const n=el('ma-n').value.trim();
   if(!n){alert('Inserisci un nome');return;}
   const u=gu(agSel);if(!u)return;
-  u.agendas.push({id:uid(),name:n,steps:[]});
+  if(renamingAgendaId){
+    const a=u.agendas.find(x=>x.id===renamingAgendaId);
+    if(a)a.name=n;
+    renamingAgendaId=null;
+  } else {
+    u.agendas.push({id:uid(),name:n,steps:[]});
+  }
   save();closeM('m-ag');rAgGrid();rHome();
 }
 function delAgenda(uid2,aid){
@@ -1788,6 +1839,12 @@ function rStrip(){
 function rCur(){
   const s=VS.steps[VS.idx];
   const vi=el('v-img'), vt=el('v-txt'), vn=el('v-nm'), vtb=el('v-timer'), nb=el('v-next'), dl=el('v-done'), dp=el('v-done-play'), dw=el('v-done-wrap'), vsp=el('v-spacer');
+  const card=el('v-card-outer');
+  if(card){
+    card.classList.remove('step-out');
+    // Restart the entrance animation even if the class was already applied
+    card.classList.remove('step-in'); void card.offsetWidth; card.classList.add('step-in');
+  }
   vi.classList.add('hidden');vt.classList.add('hidden');vtb.classList.add('hidden');
   vtb.classList.remove('pulse','pulse-green','done-only');
   dw.classList.add('hidden');
@@ -1899,9 +1956,27 @@ function clearTi(){if(VS.iv){clearInterval(VS.iv);VS.iv=null;}}
 function nextStep(){
   if(VS.idx<0)return;
   if(VS.idx>=VS.steps.length-1){clearTi();el('fin').classList.remove('hidden');return;}
-  clearTi();VS.idx++;rView();
+  clearTi();
+  animateStepChange(()=>{VS.idx++;rView();});
 }
-function prevStep(){if(VS.idx<=0)return;clearTi();VS.idx--;rView();}
+function prevStep(){
+  if(VS.idx<=0)return;
+  clearTi();
+  animateStepChange(()=>{VS.idx--;rView();});
+}
+// Plays the "outgoing" slide-down-and-out animation on the current
+// activity card, then runs the given update (which re-renders the
+// new step) — rCur() picks up from there and plays the matching
+// "incoming" slide-down-into-place animation on the fresh card.
+function animateStepChange(updateFn){
+  const card=el('v-card-outer') || el('v-img')?.closest('.vimgbl');
+  if(!card){ updateFn(); return; }
+  card.classList.remove('step-in');
+  card.classList.add('step-out');
+  setTimeout(()=>{
+    updateFn();
+  }, 300); // matches the .32s CSS animation, slightly ahead to avoid a visible gap
+}
 function resetAgenda(){
   clearTi();
   const vtb=el('v-timer');
@@ -2109,23 +2184,30 @@ const K_SYM=[
   [{k:'SY'},{k:'SP'},{k:'OK'}]
 ];
 function scrollFieldToQuarter(inp){
-  // Position the field at roughly 25% from the top of its scrollable
-  // container (the middle of the upper half of the screen) — enough
-  // room above the keyboard without slamming the box off-screen.
+  // Position the field near the top of its scrollable container so
+  // there's plenty of room above the keyboard without slamming the
+  // box off-screen.
+  // Tablet mode: the field's top edge sits flush against the bottom
+  // of the topbar (as close to the top as it can get), since the
+  // native keyboard needs the most room reserved below.
+  // Phone mode: the custom keyboard is shorter, so a gentler position
+  // at ~25% from the top (middle of the upper half) is enough.
   const cont = inp.closest('.mbox, .ef, .panes') || inp.parentElement;
-  if(!cont || typeof cont.scrollBy !== 'function'){ inp.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if(!cont || typeof cont.scrollBy !== 'function'){ inp.scrollIntoView({behavior:'smooth',block:'start'}); return; }
   const cr = cont.getBoundingClientRect();
   const ir = inp.getBoundingClientRect();
-  const targetY = cr.top + cr.height * 0.25;
+  const targetY = CFG.tablet ? (cr.top + 4) : (cr.top + cr.height * 0.25);
   const delta = ir.top - targetY;
   cont.scrollBy({top: delta, behavior: 'smooth'});
 }
 function kbdOpen(inp){
   if(CFG.tablet){
     // Tablet mode: use the real system keyboard instead of the custom
-    // one. The native keyboard still covers part of the screen, so we
-    // move the field to the middle of the upper half as soon as it opens.
+    // one. Dock the modal (if any) flush against the topbar so the
+    // native keyboard, which reserves space from the bottom, never
+    // reaches the field.
     inp.removeAttribute('inputmode');
+    el('stage').classList.add('tablet-kbd-open');
     setTimeout(()=>{
       scrollFieldToQuarter(inp);
     },300); // wait for the OS keyboard animation to finish opening
@@ -2149,6 +2231,7 @@ function kbdClose(){
   const stage=el('stage');
   el('kbd').classList.remove('open');
   stage.classList.remove('kbd-open');
+  stage.classList.remove('tablet-kbd-open');
   stage.style.removeProperty('--kbdh');
   if(kA){kA.blur();kA=null;}
 }
@@ -2221,6 +2304,19 @@ function kDel(){
 document.addEventListener('focusin',e=>{
   if(e.target.classList&&e.target.classList.contains('inp'))kbdOpen(e.target);
 });
+// Tablet mode: remove the topbar-docked modal positioning once focus
+// leaves every text field (with a short delay so tabbing between two
+// fields in the same modal doesn't flicker the docking off and on)
+document.addEventListener('focusout',e=>{
+  if(!CFG.tablet)return;
+  if(!(e.target.classList&&e.target.classList.contains('inp')))return;
+  setTimeout(()=>{
+    const a=document.activeElement;
+    if(!(a&&a.classList&&a.classList.contains('inp'))){
+      el('stage').classList.remove('tablet-kbd-open');
+    }
+  },120);
+});
 // Tablet mode + native keyboard: visualViewport fires reliably when
 // the OS keyboard resizes the visible area — re-scroll the focused
 // field into view every time that happens, not just once on open.
@@ -2252,7 +2348,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.3.0';
+const APP_VERSION='1.4.0';
 let swReg=null;
 
 function initVersionDisplay(){
