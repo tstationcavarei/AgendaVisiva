@@ -512,16 +512,23 @@ html[data-tablet=on] .vctrl{
    On advancing to a new step, the outgoing activity card slides down
    and out of view, then the incoming one slides down into place from
    just above, mimicking "the next one takes its spot". */
+/* Outgoing card: slides down and out (1s of the total 3s sequence) */
 @keyframes stepOut{
   0%{transform:translateY(0);opacity:1;}
   100%{transform:translateY(120%);opacity:0;}
 }
-@keyframes stepIn{
-  0%{transform:translateY(-60%);opacity:0;}
-  100%{transform:translateY(0);opacity:1;}
+.vimgbl.step-out{animation:stepOut 1s ease-in forwards;}
+/* Incoming clone: JS animates its position/size directly (left/top/
+   width/height) via the Web Animations API, moving it in one
+   continuous physical motion from the strip thumbnail's spot down to
+   the big card's spot. This class only supplies the visual chrome. */
+.step-clone{
+  position:fixed;z-index:50;pointer-events:none;
+  overflow:hidden;
+  background:#b8dff0;border:2px solid #7ab8d8;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
 }
-.vimgbl.step-out{animation:stepOut .32s ease-in forwards;}
-.vimgbl.step-in{animation:stepIn .32s ease-out;}
+.step-clone img{width:100%;height:100%;object-fit:cover;}
 
 /* Timer: pinned flush against the right edge of the screen, merged
    with the controls dock below it (same border/background, square
@@ -849,7 +856,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.4.0</div>
+  <div class="home-ver" id="tb-ver">v1.4.1</div>
 </div>
 
 <!-- USERS -->
@@ -1840,11 +1847,7 @@ function rCur(){
   const s=VS.steps[VS.idx];
   const vi=el('v-img'), vt=el('v-txt'), vn=el('v-nm'), vtb=el('v-timer'), nb=el('v-next'), dl=el('v-done'), dp=el('v-done-play'), dw=el('v-done-wrap'), vsp=el('v-spacer');
   const card=el('v-card-outer');
-  if(card){
-    card.classList.remove('step-out');
-    // Restart the entrance animation even if the class was already applied
-    card.classList.remove('step-in'); void card.offsetWidth; card.classList.add('step-in');
-  }
+  if(card) card.classList.remove('step-out');
   vi.classList.add('hidden');vt.classList.add('hidden');vtb.classList.add('hidden');
   vtb.classList.remove('pulse','pulse-green','done-only');
   dw.classList.add('hidden');
@@ -1964,18 +1967,63 @@ function prevStep(){
   clearTi();
   animateStepChange(()=>{VS.idx--;rView();});
 }
-// Plays the "outgoing" slide-down-and-out animation on the current
-// activity card, then runs the given update (which re-renders the
-// new step) — rCur() picks up from there and plays the matching
-// "incoming" slide-down-into-place animation on the fresh card.
+// Full 3-second sequence:
+//  0.0s–1.0s  the current activity card slides down and out
+//  1.0s–3.0s  the NEXT step's thumbnail (captured from the strip
+//             before anything changes) visibly travels — as one
+//             continuous physical motion — from its real position in
+//             the strip down to where the big card sits, "becoming"
+//             the new current activity when it arrives.
 function animateStepChange(updateFn){
-  const card=el('v-card-outer') || el('v-img')?.closest('.vimgbl');
+  const card=el('v-card-outer');
   if(!card){ updateFn(); return; }
-  card.classList.remove('step-in');
+
+  // Capture the source thumbnail (next-up card in the strip) BEFORE
+  // anything moves, so we know exactly where to start the clone from.
+  const nextThumb = el('v-strip')?.querySelector('.vsq-next .vsq-b');
+  const srcRect = nextThumb ? nextThumb.getBoundingClientRect() : null;
+  const srcHTML = nextThumb ? nextThumb.innerHTML : null;
+
   card.classList.add('step-out');
+
   setTimeout(()=>{
-    updateFn();
-  }, 300); // matches the .32s CSS animation, slightly ahead to avoid a visible gap
+    // Card has fully exited. Grab the big card's target position
+    // BEFORE re-rendering (rCur() below will repopulate it with the
+    // new step's own image, so the clone carries the transition).
+    const dstRect = card.getBoundingClientRect();
+    card.style.visibility='hidden'; // hide the real card until the clone arrives
+
+    updateFn(); // re-renders VS.idx, strip, and the (hidden) big card
+
+    if(srcRect){
+      const clone=document.createElement('div');
+      clone.className='step-clone';
+      clone.style.left=srcRect.left+'px';
+      clone.style.top=srcRect.top+'px';
+      clone.style.width=srcRect.width+'px';
+      clone.style.height=srcRect.height+'px';
+      clone.innerHTML=srcHTML||'';
+      document.body.appendChild(clone);
+
+      // Animate position + size + border color together in one
+      // continuous physical motion from the strip thumbnail's real
+      // spot to the big card's real spot — the border colour eases
+      // from thumbnail-blue to activity-green so it visually "becomes"
+      // the current activity by the time it arrives.
+      clone.animate([
+        {left:srcRect.left+'px',top:srcRect.top+'px',width:srcRect.width+'px',height:srcRect.height+'px',borderColor:'#7ab8d8',borderWidth:'2px'},
+        {left:dstRect.left+'px',top:dstRect.top+'px',width:dstRect.width+'px',height:dstRect.height+'px',borderColor:'#06D6A0',borderWidth:'6px'}
+      ],{duration:2000,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+
+      setTimeout(()=>{
+        clone.remove();
+        card.style.visibility='visible';
+      },2000);
+    } else {
+      // No thumbnail to animate from (e.g. last step) — just reveal
+      card.style.visibility='visible';
+    }
+  }, 1000);
 }
 function resetAgenda(){
   clearTi();
@@ -2348,7 +2396,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.4.1';
 let swReg=null;
 
 function initVersionDisplay(){
