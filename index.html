@@ -856,7 +856,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.4.1</div>
+  <div class="home-ver" id="tb-ver">v1.4.2</div>
 </div>
 
 <!-- USERS -->
@@ -1984,14 +1984,19 @@ function animateStepChange(updateFn){
   const srcRect = nextThumb ? nextThumb.getBoundingClientRect() : null;
   const srcHTML = nextThumb ? nextThumb.innerHTML : null;
 
+  // Capture the big card's resting slot NOW, before the exit animation
+  // moves it — this slot never changes between steps, so grabbing it
+  // here (rather than after the CSS transform has shifted the card
+  // off-screen) is what makes the incoming clone travel in one
+  // straight line, instead of overshooting past its target and
+  // rising back up into place.
+  const dstRect = card.getBoundingClientRect();
+
   card.classList.add('step-out');
 
   setTimeout(()=>{
-    // Card has fully exited. Grab the big card's target position
-    // BEFORE re-rendering (rCur() below will repopulate it with the
-    // new step's own image, so the clone carries the transition).
-    const dstRect = card.getBoundingClientRect();
-    card.style.visibility='hidden'; // hide the real card until the clone arrives
+    // Card has fully exited. Hide the real card until the clone arrives.
+    card.style.visibility='hidden';
 
     updateFn(); // re-renders VS.idx, strip, and the (hidden) big card
 
@@ -2007,9 +2012,9 @@ function animateStepChange(updateFn){
 
       // Animate position + size + border color together in one
       // continuous physical motion from the strip thumbnail's real
-      // spot to the big card's real spot — the border colour eases
-      // from thumbnail-blue to activity-green so it visually "becomes"
-      // the current activity by the time it arrives.
+      // spot straight to the big card's real resting spot — the
+      // border colour eases from thumbnail-blue to activity-green so
+      // it visually "becomes" the current activity on arrival.
       clone.animate([
         {left:srcRect.left+'px',top:srcRect.top+'px',width:srcRect.width+'px',height:srcRect.height+'px',borderColor:'#7ab8d8',borderWidth:'2px'},
         {left:dstRect.left+'px',top:dstRect.top+'px',width:dstRect.width+'px',height:dstRect.height+'px',borderColor:'#06D6A0',borderWidth:'6px'}
@@ -2396,7 +2401,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.4.1';
+const APP_VERSION='1.4.2';
 let swReg=null;
 
 function initVersionDisplay(){
