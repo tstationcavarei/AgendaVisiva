@@ -77,38 +77,36 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 }
 .tb-logo{font-size:1.05rem;font-weight:900;color:var(--acc);}
 .tb-logo span{color:var(--grn);}
-/* ── COLLAPSIBLE INSTRUCTIONS PANEL ── */
-.instr{
-  flex-shrink:0;
-  margin:0 clamp(12px,3vw,28px);
-  border:2px solid var(--brd);border-radius:12px;
-  background:var(--card);
-  overflow:hidden;
-  max-height:34%;              /* collapsed or expanded, never eats the main buttons' space */
-  display:flex;flex-direction:column;
+/* ── INSTRUCTIONS: ℹ️ icon in the topbar opens a full-page overlay ── */
+
+/* Full-page overlay: opens on top of the whole stage for comfortable
+   reading, instead of a cramped in-place expanding panel. */
+.instr-ov{
+  position:absolute;inset:0;z-index:110;
+  background:var(--bg);
+  display:none;flex-direction:column;
 }
-.instr-h{
-  flex-shrink:0;
-  width:100%;background:var(--bg2);border:none;
-  display:flex;align-items:center;gap:8px;
-  padding:9px 14px;cursor:pointer;
-  font-family:inherit;font-weight:800;font-size:.82rem;color:var(--acc);
+.instr-ov.open{display:flex;}
+.instr-ov-h{
+  flex-shrink:0;background:var(--card);border-bottom:2px solid var(--brd);
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  box-shadow:0 1px 6px rgba(0,0,0,.06);
 }
-.instr-h-ico{font-size:1rem;}
-.instr-h-txt{flex:1;text-align:left;}
-.instr-h-arrow{font-size:.72rem;color:var(--mut);transition:transform .2s;}
-.instr.open .instr-h-arrow{transform:rotate(180deg);}
+.instr-ov-t{font-weight:900;font-size:1rem;color:var(--acc);flex:1;display:flex;align-items:center;gap:8px;}
+.instr-ov-close{background:var(--bg2);border:2px solid var(--brd);border-radius:10px;padding:7px 15px;font-family:inherit;font-weight:800;font-size:.82rem;cursor:pointer;color:var(--txt);}
 .instr-body{
-  overflow-y:auto;padding:12px 16px 16px;
-  display:flex;flex-direction:column;gap:12px;
+  flex:1;overflow-y:auto;padding:16px clamp(16px,4vw,40px) 24px;
+  display:flex;flex-direction:column;gap:16px;
+  max-width:760px;width:100%;margin:0 auto;
 }
-.instr-sect{display:flex;flex-direction:column;gap:4px;}
-.instr-sect-t{font-weight:900;font-size:.8rem;color:var(--acc);}
-.instr-sect p{font-size:.74rem;line-height:1.5;color:var(--txt);font-weight:600;}
+.instr-sect{display:flex;flex-direction:column;gap:5px;}
+.instr-sect-t{font-weight:900;font-size:.88rem;color:var(--acc);}
+.instr-sect p{font-size:.8rem;line-height:1.6;color:var(--txt);font-weight:600;}
 .instr-sect p b{color:var(--acc);font-weight:800;}
-html[data-tablet=on] .instr-h{font-size:1.05rem;padding:12px 18px;}
-html[data-tablet=on] .instr-sect-t{font-size:1rem;}
-html[data-tablet=on] .instr-sect p{font-size:.92rem;}
+html[data-tablet=on] .instr-ov-t{font-size:1.2rem;}
+html[data-tablet=on] .instr-ov-close{font-size:1rem;padding:9px 18px;}
+html[data-tablet=on] .instr-sect-t{font-size:1.1rem;}
+html[data-tablet=on] .instr-sect p{font-size:1rem;}
 
 .home-ver{
   flex-shrink:0;text-align:center;
@@ -141,7 +139,7 @@ html[data-tablet=on] .acard{width:auto;min-width:200px;max-width:250px;padding:1
 html[data-tablet=on] .acard-n{font-size:1.05rem;}
 html[data-tablet=on] .acard-m{font-size:.8rem;}
 /* Step editor cards */
-html[data-tablet=on] .sc-n{width:29px;height:29px;font-size:.78rem;}
+html[data-tablet=on] .sc-num2{width:22px;height:22px;font-size:.72rem;}
 html[data-tablet=on] .sc-x{width:30px;height:30px;font-size:.85rem;}
 html[data-tablet=on] .sc-h{width:34px;height:34px;font-size:1.05rem;}
 html[data-tablet=on] .sc-dup{width:36px;height:36px;font-size:.9rem;}
@@ -188,21 +186,22 @@ html[data-tablet=on] .vlc-l{
 .hc-big-d{font-size:clamp(.72rem,2vh,.88rem);color:var(--mut);font-weight:600;text-align:center;}
 .hc-big-b{font-size:.76rem;font-weight:800;padding:3px 12px;border-radius:12px;background:var(--bg2);color:var(--mut);}
 /* Small Utenti / Agende buttons, side by side, above the instructions panel */
-.mini-row{flex-shrink:0;display:flex;gap:10px;padding:0 clamp(12px,3vw,28px) 18px;}
+.mini-row{flex-shrink:0;display:flex;gap:12px;padding:0 clamp(12px,3vw,28px) 22px;}
 .mini-btn{
-  flex:1;background:var(--card);border:2px solid var(--brd);border-radius:12px;
-  padding:9px 10px;display:flex;align-items:center;gap:8px;
+  flex:1;background:var(--card);border:2px solid var(--brd);border-radius:14px;
+  padding:14px 16px;display:flex;align-items:center;gap:11px;
   cursor:pointer;font-family:inherit;
 }
 .mini-btn:active{background:var(--bg2);}
 .mini-btn.mb-users{border-color:#4A9EDB;}
 .mini-btn.mb-ag{border-color:#9B5DE5;}
-.mini-i{font-size:1.2rem;flex-shrink:0;}
-.mini-t{font-weight:800;font-size:.82rem;color:var(--txt);flex:1;text-align:left;}
-.mini-b{font-size:.64rem;font-weight:700;color:var(--mut);white-space:nowrap;}
+.mini-i{font-size:1.6rem;flex-shrink:0;}
+.mini-t{font-weight:800;font-size:1.02rem;color:var(--txt);flex:1;text-align:left;}
+.mini-b{font-size:.72rem;font-weight:700;color:var(--mut);white-space:nowrap;}
 html[data-tablet=on] .hc-big-t{font-size:clamp(1.4rem,4vh,2rem);}
-html[data-tablet=on] .mini-t{font-size:1rem;}
-html[data-tablet=on] .mini-i{font-size:1.5rem;}
+html[data-tablet=on] .mini-t{font-size:1.25rem;}
+html[data-tablet=on] .mini-i{font-size:1.9rem;}
+html[data-tablet=on] .mini-btn{padding:18px 20px;}
 
 /* ── USERS ── */
 .grid{flex:1;overflow-y:auto;padding:12px;display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
@@ -244,7 +243,9 @@ html[data-tablet=on] .mini-i{font-size:1.5rem;}
 .colR-h{padding:8px 12px;background:var(--card);border-bottom:2px solid var(--brd);display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .colR-t{font-weight:800;font-size:.8rem;color:var(--mut);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .acard{background:var(--card);border:2px solid var(--brd);border-radius:13px;box-shadow:var(--sh);width:158px;padding:9px 11px;display:flex;flex-direction:column;gap:6px;}
-.acard-n{font-weight:800;font-size:.85rem;}
+.acard-nrow{display:flex;align-items:center;gap:6px;}
+.acard-n{font-weight:800;font-size:.85rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bic.sm{width:22px;height:22px;font-size:.7rem;border-radius:6px;flex-shrink:0;}
 .acard-m{font-size:.66rem;color:var(--mut);font-weight:600;}
 .acard-a{display:flex;gap:5px;}
 
@@ -256,8 +257,8 @@ html[data-tablet=on] .mini-i{font-size:1.5rem;}
 .sc-box.has-img{background:#fff;}
 .sc-box img{width:100%;height:100%;object-fit:cover;background:#fff;}
 .sc-txt{font-size:.62rem;font-weight:800;text-align:center;padding:4px;line-height:1.2;}
-.sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;word-break:break-word;}
-.sc-n{position:absolute;top:3px;left:4px;background:var(--acc);color:#fff;border-radius:50%;width:17px;height:17px;font-size:.56rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;word-break:break-word;display:flex;align-items:center;justify-content:center;gap:5px;}
+.sc-num2{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:#06D6A0;color:#fff;font-size:.56rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
 .sc-x{position:absolute;top:3px;right:4px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .sc-h{position:absolute;bottom:3px;right:4px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(0,0,0,.4);background:rgba(255,255,255,.85);border-radius:6px;cursor:grab;}
 .sc-dup{position:absolute;bottom:3px;left:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;background:var(--acc);border:none;border-radius:50%;cursor:pointer;}
@@ -845,9 +846,10 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <div class="tb-logo">Agenda <span>Visiva</span></div>
     <div class="spacer"></div>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
+    <button class="ib" onclick="toggleInstr()" title="Istruzioni">ℹ️</button>
     <button class="ib" id="lock-btn" onclick="onLockIconTap()" title="Blocco impostazioni">🔓</button>
     <button class="ib" onclick="goSettings(this)">⚙️</button>
+    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="body body-main">
     <div class="hc-big" onclick="goUse()">
@@ -869,19 +871,25 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <span class="mini-b" id="hb-a">–</span>
     </button>
   </div>
-  <div class="instr" id="instr">
-    <button class="instr-h" onclick="toggleInstr()">
-      <span class="instr-h-ico">📖</span>
-      <span class="instr-h-txt">Istruzioni</span>
-      <span class="instr-h-arrow" id="instr-arrow">▾</span>
-    </button>
-    <div class="instr-body hidden" id="instr-body">
+
+  <!-- Full-page instructions overlay — opens on top of the whole stage for comfortable reading -->
+  <div class="instr-ov" id="instr-ov">
+    <div class="instr-ov-h">
+      <div class="instr-ov-t"><span>📖</span><span>Istruzioni</span></div>
+      <button class="instr-ov-close" onclick="toggleInstr()">✕ Chiudi</button>
+    </div>
+    <div class="instr-body" id="instr-body">
+      <div class="instr-sect">
+        <div class="instr-sect-t">🏠 Home</div>
+        <p>In alto a destra trovi quattro icone, in quest'ordine: <b>ℹ️ Info</b> (queste istruzioni), <b>🔓/🔒 Lucchetto</b> (blocco con password), <b>⚙️ Impostazioni</b>, <b>⛶ Ridimensiona</b> (schermo intero).</p>
+        <p>Al centro, il grande pulsante verde <b>▶️ Usa Agenda</b> avvia subito una sessione. Sotto, due pulsanti più piccoli portano a <b>👤 Utenti</b> (bordo blu) e <b>📋 Agende</b> (bordo viola).</p>
+      </div>
       <div class="instr-sect">
         <div class="instr-sect-t">▶️ Usa Agenda</div>
-        <p>Il grande pulsante verde al centro della Home avvia subito la sessione. Se in tutta l'app c'è <b>un solo utente con una sola agenda</b>, premendolo parte tutto in automatico, senza chiedere nulla. Altrimenti si apre una schermata dove scegliere utente e/o agenda — e anche lì, se per un utente esiste una sola agenda, quella viene scelta da sola senza doverla selezionare.</p>
+        <p>Il grande pulsante verde avvia subito la sessione. Se in tutta l'app c'è <b>un solo utente con una sola agenda</b>, premendolo parte tutto in automatico, senza chiedere nulla. Altrimenti si apre una schermata dove scegliere utente e/o agenda — e anche lì, se per un utente esiste una sola agenda, quella viene scelta da sola senza doverla selezionare.</p>
         <p>Premi il pulsante ▶ verde per iniziare. Durante l'uso, lo step corrente appare grande al centro con un bordo verde; gli step successivi scorrono in alto. Tocca l'immagine attuale, oppure la tessera successiva nella striscia in alto, per avanzare.</p>
-        <p>Se uno step ha un timer attivo, appare nel pannello a destra. <b>Mentre il timer è in corso non puoi passare allo step successivo</b> con un tocco normale (il pannello lampeggerà per avvisarti) — puoi comunque forzare l'avanzamento tenendo premuto per 2 secondi i pulsanti "Avanti"/"Indietro". Quando il timer scade, suona un allarme e poi appare la scritta "AVANTI" (o "FINE" se è l'ultimo step) con un pulsante ▶ per proseguire.</p>
-        <p>In fondo trovi sempre: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. I pulsanti Chiudi, Ripristina e Ridimensiona (⛶) richiedono una pressione continua di <b>2 secondi</b> per attivarsi (pulsano mentre li tieni premuti) — una protezione contro i tocchi accidentali.</p>
+        <p>Se uno step ha un timer attivo, appare nel pannello a destra. <b>Mentre il timer è in corso non puoi passare allo step successivo</b> con un tocco normale (il pannello lampeggerà in blu per avvisarti) — puoi comunque forzare l'avanzamento tenendo premuto per 2 secondi i pulsanti "Avanti"/"Indietro" (pulsano in verde mentre li tieni premuti). Quando il timer scade, suona un allarme, il pannello lampeggia in verde, e poi appare la scritta "AVANTI" (o "FINE" se è l'ultimo step) con un pulsante ▶ per proseguire.</p>
+        <p>In fondo trovi sempre: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. I pulsanti Chiudi, Ripristina, Ridimensiona (⛶) e Avanti/Indietro (quando bloccati da un timer) richiedono una pressione continua di <b>2 secondi</b> per attivarsi, e pulsano mentre li tieni premuti — una protezione contro i tocchi accidentali.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
@@ -889,21 +897,24 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">📋 Agende</div>
-        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi: <b>✏️</b> Modifica (entra nell'editor degli step), <b>✎</b> Rinomina, <b>⧉</b> Duplica (copia l'agenda intera con tutti i suoi step, utile per creare varianti simili senza ricominciare da zero), <b>🗑</b> Elimina.</p>
+        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso: <b>📂</b> Modifica (entra nell'editor degli step), <b>⧉</b> Duplica (copia l'agenda intera con tutti i suoi step, utile per creare varianti simili senza ricominciare da zero), <b>🗑</b> Elimina.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
-        <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare lo step (con conferma, copia identica), <b>⠿</b> per trascinare e riordinare gli step.</p>
-        <p>Nel form di modifica puoi scegliere se lo step mostra immagine, testo o entrambi, caricare un'immagine dal dispositivo o cercarla su ARASAAC, scrivere un testo e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto.</p>
+        <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere, con un numero verde prima del nome. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare lo step (con conferma, copia identica), <b>⠿</b> per trascinare e riordinare gli step.</p>
+        <p>Nel form di modifica puoi scegliere se lo step mostra immagine, testo o entrambi, caricare un'immagine dal dispositivo o cercarla su ARASAAC, scrivere un testo e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔒 Blocco con password</div>
-        <p>L'icona lucchetto in alto (vicino a ⚙️) attiva o disattiva un blocco a password per le aree Utenti, Agende e Impostazioni — utile per evitare modifiche accidentali. La password predefinita è <b>ADMIN</b>. Lucchetto aperto 🔓 = blocco disattivo, lucchetto chiuso 🔒 = blocco attivo.</p>
+        <p>L'icona lucchetto in alto attiva o disattiva un blocco a password per le aree Utenti, Agende e Impostazioni — utile per evitare modifiche accidentali. La password predefinita è <b>ADMIN</b>. Lucchetto aperto 🔓 = blocco disattivo, lucchetto chiuso 🔒 = blocco attivo.</p>
         <p>Quando il blocco è attivo, toccare Utenti, Agende o Impostazioni <b>non chiede la password</b>: il pulsante toccato e il lucchetto in alto pulsano semplicemente in rosso, segnalando che l'area è bloccata. L'unico modo per entrare è toccare il lucchetto stesso e inserire la password lì — è anche l'unico modo per disattivare il blocco.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">⚙️ Impostazioni</div>
-        <p><b>Aspetto</b>: tema chiaro/scuro, colore accento, e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi (usa la tastiera di sistema invece di quella integrata). <b>Suono</b>: tipo di suoneria e durata dell'allarme di fine timer. <b>Dati</b>: esporta/importa un backup completo in JSON, oppure cancella tutto. <b>Info</b>: versione installata e pulsante per controllare aggiornamenti.</p>
+        <p><b>Aspetto</b>: tema chiaro/scuro, 6 colori accento (blu, viola, verde, arancio, rosso, turchese), e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi (usa la tastiera di sistema invece di quella integrata, e ridisegna la schermata di utilizzo).</p>
+        <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata (1-5 secondi), con pulsante di prova.</p>
+        <p><b>Dati</b>: esporta/importa un backup completo in JSON, oppure cancella tutto (utenti e agende).</p>
+        <p><b>Info</b>: versione installata e pulsante per controllare e installare aggiornamenti.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔐 Bloccare il tablet solo su questa app</div>
@@ -916,7 +927,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.5.3</div>
+  <div class="home-ver" id="tb-ver">v1.6.0</div>
 </div>
 
 <!-- USERS -->
@@ -1277,9 +1288,7 @@ function rHome(){
   set('hb-s',na?'Pronto ✓':'Crea prima un\u2019agenda');
 }
 function toggleInstr(){
-  const box=el('instr'), body=el('instr-body');
-  const open=box.classList.toggle('open');
-  body.classList.toggle('hidden',!open);
+  el('instr-ov').classList.toggle('open');
 }
 
 // ═══ USERS ═══
@@ -1368,15 +1377,17 @@ function rAgGrid(){
   u.agendas.forEach(a=>{
     const c=mk('div','acard');
     const ic=mk('div');ic.style.fontSize='1.2rem';ic.textContent='📋';
+    const nameRow=mk('div','acard-nrow');
     const nm=mk('div','acard-n');nm.textContent=a.name;
+    const br=mk('button','bic e sm');br.textContent='✎';br.title='Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
+    nameRow.appendChild(nm);nameRow.appendChild(br);
     const m=mk('div','acard-m');m.textContent=a.steps.length+' step'+(a.steps.length!==1?'s':'');
     const acts=mk('div','acard-a');
-    const be=mk('button','bic p');be.textContent='✏️';be.title='Modifica';be.onclick=()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();};
-    const br=mk('button','bic e');br.textContent='✎';br.title='Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
+    const be=mk('button','bic p');be.textContent='📂';be.title='Modifica';be.onclick=()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();};
     const bc=mk('button','bic e');bc.textContent='⧉';bc.title='Duplica';bc.onclick=()=>dupAgenda(u.id,a.id);
     const bd=mk('button','bic d');bd.textContent='🗑';bd.title='Elimina';bd.onclick=()=>delAgenda(u.id,a.id);
-    acts.appendChild(be);acts.appendChild(br);acts.appendChild(bc);acts.appendChild(bd);
-    c.appendChild(ic);c.appendChild(nm);c.appendChild(m);c.appendChild(acts);
+    acts.appendChild(be);acts.appendChild(bc);acts.appendChild(bd);
+    c.appendChild(ic);c.appendChild(nameRow);c.appendChild(m);c.appendChild(acts);
     g.appendChild(c);
   });
 }
@@ -1454,13 +1465,16 @@ function rEdGrid(){
     if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}
     else if(s.mode==='text'&&s.text){const t=mk('div','sc-txt');t.textContent=s.text.substring(0,22);box.appendChild(t);}
     else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent=s.mode==='text'?'📝':'🖼️';box.appendChild(p);}
-    const n=mk('div','sc-n');n.textContent=i+1;box.appendChild(n);
     const x=mk('button','sc-x');x.textContent='✕';x.onclick=e=>{e.stopPropagation();delStep(i);};box.appendChild(x);
     const dp=mk('button','sc-dup');dp.textContent='⧉';dp.title='Duplica step';dp.onclick=e=>{e.stopPropagation();dupStep(i);};box.appendChild(dp);
     const h=mk('div','sc-h');h.textContent='⠿';h.title='Trascina per riordinare';box.appendChild(h);
     sc.appendChild(box);
     const hasT=s.timer?.on&&((s.timer.h||0)*3600+(s.timer.m||0)*60+(s.timer.s||0)>0);
-    const l=mk('div','sc-l');l.textContent=s.label+(hasT?' ⏱':'');sc.appendChild(l);
+    const l=mk('div','sc-l');
+    const numB=mk('span','sc-num2');numB.textContent=i+1;
+    const lblSpan=mk('span');lblSpan.textContent=s.label+(hasT?' ⏱':'');
+    l.appendChild(numB);l.appendChild(lblSpan);
+    sc.appendChild(l);
     sc.onclick=()=>selStep(i);
     // drag&drop mouse
     sc.draggable=true;
@@ -2556,7 +2570,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.5.3';
+const APP_VERSION='1.6.0';
 let swReg=null;
 
 function initVersionDisplay(){
