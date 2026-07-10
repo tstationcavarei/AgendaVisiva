@@ -226,6 +226,12 @@ html[data-tablet=on] .mini-btn{padding:18px 20px;}
 .bic.e{background:var(--bg2);color:var(--acc);}
 .bic.p{background:var(--acc);color:#fff;}
 .bic.d{background:#fde8ec;color:var(--red);}
+/* Icon button + tiny caption underneath (e.g. 🗑 / "Elimina") — the
+   caption is kept small enough to roughly match the button's own
+   width, so the row doesn't grow much taller or wider than before. */
+.bic-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;}
+.bic-cap{font-size:.44rem;font-weight:700;color:var(--mut);line-height:1;white-space:nowrap;}
+html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mut);text-align:center;padding:16px;width:100%;}
 .empty-i{font-size:2rem;}.empty-t{font-weight:700;font-size:.85rem;}
 
@@ -347,11 +353,20 @@ html[data-tablet=on] .mini-btn{padding:18px 20px;}
 .xpk-opt{
   padding:12px 14px;font-family:inherit;font-size:.86rem;font-weight:700;color:var(--txt);
   cursor:pointer;border-radius:10px;margin:2px 0;
+  display:flex;align-items:center;gap:8px;
 }
 .xpk-opt:active{background:var(--bg2);}
 .xpk-opt.sel2{color:var(--acc);font-weight:900;background:var(--bg2);}
 .xpk-close{flex-shrink:0;padding:10px;border-top:2px solid var(--brd);}
 .xpk-cbtn{width:100%;background:var(--bg);border:2px solid var(--brd);border-radius:10px;padding:9px;font-family:inherit;font-weight:800;font-size:.82rem;color:var(--txt);cursor:pointer;}
+/* Small colored initial avatar shown next to an agenda's name, so
+   it's clear at a glance which user it belongs to. */
+.mini-av{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:18px;height:18px;border-radius:50%;color:#fff;
+  font-size:.6rem;font-weight:900;
+}
+#use-a-txt{display:inline-flex;align-items:center;gap:7px;}
 .bstart{background:var(--grn);color:#fff;border:none;border-radius:12px;padding:11px;font-family:inherit;font-weight:900;font-size:.92rem;cursor:pointer;}
 .bstart:disabled{background:var(--brd);color:var(--mut);cursor:not-allowed;}
 
@@ -886,18 +901,18 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">▶️ Usa Agenda</div>
-        <p>Il grande pulsante verde avvia subito la sessione. Se in tutta l'app c'è <b>un solo utente con una sola agenda</b>, premendolo parte tutto in automatico, senza chiedere nulla. Altrimenti si apre una schermata dove scegliere utente e/o agenda — e anche lì, se per un utente esiste una sola agenda, quella viene scelta da sola senza doverla selezionare.</p>
+        <p>Il grande pulsante verde avvia subito la sessione. Se in tutta l'app c'è <b>un solo utente con una sola agenda</b>, premendolo parte tutto in automatico, senza chiedere nulla. Altrimenti si apre una schermata dove scegliere utente e/o agenda (ogni agenda mostra accanto al nome un cerchietto colorato con l'iniziale del suo utente) — e anche lì, se per un utente esiste una sola agenda, quella viene scelta da sola senza doverla selezionare.</p>
         <p>Premi il pulsante ▶ verde per iniziare. Durante l'uso, lo step corrente appare grande al centro con un bordo verde; gli step successivi scorrono in alto. Tocca l'immagine attuale, oppure la tessera successiva nella striscia in alto, per avanzare.</p>
         <p>Se uno step ha un timer attivo, appare nel pannello a destra. <b>Mentre il timer è in corso non puoi passare allo step successivo</b> con un tocco normale (il pannello lampeggerà in blu per avvisarti) — puoi comunque forzare l'avanzamento tenendo premuto per 2 secondi i pulsanti "Avanti"/"Indietro" (pulsano in verde mentre li tieni premuti). Quando il timer scade, suona un allarme, il pannello lampeggia in verde, e poi appare la scritta "AVANTI" (o "FINE" se è l'ultimo step) con un pulsante ▶ per proseguire.</p>
         <p>In fondo trovi sempre: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. I pulsanti Chiudi, Ripristina, Ridimensiona (⛶) e Avanti/Indietro (quando bloccati da un timer) richiedono una pressione continua di <b>2 secondi</b> per attivarsi, e pulsano mentre li tieni premuti — una protezione contro i tocchi accidentali.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
-        <p>Crea un profilo per ogni persona che userà l'agenda. Ogni utente ha un nome e un colore identificativo. Sulla card trovi le icone 📋 (vai alle sue agende), ✏️ (modifica nome/colore) e 🗑 (elimina, con conferma — elimina anche tutte le sue agende).</p>
+        <p>Crea un profilo per ogni persona che userà l'agenda. Ogni utente ha un nome e un colore identificativo. Sulla card trovi le icone 📋, ✏️ e 🗑 (con una piccola scritta sotto ciascuna: "Agende", "Modifica", "Elimina") per andare alle sue agende, modificare nome/colore, o eliminarlo (con conferma — elimina anche tutte le sue agende).</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">📋 Agende</div>
-        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso: <b>📂</b> Modifica (entra nell'editor degli step), <b>⧉</b> Duplica (copia l'agenda intera con tutti i suoi step, utile per creare varianti simili senza ricominciare da zero), <b>🗑</b> Elimina.</p>
+        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso le icone <b>📂</b>, <b>⧉</b>, <b>🗑</b> (con le rispettive scritte "Modifica", "Duplica", "Elimina" sotto): Modifica entra nell'editor degli step, Duplica copia l'agenda intera con tutti i suoi step (utile per creare varianti simili senza ricominciare da zero), Elimina la rimuove con conferma.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
@@ -927,7 +942,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.6.0</div>
+  <div class="home-ver" id="tb-ver">v1.7.1</div>
 </div>
 
 <!-- USERS -->
@@ -1261,6 +1276,15 @@ function ga(){return gu(ST.selU)?.agendas.find(a=>a.id===ST.selA);}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function mk(t,c){const e=document.createElement(t||'div');if(c)e.className=c;return e;}
+// Icon button + tiny caption below it, e.g. "🗑" with "Elimina" underneath.
+// Keeps the button itself small while making its action unambiguous.
+function mkIconAction(cls,icon,title,caption,onclick){
+  const wrap=mk('div','bic-col');
+  const b=mk('button','bic '+cls);b.textContent=icon;b.title=title;b.onclick=onclick;
+  const cap=mk('span','bic-cap');cap.textContent=caption;
+  wrap.appendChild(b);wrap.appendChild(cap);
+  return wrap;
+}
 function el(id){return document.getElementById(id);}
 
 // ═══ NAV ═══
@@ -1283,8 +1307,8 @@ function toggleFS(){
 // ═══ HOME ═══
 function rHome(){
   const nu=ST.users.length, na=ST.users.reduce((s,u)=>s+(u.agendas?.length||0),0);
-  set('hb-u',nu?nu+' utente'+(nu!==1?'i':''):'Nessun utente');
-  set('hb-a',na?na+' agenda'+(na!==1?'e':''):'Nessuna agenda');
+  set('hb-u',nu?nu+' utent'+(nu===1?'e':'i'):'Nessun utente');
+  set('hb-a',na?na+' agend'+(na===1?'a':'e'):'Nessuna agenda');
   set('hb-s',na?'Pronto ✓':'Crea prima un\u2019agenda');
 }
 function toggleInstr(){
@@ -1302,13 +1326,13 @@ function rUsers(){
     const av=mk('div','uc-av');av.style.background=u.color;av.textContent=u.name[0].toUpperCase();
     const nd=mk('div');
     const nm=mk('div','uc-nm');nm.textContent=u.name;
-    const st=mk('div','uc-st');st.textContent=has?('✓ '+u.agendas.length+' agenda'+(u.agendas.length!==1?'e':'')):'Nessuna agenda';
+    const st=mk('div','uc-st');st.textContent=has?('✓ '+u.agendas.length+' agend'+(u.agendas.length===1?'a':'e')):'Nessuna agenda';
     nd.appendChild(nm);nd.appendChild(st);
     top.appendChild(av);top.appendChild(nd);
     const acts=mk('div','uc-acts');
-    const bo=mk('button','bic e');bo.textContent='📋';bo.title='Agende';bo.onclick=()=>{agSel=u.id;go('s-ag');};
-    const be=mk('button','bic p');be.textContent='✏️';be.title='Modifica';be.onclick=()=>openEditUser(u.id);
-    const bd=mk('button','bic d');bd.textContent='🗑';bd.title='Elimina';bd.onclick=()=>delUser(u.id);
+    const bo=mkIconAction('e','📋','Agende','Agende',()=>{agSel=u.id;go('s-ag');});
+    const be=mkIconAction('p','✏️','Modifica','Modifica',()=>openEditUser(u.id));
+    const bd=mkIconAction('d','🗑','Elimina','Elimina',()=>delUser(u.id));
     acts.appendChild(bo);acts.appendChild(be);acts.appendChild(bd);
     c.appendChild(top);c.appendChild(acts);
     g.appendChild(c);
@@ -1376,18 +1400,17 @@ function rAgGrid(){
   if(!u.agendas.length){g.innerHTML='<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Nessuna agenda — premi + Nuova</div></div>';return;}
   u.agendas.forEach(a=>{
     const c=mk('div','acard');
-    const ic=mk('div');ic.style.fontSize='1.2rem';ic.textContent='📋';
     const nameRow=mk('div','acard-nrow');
     const nm=mk('div','acard-n');nm.textContent=a.name;
     const br=mk('button','bic e sm');br.textContent='✎';br.title='Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
     nameRow.appendChild(nm);nameRow.appendChild(br);
-    const m=mk('div','acard-m');m.textContent=a.steps.length+' step'+(a.steps.length!==1?'s':'');
+    const m=mk('div','acard-m');m.textContent=a.steps.length+' step';
     const acts=mk('div','acard-a');
-    const be=mk('button','bic p');be.textContent='📂';be.title='Modifica';be.onclick=()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();};
-    const bc=mk('button','bic e');bc.textContent='⧉';bc.title='Duplica';bc.onclick=()=>dupAgenda(u.id,a.id);
-    const bd=mk('button','bic d');bd.textContent='🗑';bd.title='Elimina';bd.onclick=()=>delAgenda(u.id,a.id);
+    const be=mkIconAction('p','📂','Modifica','Modifica',()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();});
+    const bc=mkIconAction('e','⧉','Duplica','Duplica',()=>dupAgenda(u.id,a.id));
+    const bd=mkIconAction('d','🗑','Elimina','Elimina',()=>delAgenda(u.id,a.id));
     acts.appendChild(be);acts.appendChild(bc);acts.appendChild(bd);
-    c.appendChild(ic);c.appendChild(nameRow);c.appendChild(m);c.appendChild(acts);
+    c.appendChild(nameRow);c.appendChild(m);c.appendChild(acts);
     g.appendChild(c);
   });
 }
@@ -1750,6 +1773,16 @@ async function pickAr(url){
 
 // ═══ USE ═══
 let useUOpts=[], useAOpts=[];
+// Small colored circle with a user's initial, shown next to an agenda
+// name so it's clear at a glance which user it belongs to.
+function avHTML(letter,color){
+  return '<span class="mini-av" style="background:'+color+'">'+esc(letter)+'</span>';
+}
+function setAgendaTxt(text,av){
+  const e=el('use-a-txt');
+  if(!e)return;
+  e.innerHTML = av ? (avHTML(av.letter,av.color)+esc(text)) : esc(text);
+}
 function rUse(){
   useUOpts=ST.users.map(u=>({v:u.id,t:u.name}));
   const fgU=el('use-u-fg');
@@ -1764,7 +1797,7 @@ function rUse(){
   fgU.classList.remove('hidden');
   el('use-u').dataset.val='';set('use-u-txt','— Utente —');
   useAOpts=[];
-  el('use-a').dataset.val='';set('use-a-txt','— Agenda —');
+  el('use-a').dataset.val='';setAgendaTxt('— Agenda —');
   useChk();
 }
 function useSyncU(){
@@ -1774,21 +1807,25 @@ function useSyncU(){
 }
 function useSyncA(){
   const id=el('use-a').dataset.val;
-  const a=useAOpts.find(o=>o.v===id);
-  set('use-a-txt',a?a.t:'— Agenda —');
+  const o=useAOpts.find(o=>o.v===id);
+  setAgendaTxt(o?o.t:'— Agenda —', o?o.av:null);
 }
 function useFillA(){
   const id=el('use-u').dataset.val;
-  useAOpts=id?(gu(id)?.agendas.map(a=>({v:a.id,t:a.name+' ('+a.steps.length+' step)'}))||[]):[];
+  const u=gu(id);
+  // Each agenda option carries the owning user's avatar (initial +
+  // color) so it can be shown next to the agenda name when choosing.
+  const av = u ? {letter:u.name[0].toUpperCase(), color:u.color} : null;
+  useAOpts = u ? u.agendas.map(a=>({v:a.id,t:a.name+' ('+a.steps.length+' step)',av})) : [];
   const fgA=el('use-a-fg');
   if(useAOpts.length===1){
     // Only one agenda for this user — pre-select it and hide the picker
     el('use-a').dataset.val=useAOpts[0].v;
-    set('use-a-txt',useAOpts[0].t);
+    setAgendaTxt(useAOpts[0].t, useAOpts[0].av);
     fgA.classList.add('hidden');
   } else {
     fgA.classList.remove('hidden');
-    el('use-a').dataset.val='';set('use-a-txt','— Agenda —');
+    el('use-a').dataset.val='';setAgendaTxt('— Agenda —');
   }
   useChk();
 }
@@ -2374,7 +2411,7 @@ function xSelOpen(trigger, opts, onPick){
   const curVal=trigger.dataset.val;
   opts.forEach(o=>{
     const it=mk('div','xpk-opt'+(String(o.v)===String(curVal)?' sel2':''));
-    it.textContent=o.t;
+    it.innerHTML = o.av ? (avHTML(o.av.letter,o.av.color)+esc(o.t)) : esc(o.t);
     it.addEventListener('click',()=>{ onPick(o.v); xPkClose(); });
     list.appendChild(it);
   });
@@ -2570,7 +2607,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.6.0';
+const APP_VERSION='1.7.1';
 let swReg=null;
 
 function initVersionDisplay(){
