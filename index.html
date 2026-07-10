@@ -968,7 +968,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.2</div>
+  <div class="home-ver" id="tb-ver">v1.9.3</div>
 </div>
 
 <!-- USERS -->
@@ -1530,7 +1530,8 @@ function rEdGrid(){
   a.steps.forEach((s,i)=>{
     const sc=mk('div','sc');sc.dataset.i=i;
     const box=mk('div','sc-box');
-    if(s.mode==='text'){const t=mk('div','sc-txt');t.textContent=s.label||'';box.appendChild(t);fitTextToBox(t,7,22,box);}
+    let textPreview=null;
+    if(s.mode==='text'){const t=mk('div','sc-txt');t.textContent=s.label||'';box.appendChild(t);textPreview=t;}
     else if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}
     else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent='🖼️';box.appendChild(p);}
     const x=mk('button','sc-x');x.textContent='✕';x.onclick=e=>{e.stopPropagation();delStep(i);};box.appendChild(x);
@@ -1563,6 +1564,11 @@ function rEdGrid(){
     });
     touchDrag(sc,i,g,h);
     g.appendChild(sc);
+    // Fit only NOW, after the card is truly attached to the live
+    // document — measuring while still detached always reports zero
+    // size, which was silently forcing every text preview down to
+    // its absolute minimum font (looking cut off / wrongly tiny).
+    if(textPreview) fitTextToBox(textPreview,7,22,box);
   });
   const add=mk('div','sc sc-add');
   const ab=mk('div','sc-box');ab.textContent='＋';add.appendChild(ab);
@@ -2004,13 +2010,15 @@ function rView(){
     VS.steps.forEach((s,i)=>{
       const c=mk('div','vlc');
       const b=mk('div','vlc-b');
+      let textPreview=null;
       if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-      else if(s.mode==='text'){const t=mk('div','vlc-txt');t.textContent=s.label||'';b.appendChild(t);fitTextToBox(t,6,20,b);}
+      else if(s.mode==='text'){const t=mk('div','vlc-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
       else b.textContent='🖼️';
       const n=mk('div','vlc-n');n.textContent=i+1;b.appendChild(n);
       c.appendChild(b);
       if(s.mode!=='text'){const l=mk('div','vlc-l');l.textContent=s.label;c.appendChild(l);}
       g.appendChild(c);
+      if(textPreview) fitTextToBox(textPreview,6,20,b);
     });
   } else {
     L.classList.add('hidden');R.classList.remove('hidden');
@@ -2027,8 +2035,9 @@ function rStrip(){
     const e=mk('div','vsq'+(isImmediate?' vsq-next':''));
     const n=mk('div','vsq-n');n.textContent=i+1;e.appendChild(n);
     const b=mk('div','vsq-b');
+    let textPreview=null;
     if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-    else if(s.mode==='text'){const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);fitTextToBox(t,5,14,b);}
+    else if(s.mode==='text'){const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
     else b.textContent='🖼️';
     e.appendChild(b);
     if(s.mode!=='text'){const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);}
@@ -2036,6 +2045,7 @@ function rStrip(){
     // same as tapping the current activity itself
     if(isImmediate) e.onclick=()=>tryNav('next');
     strip.appendChild(e);
+    if(textPreview) fitTextToBox(textPreview,5,14,b);
   }
   strip.scrollLeft=0;
 }
@@ -2689,7 +2699,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.2';
+const APP_VERSION='1.9.3';
 let swReg=null;
 
 function initVersionDisplay(){
