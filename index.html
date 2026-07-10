@@ -366,7 +366,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
   width:18px;height:18px;border-radius:50%;color:#fff;
   font-size:.6rem;font-weight:900;
 }
-#use-a-txt{display:inline-flex;align-items:center;gap:7px;}
+#use-a-txt,#use-u-txt{display:inline-flex;align-items:center;gap:7px;}
 .bstart{background:var(--grn);color:#fff;border:none;border-radius:12px;padding:11px;font-family:inherit;font-weight:900;font-size:.92rem;cursor:pointer;}
 .bstart:disabled{background:var(--brd);color:var(--mut);cursor:not-allowed;}
 
@@ -942,7 +942,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.7.1</div>
+  <div class="home-ver" id="tb-ver">v1.7.2</div>
 </div>
 
 <!-- USERS -->
@@ -1402,7 +1402,7 @@ function rAgGrid(){
     const c=mk('div','acard');
     const nameRow=mk('div','acard-nrow');
     const nm=mk('div','acard-n');nm.textContent=a.name;
-    const br=mk('button','bic e sm');br.textContent='✎';br.title='Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
+    const br=mkIconAction('e sm','✎','Rinomina','Rinomina',()=>openRenameAgenda(u.id,a.id));
     nameRow.appendChild(nm);nameRow.appendChild(br);
     const m=mk('div','acard-m');m.textContent=a.steps.length+' step';
     const acts=mk('div','acard-a');
@@ -1773,42 +1773,42 @@ async function pickAr(url){
 
 // ═══ USE ═══
 let useUOpts=[], useAOpts=[];
-// Small colored circle with a user's initial, shown next to an agenda
-// name so it's clear at a glance which user it belongs to.
+// Small colored circle with a user's initial, shown next to a name
+// (user or agenda) so it's clear at a glance who it belongs to.
 function avHTML(letter,color){
   return '<span class="mini-av" style="background:'+color+'">'+esc(letter)+'</span>';
 }
-function setAgendaTxt(text,av){
-  const e=el('use-a-txt');
+function setAvTxt(id,text,av){
+  const e=el(id);
   if(!e)return;
   e.innerHTML = av ? (avHTML(av.letter,av.color)+esc(text)) : esc(text);
 }
 function rUse(){
-  useUOpts=ST.users.map(u=>({v:u.id,t:u.name}));
+  useUOpts=ST.users.map(u=>({v:u.id,t:u.name,av:{letter:u.name[0].toUpperCase(),color:u.color}}));
   const fgU=el('use-u-fg');
   if(useUOpts.length===1){
     // Only one user exists — pre-select it and hide the picker entirely
     el('use-u').dataset.val=useUOpts[0].v;
-    set('use-u-txt',useUOpts[0].t);
+    setAvTxt('use-u-txt',useUOpts[0].t,useUOpts[0].av);
     fgU.classList.add('hidden');
     useFillA();
     return;
   }
   fgU.classList.remove('hidden');
-  el('use-u').dataset.val='';set('use-u-txt','— Utente —');
+  el('use-u').dataset.val='';setAvTxt('use-u-txt','— Utente —');
   useAOpts=[];
-  el('use-a').dataset.val='';setAgendaTxt('— Agenda —');
+  el('use-a').dataset.val='';setAvTxt('use-a-txt','— Agenda —');
   useChk();
 }
 function useSyncU(){
   const id=el('use-u').dataset.val;
-  const u=gu(id);
-  set('use-u-txt',u?u.name:'— Utente —');
+  const o=useUOpts.find(o=>o.v===id);
+  setAvTxt('use-u-txt', o?o.t:'— Utente —', o?o.av:null);
 }
 function useSyncA(){
   const id=el('use-a').dataset.val;
   const o=useAOpts.find(o=>o.v===id);
-  setAgendaTxt(o?o.t:'— Agenda —', o?o.av:null);
+  setAvTxt('use-a-txt', o?o.t:'— Agenda —', o?o.av:null);
 }
 function useFillA(){
   const id=el('use-u').dataset.val;
@@ -1821,11 +1821,11 @@ function useFillA(){
   if(useAOpts.length===1){
     // Only one agenda for this user — pre-select it and hide the picker
     el('use-a').dataset.val=useAOpts[0].v;
-    setAgendaTxt(useAOpts[0].t, useAOpts[0].av);
+    setAvTxt('use-a-txt', useAOpts[0].t, useAOpts[0].av);
     fgA.classList.add('hidden');
   } else {
     fgA.classList.remove('hidden');
-    el('use-a').dataset.val='';setAgendaTxt('— Agenda —');
+    el('use-a').dataset.val='';setAvTxt('use-a-txt','— Agenda —');
   }
   useChk();
 }
@@ -2607,7 +2607,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.7.1';
+const APP_VERSION='1.7.2';
 let swReg=null;
 
 function initVersionDisplay(){
