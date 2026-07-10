@@ -150,7 +150,7 @@ html[data-tablet=on] .mn-b,html[data-tablet=on] .mn-add{width:58px;height:50px;f
 html[data-tablet=on] .mn-l{font-size:.72rem;}
 html[data-tablet=on] .tsel{width:auto;min-width:74px;padding:8px 10px;font-size:1.05rem;}
 html[data-tablet=on] .ttb{min-width:78px;padding:7px 11px;font-size:.82rem;}
-html[data-tablet=on] .iprev{width:96px;height:82px;font-size:1.8rem;}
+html[data-tablet=on] .iprev{width:150px;height:150px;font-size:2.6rem;}
 html[data-tablet=on] .ef-card{padding:16px 18px;gap:12px;border-radius:16px;}
 html[data-tablet=on] .ef-card-t{font-size:.92rem;}
 html[data-tablet=on] .mbtn-mode{font-size:.88rem;padding:11px 8px;}
@@ -301,6 +301,8 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .ef-card-t{font-weight:900;font-size:.76rem;color:var(--acc);display:flex;align-items:center;gap:6px;letter-spacing:.2px;}
 .fg{display:flex;flex-direction:column;gap:4px;}
 .fl{font-weight:800;font-size:.72rem;}
+.ef-count{align-self:flex-end;font-size:.64rem;font-weight:700;color:var(--mut);}
+.ef-count.warn{color:var(--red,#EF476F);}
 .inp{background:var(--card);border:2px solid var(--brd);border-radius:10px;padding:8px 11px;font-family:inherit;font-size:.85rem;font-weight:600;color:var(--txt);width:100%;outline:none;caret-color:var(--acc);}
 .inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(74,158,219,.15);}
 .inp::placeholder{color:var(--mut);}
@@ -310,7 +312,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .mrow-modes{display:flex;gap:7px;}
 .mbtn-mode{flex:1;padding:9px 6px;font-size:.74rem;text-align:center;}
 .ef-hint{font-size:.7rem;color:var(--mut);font-weight:600;line-height:1.4;background:var(--bg2);border-radius:8px;padding:8px 11px;}
-.iprev{width:74px;height:64px;border:3px dashed var(--brd);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--bg);overflow:hidden;cursor:pointer;flex-shrink:0;}
+.iprev{width:120px;height:120px;border:3px dashed var(--brd);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--bg);overflow:hidden;cursor:pointer;flex-shrink:0;}
 .iprev.has-img{background:#fff;}
 .iprev img{background:#fff;}
 .iprev img{width:100%;height:100%;object-fit:cover;border-radius:7px;}
@@ -394,6 +396,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .vl-g{flex:1;min-height:0;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
 .vlc{display:flex;flex-direction:column;align-items:center;gap:3px;width:clamp(58px,9%,92px);}
 .vlc-b{width:100%;aspect-ratio:1/1;background:#b8dff0;border:2px solid #7ab8d8;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:1.3rem;}
+.vlc-txt{font-size:.6rem;font-weight:800;color:#2d5470;text-align:center;padding:5px;line-height:1.2;overflow:hidden;}
 .vlc-b img{width:100%;height:100%;object-fit:cover;}
 .vlc-n{position:absolute;top:2px;left:3px;background:rgba(255,255,255,.88);color:#1a3060;border-radius:3px;font-size:.5rem;font-weight:900;padding:0 2px;}
 .vlc-l{font-size:.5rem;font-weight:700;color:#3a5070;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -429,6 +432,7 @@ html[data-tablet=on] .vsq-b{
   height:auto;width:13vh;max-width:130px;aspect-ratio:1/1;
 }
 html[data-tablet=on] .vsq-l{font-size:15px;}
+html[data-tablet=on] .vsq-txt{font-size:11px;padding:6px;}
 html[data-tablet=on] .vsq-n{font-size:14px;padding:2px 5px;}
 
 /* Main area: current activity truly centred in the available space,
@@ -518,6 +522,7 @@ html[data-tablet=on] .vctrl{
   font-size:.85rem;color:#5a8aa0;
 }
 .vsq-b img{width:100%;height:100%;object-fit:cover;}
+.vsq-txt{font-size:8px;font-weight:800;color:#2d5470;text-align:center;padding:3px;line-height:1.2;overflow:hidden;}
 .vsq-l{flex-shrink:0;font-size:11px;line-height:1.25;font-weight:700;color:#4a6880;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .vsq-n{position:absolute;top:2px;left:2px;background:rgba(255,255,255,.9);color:#1a3060;border-radius:4px;font-size:10px;font-weight:900;padding:0 3px;z-index:2;}
 /* The card immediately after "current" is tappable to advance too */
@@ -932,7 +937,8 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
         <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere, con un numero verde prima del nome. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare lo step (con conferma, copia identica), <b>⠿</b> per trascinare e riordinare gli step.</p>
-        <p>Nel form di modifica scegli come mostrare lo step: <b>🖼️ Immagine</b> (solo immagine), <b>📝 Titolo</b> (solo il nome scritto grande, senza immagine — utile per un'agenda testuale invece che visiva), oppure <b>🖼️+📝 Entrambe</b> (immagine e nome insieme). Puoi caricare un'immagine dal dispositivo o cercarla su ARASAAC, e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
+        <p>Il nome dello step ha un limite di 40 caratteri, con un contatore che scala mentre scrivi — così il titolo resta sempre leggibile nelle miniature senza uscire dai riquadri.</p>
+        <p>Nel form di modifica scegli come mostrare lo step: <b>🖼️ Immagine</b> (solo immagine), <b>📝 Testo</b> (solo il nome scritto grande, senza immagine — utile per un'agenda testuale invece che visiva), oppure <b>🖼️+📝 Entrambe</b> (immagine e nome insieme). Puoi caricare un'immagine dal dispositivo o cercarla su ARASAAC, e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔒 Blocco con password</div>
@@ -957,7 +963,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.8.0</div>
+  <div class="home-ver" id="tb-ver">v1.8.2</div>
 </div>
 
 <!-- USERS -->
@@ -1654,9 +1660,14 @@ function rEdForm(){
   // ── Card 1: Nome ──
   const c1=mk('div','ef-card');
   c1.appendChild(mkCardT('🏷️','Nome dello step'));
-  const i1=mk('input','inp');i1.type='text';i1.placeholder='es: Pranzo...';i1.value=s.label||'';i1.autocomplete='off';i1.setAttribute('inputmode','none');
-  i1.addEventListener('input',()=>{const x=ga()?.steps[ST.editIdx];if(x){x.label=i1.value;markD();rEdMini();}});
+  const NAME_MAX=40; // fits cleanly inside the small squares used in the strip/grid without overflowing
+  const i1=mk('input','inp');i1.type='text';i1.placeholder='es: Pranzo...';i1.value=s.label||'';i1.autocomplete='off';i1.setAttribute('inputmode','none');i1.maxLength=NAME_MAX;
+  const cnt1=mk('div','ef-count');
+  const updCnt1=()=>{cnt1.textContent=i1.value.length+'/'+NAME_MAX;cnt1.classList.toggle('warn',i1.value.length>=NAME_MAX-5);};
+  i1.addEventListener('input',()=>{const x=ga()?.steps[ST.editIdx];if(x){x.label=i1.value;markD();rEdMini();}updCnt1();});
+  updCnt1();
   c1.appendChild(i1);
+  c1.appendChild(cnt1);
   f.appendChild(c1);
 
   // ── Card 2: Modalità di visualizzazione ──
@@ -1665,7 +1676,7 @@ function rEdForm(){
   const mr=mk('div','mrow mrow-modes');
   const modeInfo={
     'image':   {lbl:'🖼️ Immagine',  hint:'Solo immagine, senza testo.'},
-    'text':    {lbl:'📝 Titolo',     hint:'Solo il nome dello step, scritto grande — nessuna immagine (agenda testuale).'},
+    'text':    {lbl:'📝 Testo',     hint:'Solo il nome dello step, scritto grande — nessuna immagine (agenda testuale).'},
     'image-text': {lbl:'🖼️+📝 Entrambe', hint:'Immagine e nome dello step insieme, ben visibili.'},
   };
   ['image','text','image-text'].forEach(mv=>{
@@ -1967,7 +1978,8 @@ function rView(){
       const c=mk('div','vlc');
       const b=mk('div','vlc-b');
       if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-      else b.textContent=s.mode==='text'?'📝':'🖼️';
+      else if(s.mode==='text'){const t=mk('div','vlc-txt');t.textContent=s.label||'';b.appendChild(t);}
+      else b.textContent='🖼️';
       const n=mk('div','vlc-n');n.textContent=i+1;b.appendChild(n);
       c.appendChild(b);
       const l=mk('div','vlc-l');l.textContent=s.label;c.appendChild(l);
@@ -1989,7 +2001,8 @@ function rStrip(){
     const n=mk('div','vsq-n');n.textContent=i+1;e.appendChild(n);
     const b=mk('div','vsq-b');
     if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-    else b.textContent=s.mode==='text'?'📝':'🖼️';
+    else if(s.mode==='text'){const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);}
+    else b.textContent='🖼️';
     e.appendChild(b);
     const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);
     // The card right after the current one can be tapped to advance,
@@ -2631,7 +2644,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.8.0';
+const APP_VERSION='1.8.2';
 let swReg=null;
 
 function initVersionDisplay(){
