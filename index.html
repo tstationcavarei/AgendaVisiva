@@ -963,7 +963,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.8.2</div>
+  <div class="home-ver" id="tb-ver">v1.8.3</div>
 </div>
 
 <!-- USERS -->
@@ -1982,7 +1982,7 @@ function rView(){
       else b.textContent='🖼️';
       const n=mk('div','vlc-n');n.textContent=i+1;b.appendChild(n);
       c.appendChild(b);
-      const l=mk('div','vlc-l');l.textContent=s.label;c.appendChild(l);
+      if(s.mode!=='text'){const l=mk('div','vlc-l');l.textContent=s.label;c.appendChild(l);}
       g.appendChild(c);
     });
   } else {
@@ -2004,7 +2004,7 @@ function rStrip(){
     else if(s.mode==='text'){const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);}
     else b.textContent='🖼️';
     e.appendChild(b);
-    const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);
+    if(s.mode!=='text'){const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);}
     // The card right after the current one can be tapped to advance,
     // same as tapping the current activity itself
     if(isImmediate) e.onclick=()=>tryNav('next');
@@ -2644,7 +2644,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.8.2';
+const APP_VERSION='1.8.3';
 let swReg=null;
 
 function initVersionDisplay(){
