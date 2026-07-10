@@ -266,8 +266,8 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .sc-box{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px solid var(--brd);background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
 .sc-box.has-img{background:#fff;}
 .sc-box img{width:100%;height:100%;object-fit:cover;background:#fff;}
-.sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;word-break:break-word;overflow-wrap:break-word;width:100%;min-width:0;}
-.sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;word-break:break-word;display:flex;align-items:center;justify-content:center;gap:5px;}
+.sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;width:100%;min-width:0;}
+.sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;display:flex;align-items:center;justify-content:center;gap:5px;}
 .sc-num2{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:#06D6A0;color:#fff;font-size:.56rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
 .sc-x{position:absolute;top:3px;right:4px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .sc-h{position:absolute;bottom:3px;right:4px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(0,0,0,.4);background:rgba(255,255,255,.85);border-radius:6px;cursor:grab;}
@@ -396,7 +396,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .vl-g{flex:1;min-height:0;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
 .vlc{display:flex;flex-direction:column;align-items:center;gap:3px;width:clamp(58px,9%,92px);}
 .vlc-b{width:100%;aspect-ratio:1/1;background:#b8dff0;border:2px solid #7ab8d8;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:1.3rem;}
-.vlc-txt{font-size:.5rem;font-weight:800;color:#2d5470;text-align:center;padding:5px;line-height:1.25;overflow:hidden;word-break:break-word;overflow-wrap:break-word;width:100%;min-width:0;}
+.vlc-txt{font-size:.5rem;font-weight:800;color:#2d5470;text-align:center;padding:5px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
 .vlc-b img{width:100%;height:100%;object-fit:cover;}
 .vlc-n{position:absolute;top:2px;left:3px;background:rgba(255,255,255,.88);color:#1a3060;border-radius:3px;font-size:.5rem;font-weight:900;padding:0 2px;}
 .vlc-l{font-size:.5rem;font-weight:700;color:#3a5070;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -521,7 +521,7 @@ html[data-tablet=on] .vctrl{
   font-size:.85rem;color:#5a8aa0;
 }
 .vsq-b img{width:100%;height:100%;object-fit:cover;}
-.vsq-txt{font-size:7px;font-weight:800;color:#2d5470;text-align:center;padding:3px;line-height:1.25;overflow:hidden;word-break:break-word;overflow-wrap:break-word;width:100%;min-width:0;}
+.vsq-txt{font-size:7px;font-weight:800;color:#2d5470;text-align:center;padding:3px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
 .vsq-l{flex-shrink:0;font-size:11px;line-height:1.25;font-weight:700;color:#4a6880;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .vsq-n{position:absolute;top:2px;left:2px;background:rgba(255,255,255,.9);color:#1a3060;border-radius:4px;font-size:10px;font-weight:900;padding:0 3px;z-index:2;}
 /* The card immediately after "current" is tappable to advance too */
@@ -562,7 +562,7 @@ html[data-tablet=on] .vctrl{
    to fit. Any step with an image (Immagine or Entrambe) keeps the
    original fixed/responsive sizing above, unchanged, so the image
    always gets priority for space exactly like before. */
-.vtxt.vtxt-solo{flex:1;min-height:0;min-width:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;word-break:break-word;overflow-wrap:break-word;}
+.vtxt.vtxt-solo{flex:1;min-height:0;min-width:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .vnm{font-size:clamp(.56rem,1.4vh,.74rem);font-weight:700;color:#6a82a0;text-align:center;flex-shrink:0;}
 
 /* ── STEP TRANSITION ANIMATION ──
@@ -968,7 +968,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.3</div>
+  <div class="home-ver" id="tb-ver">v1.9.4</div>
 </div>
 
 <!-- USERS -->
@@ -2269,6 +2269,24 @@ function animateStepChange(updateFn){
         {left:dstRect.left+'px',top:dstRect.top+'px',width:dstRect.width+'px',height:dstRect.height+'px',borderColor:'#06D6A0',borderWidth:'6px'}
       ],{duration:2000,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
 
+      // If the new step is text-only, the cloned thumbnail text
+      // starts tiny (its own small-box size) — grow its font-size in
+      // step with the box, ending EXACTLY at the size the real card
+      // will use. This way the text reaches its final size gradually,
+      // as part of the same motion, instead of silently "popping" to
+      // a different size the instant the clone is swapped away.
+      const newStep=VS.steps[VS.idx];
+      const innerTxt=clone.querySelector('.vsq-txt');
+      if(innerTxt && newStep && newStep.mode==='text'){
+        const realVt=el('v-txt');
+        const srcFontPx=parseFloat(innerTxt.style.fontSize)||8;
+        const dstFontPx=parseFloat(realVt.style.fontSize)||srcFontPx;
+        innerTxt.animate(
+          [{fontSize:srcFontPx+'px'},{fontSize:dstFontPx+'px'}],
+          {duration:2000,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}
+        );
+      }
+
       const t2=setTimeout(()=>{
         clone.remove();
         card.style.visibility='visible'; // reveals exactly at dstRect — no jump
@@ -2699,7 +2717,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.3';
+const APP_VERSION='1.9.4';
 let swReg=null;
 
 function initVersionDisplay(){
