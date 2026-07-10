@@ -266,7 +266,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .sc-box{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px solid var(--brd);background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
 .sc-box.has-img{background:#fff;}
 .sc-box img{width:100%;height:100%;object-fit:cover;background:#fff;}
-.sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;word-break:break-word;overflow-wrap:break-word;width:100%;}
+.sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;word-break:break-word;overflow-wrap:break-word;width:100%;min-width:0;}
 .sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;word-break:break-word;display:flex;align-items:center;justify-content:center;gap:5px;}
 .sc-num2{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:#06D6A0;color:#fff;font-size:.56rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
 .sc-x{position:absolute;top:3px;right:4px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
@@ -396,7 +396,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .vl-g{flex:1;min-height:0;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
 .vlc{display:flex;flex-direction:column;align-items:center;gap:3px;width:clamp(58px,9%,92px);}
 .vlc-b{width:100%;aspect-ratio:1/1;background:#b8dff0;border:2px solid #7ab8d8;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:1.3rem;}
-.vlc-txt{font-size:.5rem;font-weight:800;color:#2d5470;text-align:center;padding:5px;line-height:1.25;overflow:hidden;word-break:break-word;overflow-wrap:break-word;width:100%;}
+.vlc-txt{font-size:.5rem;font-weight:800;color:#2d5470;text-align:center;padding:5px;line-height:1.25;overflow:hidden;word-break:break-word;overflow-wrap:break-word;width:100%;min-width:0;}
 .vlc-b img{width:100%;height:100%;object-fit:cover;}
 .vlc-n{position:absolute;top:2px;left:3px;background:rgba(255,255,255,.88);color:#1a3060;border-radius:3px;font-size:.5rem;font-weight:900;padding:0 2px;}
 .vlc-l{font-size:.5rem;font-weight:700;color:#3a5070;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -521,7 +521,7 @@ html[data-tablet=on] .vctrl{
   font-size:.85rem;color:#5a8aa0;
 }
 .vsq-b img{width:100%;height:100%;object-fit:cover;}
-.vsq-txt{font-size:7px;font-weight:800;color:#2d5470;text-align:center;padding:3px;line-height:1.25;overflow:hidden;word-break:break-word;overflow-wrap:break-word;width:100%;}
+.vsq-txt{font-size:7px;font-weight:800;color:#2d5470;text-align:center;padding:3px;line-height:1.25;overflow:hidden;word-break:break-word;overflow-wrap:break-word;width:100%;min-width:0;}
 .vsq-l{flex-shrink:0;font-size:11px;line-height:1.25;font-weight:700;color:#4a6880;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .vsq-n{position:absolute;top:2px;left:2px;background:rgba(255,255,255,.9);color:#1a3060;border-radius:4px;font-size:10px;font-weight:900;padding:0 3px;z-index:2;}
 /* The card immediately after "current" is tappable to advance too */
@@ -556,7 +556,13 @@ html[data-tablet=on] .vctrl{
 }
 .vimgbl:active{opacity:.9;}
 .vimg{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:9px;display:block;background:#fff;}
-.vtxt{font-weight:900;color:#1a2340;text-align:center;line-height:1.15;flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.vtxt{font-size:clamp(.82rem,3.4vh,1.4rem);font-weight:900;color:#1a2340;text-align:center;line-height:1.15;flex-shrink:0;}
+/* Only pure "Testo" steps (no image at all) get the shrink-to-fit
+   treatment — short titles render big and centred, long ones shrink
+   to fit. Any step with an image (Immagine or Entrambe) keeps the
+   original fixed/responsive sizing above, unchanged, so the image
+   always gets priority for space exactly like before. */
+.vtxt.vtxt-solo{flex:1;min-height:0;min-width:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;word-break:break-word;overflow-wrap:break-word;}
 .vnm{font-size:clamp(.56rem,1.4vh,.74rem);font-weight:700;color:#6a82a0;text-align:center;flex-shrink:0;}
 
 /* ── STEP TRANSITION ANIMATION ──
@@ -962,7 +968,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.0</div>
+  <div class="home-ver" id="tb-ver">v1.9.2</div>
 </div>
 
 <!-- USERS -->
@@ -2049,10 +2055,20 @@ function rCur(){
   vn.textContent=s.label;
   vn.classList.remove('hidden');
   if((s.mode==='image'||s.mode==='image-text')&&s.img){vi.src=s.img;vi.classList.remove('hidden');}
-  if(s.mode==='text'||s.mode==='image-text'){
+  vt.classList.remove('vtxt-solo');
+  vt.style.fontSize=''; // clear any leftover auto-fit size from a previous text-only step
+  if(s.mode==='text'){
+    // Pure text step: no image at all, so the title can freely use
+    // the whole card — shrink-to-fit keeps it as large as possible.
+    vt.classList.add('vtxt-solo');
     vt.textContent=s.label;vt.classList.remove('hidden');
     vn.classList.add('hidden'); // the big title already shows the name — no need to repeat it small below
     fitTextToBox(vt,14,72,vt);
+  } else if(s.mode==='image-text'){
+    // Entrambe: image gets priority, text below uses the original
+    // fixed/responsive size — unchanged from previous versions.
+    vt.textContent=s.label;vt.classList.remove('hidden');
+    vn.classList.add('hidden');
   }
   nb.disabled=(VS.idx>=VS.steps.length-1);
   nb.textContent=VS.idx>=VS.steps.length-1?'✓ Fine':'Avanti ▶';
@@ -2154,12 +2170,12 @@ function nextStep(){
   if(VS.idx<0)return;
   if(VS.idx>=VS.steps.length-1){clearTi();el('fin').classList.remove('hidden');return;}
   clearTi();
-  animateStepChange(()=>{VS.idx++;rView();});
+  animateStepChange(()=>{VS.idx++;});
 }
 function prevStep(){
   if(VS.idx<=0)return;
   clearTi();
-  animateStepChange(()=>{VS.idx--;rView();});
+  animateStepChange(()=>{VS.idx--;});
 }
 // Full 3-second sequence:
 //  0.0s–1.0s  the current activity card slides down and out
@@ -2171,7 +2187,7 @@ function prevStep(){
 let animState=null; // tracks the in-flight transition, if any, so a new one can cleanly cancel it
 function animateStepChange(updateFn){
   const card=el('v-card-outer');
-  if(!card){ updateFn(); return; }
+  if(!card){ updateFn(); rView(); return; }
 
   // If a previous transition is still running, cancel it immediately
   // (clear its timers, remove its clone, reset the real card) before
@@ -2210,7 +2226,12 @@ function animateStepChange(updateFn){
     // timer panel + spacer may appear or disappear), so the card's
     // resting position/size can genuinely differ from the previous
     // step. We deliberately measure the target AFTER this happens.
+    // Note: only rCur() runs here (the big card, still hidden) — the
+    // upcoming-activities strip is deliberately NOT refreshed yet, so
+    // its text doesn't visibly resize while the transition is still
+    // playing. It updates later, in sync with the card's reveal.
     updateFn();
+    rCur();
 
     // NOW read the true, final resting slot for the new step — this
     // is what makes the incoming clone travel in one straight line
@@ -2241,12 +2262,14 @@ function animateStepChange(updateFn){
       const t2=setTimeout(()=>{
         clone.remove();
         card.style.visibility='visible'; // reveals exactly at dstRect — no jump
+        rStrip(); // strip updates NOW, at the same moment as the reveal — one single coordinated change, not two staggered ones
         if(animState===state) animState=null;
       },2000);
       state.timeouts.push(t2);
     } else {
       // No thumbnail to animate from (e.g. last step) — just reveal
       card.style.visibility='visible';
+      rStrip();
       if(animState===state) animState=null;
     }
   }, 1000);
@@ -2666,7 +2689,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.0';
+const APP_VERSION='1.9.2';
 let swReg=null;
 
 function initVersionDisplay(){
