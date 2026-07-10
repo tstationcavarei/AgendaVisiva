@@ -134,8 +134,8 @@ html[data-tablet=on] .ucard{width:auto;min-width:230px;max-width:280px;padding:1
 html[data-tablet=on] .uc-av{width:56px;height:56px;font-size:1.35rem;}
 html[data-tablet=on] .uc-nm{font-size:1.15rem;}
 html[data-tablet=on] .uc-st{font-size:.82rem;}
-html[data-tablet=on] .uc-acts{gap:8px;}
-html[data-tablet=on] .bic{width:38px;height:38px;font-size:1.1rem;border-radius:10px;}
+html[data-tablet=on] .uc-acts{gap:8px;flex-wrap:wrap;}
+html[data-tablet=on] .bsm{padding:7px 13px;font-size:.85rem;border-radius:9px;}
 /* Agenda cards: same fixed-width overflow issue */
 html[data-tablet=on] .acard{width:auto;min-width:200px;max-width:250px;padding:14px 16px;gap:9px;}
 html[data-tablet=on] .acard-n{font-size:1.05rem;}
@@ -208,25 +208,17 @@ html[data-tablet=on] .mini-i{font-size:1.5rem;}
 .grid{flex:1;overflow-y:auto;padding:12px;display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
 .ucard{
   background:var(--card);border:2px solid var(--brd);border-radius:14px;box-shadow:var(--sh);
-  width:168px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;
+  width:180px;padding:11px 13px;display:flex;flex-direction:column;gap:8px;
 }
 .ucard.has{border-color:var(--grn);}
 .uc-top{display:flex;align-items:center;gap:9px;}
 .uc-av{width:38px;height:38px;border-radius:50%;color:#fff;font-weight:900;font-size:1.05rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .uc-nm{font-weight:900;font-size:.9rem;}
 .uc-st{font-size:.62rem;font-weight:700;color:var(--mut);}
-.uc-acts{display:flex;gap:5px;}
+.uc-acts{display:flex;gap:6px;}
 .bsm{border:none;border-radius:7px;padding:4px 9px;font-family:inherit;font-weight:700;font-size:.68rem;cursor:pointer;}
 .bsm.e{background:var(--bg2);color:var(--acc);}
 .bsm.d{background:#fde8ec;color:var(--red);}
-/* Compact icon-only action buttons — a single tidy row instead of
-   text-label buttons wrapping onto a second row and bloating the
-   card's height. The action name is still available via the title
-   tooltip (and screen readers), just not printed on the button. */
-.bic{width:30px;height:30px;flex-shrink:0;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.92rem;cursor:pointer;}
-.bic.e{background:var(--bg2);color:var(--acc);}
-.bic.p{background:var(--acc);color:#fff;}
-.bic.d{background:#fde8ec;color:var(--red);}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mut);text-align:center;padding:16px;width:100%;}
 .empty-i{font-size:2rem;}.empty-t{font-weight:700;font-size:.85rem;}
 
@@ -243,10 +235,10 @@ html[data-tablet=on] .mini-i{font-size:1.5rem;}
 .colR{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .colR-h{padding:8px 12px;background:var(--card);border-bottom:2px solid var(--brd);display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .colR-t{font-weight:800;font-size:.8rem;color:var(--mut);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.acard{background:var(--card);border:2px solid var(--brd);border-radius:13px;box-shadow:var(--sh);width:158px;padding:9px 11px;display:flex;flex-direction:column;gap:6px;}
+.acard{background:var(--card);border:2px solid var(--brd);border-radius:13px;box-shadow:var(--sh);width:165px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
 .acard-n{font-weight:800;font-size:.85rem;}
 .acard-m{font-size:.66rem;color:var(--mut);font-weight:600;}
-.acard-a{display:flex;gap:5px;}
+.acard-a{display:flex;gap:5px;flex-wrap:wrap;}
 
 /* ── EDITOR ── */
 /* grid view */
@@ -906,7 +898,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.5.2</div>
+  <div class="home-ver" id="tb-ver">v1.5.1</div>
 </div>
 
 <!-- USERS -->
@@ -1287,9 +1279,9 @@ function rUsers(){
     nd.appendChild(nm);nd.appendChild(st);
     top.appendChild(av);top.appendChild(nd);
     const acts=mk('div','uc-acts');
-    const bo=mk('button','bic e');bo.textContent='📋';bo.title='Agende';bo.onclick=()=>{agSel=u.id;go('s-ag');};
-    const be=mk('button','bic p');be.textContent='✏️';be.title='Modifica';be.onclick=()=>openEditUser(u.id);
-    const bd=mk('button','bic d');bd.textContent='🗑';bd.title='Elimina';bd.onclick=()=>delUser(u.id);
+    const bo=mk('button','bsm e');bo.textContent='📋 Agende';bo.onclick=()=>{agSel=u.id;go('s-ag');};
+    const be=mk('button','bsm e');be.textContent='✏️ Modifica';be.onclick=()=>openEditUser(u.id);
+    const bd=mk('button','bsm d');bd.textContent='🗑';bd.onclick=()=>delUser(u.id);
     acts.appendChild(bo);acts.appendChild(be);acts.appendChild(bd);
     c.appendChild(top);c.appendChild(acts);
     g.appendChild(c);
@@ -1361,10 +1353,10 @@ function rAgGrid(){
     const nm=mk('div','acard-n');nm.textContent=a.name;
     const m=mk('div','acard-m');m.textContent=a.steps.length+' step'+(a.steps.length!==1?'s':'');
     const acts=mk('div','acard-a');
-    const be=mk('button','bic p');be.textContent='✏️';be.title='Modifica';be.onclick=()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();};
-    const br=mk('button','bic e');br.textContent='✎';br.title='Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
-    const bc=mk('button','bic e');bc.textContent='⧉';bc.title='Duplica';bc.onclick=()=>dupAgenda(u.id,a.id);
-    const bd=mk('button','bic d');bd.textContent='🗑';bd.title='Elimina';bd.onclick=()=>delAgenda(u.id,a.id);
+    const be=mk('button','bsm e');be.textContent='✏️ Modifica';be.onclick=()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();};
+    const br=mk('button','bsm e');br.textContent='✎ Rinomina';br.onclick=()=>openRenameAgenda(u.id,a.id);
+    const bc=mk('button','bsm e');bc.textContent='⧉ Copia';bc.onclick=()=>dupAgenda(u.id,a.id);
+    const bd=mk('button','bsm d');bd.textContent='🗑';bd.onclick=()=>delAgenda(u.id,a.id);
     acts.appendChild(be);acts.appendChild(br);acts.appendChild(bc);acts.appendChild(bd);
     c.appendChild(ic);c.appendChild(nm);c.appendChild(m);c.appendChild(acts);
     g.appendChild(c);
@@ -2546,7 +2538,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.5.2';
+const APP_VERSION='1.5.1';
 let swReg=null;
 
 function initVersionDisplay(){
