@@ -151,6 +151,10 @@ html[data-tablet=on] .mn-l{font-size:.72rem;}
 html[data-tablet=on] .tsel{width:auto;min-width:74px;padding:8px 10px;font-size:1.05rem;}
 html[data-tablet=on] .ttb{min-width:78px;padding:7px 11px;font-size:.82rem;}
 html[data-tablet=on] .iprev{width:96px;height:82px;font-size:1.8rem;}
+html[data-tablet=on] .ef-card{padding:16px 18px;gap:12px;border-radius:16px;}
+html[data-tablet=on] .ef-card-t{font-size:.92rem;}
+html[data-tablet=on] .mbtn-mode{font-size:.88rem;padding:11px 8px;}
+html[data-tablet=on] .ef-hint{font-size:.84rem;padding:10px 13px;}
 html[data-tablet=on] .ar-img{width:70px;height:70px;}
 html[data-tablet=on] .tog{width:46px;height:26px;}
 html[data-tablet=on] .tog::after{width:20px;height:20px;}
@@ -285,8 +289,16 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .mn-b img{width:100%;height:100%;object-fit:cover;}
 .mn-l{font-size:.5rem;font-weight:700;color:var(--mut);width:100%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mn-add{flex-shrink:0;width:44px;height:38px;border-radius:7px;border:2px dashed var(--grn);background:rgba(6,214,160,.07);color:var(--grn);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.ef{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:10px;}
-.ef-h{font-size:.85rem;font-weight:900;color:var(--acc);padding-bottom:6px;border-bottom:2px solid var(--brd);display:flex;align-items:center;gap:8px;}
+.ef{flex:1;overflow-y:auto;padding:12px 14px 20px;display:flex;flex-direction:column;gap:12px;}
+.ef-h{font-size:.85rem;font-weight:900;color:var(--acc);padding-bottom:8px;border-bottom:2px solid var(--brd);display:flex;align-items:center;gap:8px;}
+/* Each logical group (Nome, Modalità, Immagine, Timer) lives in its
+   own clearly-bounded card, so the form reads as distinct sections
+   instead of one long unbroken stack of fields. */
+.ef-card{
+  background:var(--card);border:2px solid var(--brd);border-radius:14px;
+  padding:13px 15px;display:flex;flex-direction:column;gap:10px;
+}
+.ef-card-t{font-weight:900;font-size:.76rem;color:var(--acc);display:flex;align-items:center;gap:6px;letter-spacing:.2px;}
 .fg{display:flex;flex-direction:column;gap:4px;}
 .fl{font-weight:800;font-size:.72rem;}
 .inp{background:var(--card);border:2px solid var(--brd);border-radius:10px;padding:8px 11px;font-family:inherit;font-size:.85rem;font-weight:600;color:var(--txt);width:100%;outline:none;caret-color:var(--acc);}
@@ -295,6 +307,9 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .mrow{display:flex;gap:6px;flex-wrap:wrap;}
 .mbtn{background:var(--bg);border:2px solid var(--brd);border-radius:9px;padding:5px 10px;font-family:inherit;font-weight:700;font-size:.7rem;cursor:pointer;color:var(--txt);}
 .mbtn.on{background:var(--acc);border-color:var(--acc);color:#fff;}
+.mrow-modes{display:flex;gap:7px;}
+.mbtn-mode{flex:1;padding:9px 6px;font-size:.74rem;text-align:center;}
+.ef-hint{font-size:.7rem;color:var(--mut);font-weight:600;line-height:1.4;background:var(--bg2);border-radius:8px;padding:8px 11px;}
 .iprev{width:74px;height:64px;border:3px dashed var(--brd);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--bg);overflow:hidden;cursor:pointer;flex-shrink:0;}
 .iprev.has-img{background:#fff;}
 .iprev img{background:#fff;}
@@ -917,7 +932,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
         <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere, con un numero verde prima del nome. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare lo step (con conferma, copia identica), <b>⠿</b> per trascinare e riordinare gli step.</p>
-        <p>Nel form di modifica puoi scegliere se lo step mostra immagine, testo o entrambi, caricare un'immagine dal dispositivo o cercarla su ARASAAC, scrivere un testo e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
+        <p>Nel form di modifica scegli come mostrare lo step: <b>🖼️ Immagine</b> (solo immagine), <b>📝 Titolo</b> (solo il nome scritto grande, senza immagine — utile per un'agenda testuale invece che visiva), oppure <b>🖼️+📝 Entrambe</b> (immagine e nome insieme). Puoi caricare un'immagine dal dispositivo o cercarla su ARASAAC, e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔒 Blocco con password</div>
@@ -942,7 +957,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.7.2</div>
+  <div class="home-ver" id="tb-ver">v1.8.0</div>
 </div>
 
 <!-- USERS -->
@@ -1485,9 +1500,9 @@ function rEdGrid(){
   a.steps.forEach((s,i)=>{
     const sc=mk('div','sc');sc.dataset.i=i;
     const box=mk('div','sc-box');
-    if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}
-    else if(s.mode==='text'&&s.text){const t=mk('div','sc-txt');t.textContent=s.text.substring(0,22);box.appendChild(t);}
-    else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent=s.mode==='text'?'📝':'🖼️';box.appendChild(p);}
+    if(s.mode==='text'){const t=mk('div','sc-txt');t.textContent=(s.label||'').substring(0,22);box.appendChild(t);}
+    else if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}
+    else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent='🖼️';box.appendChild(p);}
     const x=mk('button','sc-x');x.textContent='✕';x.onclick=e=>{e.stopPropagation();delStep(i);};box.appendChild(x);
     const dp=mk('button','sc-dup');dp.textContent='⧉';dp.title='Duplica step';dp.onclick=e=>{e.stopPropagation();dupStep(i);};box.appendChild(dp);
     const h=mk('div','sc-h');h.textContent='⠿';h.title='Trascina per riordinare';box.appendChild(h);
@@ -1614,7 +1629,7 @@ function rEdMini(){
   a.steps.forEach((s,i)=>{
     const e=mk('div','mn'+(i===ST.editIdx?' cur':''));
     const b=mk('div','mn-b');
-    if(s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
+    if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
     else b.textContent=s.mode==='text'?'📝':'🖼️';
     e.appendChild(b);
     const l=mk('div','mn-l');l.textContent=s.label;e.appendChild(l);
@@ -1636,55 +1651,60 @@ function rEdForm(){
   const db=mk('button','bsm d');db.style.marginLeft='auto';db.textContent='🗑 Elimina';db.onclick=()=>delStep(ST.editIdx);hd.appendChild(db);
   f.appendChild(hd);
 
-  // nome
-  const fg1=mkFG('🏷️ Nome step');
+  // ── Card 1: Nome ──
+  const c1=mk('div','ef-card');
+  c1.appendChild(mkCardT('🏷️','Nome dello step'));
   const i1=mk('input','inp');i1.type='text';i1.placeholder='es: Pranzo...';i1.value=s.label||'';i1.autocomplete='off';i1.setAttribute('inputmode','none');
   i1.addEventListener('input',()=>{const x=ga()?.steps[ST.editIdx];if(x){x.label=i1.value;markD();rEdMini();}});
-  fg1.appendChild(i1);f.appendChild(fg1);
+  c1.appendChild(i1);
+  f.appendChild(c1);
 
-  // modalità
-  const fg2=mkFG('👁️ Modalità');
-  const mr=mk('div','mrow');
-  [['image','🖼️ Immagine'],['image-text','🖼️+📝 Entrambi'],['text','📝 Testo']].forEach(p=>{
-    const b=mk('button','mbtn'+(s.mode===p[0]?' on':''));b.textContent=p[1];
-    b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.mode=p[0];save();rEdForm();rEdMini();}};
+  // ── Card 2: Modalità di visualizzazione ──
+  const c2=mk('div','ef-card');
+  c2.appendChild(mkCardT('👁️','Come mostrarlo'));
+  const mr=mk('div','mrow mrow-modes');
+  const modeInfo={
+    'image':   {lbl:'🖼️ Immagine',  hint:'Solo immagine, senza testo.'},
+    'text':    {lbl:'📝 Titolo',     hint:'Solo il nome dello step, scritto grande — nessuna immagine (agenda testuale).'},
+    'image-text': {lbl:'🖼️+📝 Entrambe', hint:'Immagine e nome dello step insieme, ben visibili.'},
+  };
+  ['image','text','image-text'].forEach(mv=>{
+    const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));b.textContent=modeInfo[mv].lbl;
+    b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.mode=mv;save();rEdForm();rEdMini();rEdGrid();}};
     mr.appendChild(b);
   });
-  fg2.appendChild(mr);f.appendChild(fg2);
+  c2.appendChild(mr);
+  const modeHint=mk('div','ef-hint');modeHint.textContent=modeInfo[s.mode]?.hint||'';
+  c2.appendChild(modeHint);
+  f.appendChild(c2);
 
-  // immagine
+  // ── Card 3: Immagine (solo se la modalità la prevede) ──
   if(s.mode!=='text'){
-    const fg3=mkFG('🖼️ Immagine');
-    const row=mk('div');row.style.cssText='display:flex;gap:9px;align-items:flex-start;flex-wrap:wrap';
+    const c3=mk('div','ef-card');
+    c3.appendChild(mkCardT('🖼️','Immagine'));
+    const row=mk('div');row.style.cssText='display:flex;gap:11px;align-items:flex-start;flex-wrap:wrap';
     const pv=mk('div','iprev');pv.onclick=()=>el('f-img').click();
     if(s.img){pv.classList.add('has-img');const im=mk('img');im.src=s.img;pv.appendChild(im);}else pv.textContent='🖼️';
     row.appendChild(pv);
-    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:6px;flex:1';
+    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex:1;min-width:140px';
     const sr=mk('div');sr.style.cssText='display:flex;gap:6px;flex-wrap:wrap';
     const b1=mk('button','mbtn');b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();sr.appendChild(b1);
     const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();sr.appendChild(b2);
     col.appendChild(sr);
     if(s.img){
       const rm=mk('button','bsm d');rm.style.alignSelf='flex-start';rm.textContent='✕ Rimuovi';
-      rm.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.img=null;save();rEdForm();rEdMini();}};
+      rm.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.img=null;save();rEdForm();rEdMini();rEdGrid();}};
       col.appendChild(rm);
     }
-    row.appendChild(col);fg3.appendChild(row);f.appendChild(fg3);
+    row.appendChild(col);c3.appendChild(row);
+    f.appendChild(c3);
   }
 
-  // testo
-  if(s.mode!=='image'){
-    const fg4=mkFG('📝 Testo');
-    const i2=mk('input','inp');i2.type='text';i2.placeholder='es: \u00c8 ora di pranzo!';i2.value=s.text||'';i2.autocomplete='off';i2.setAttribute('inputmode','none');
-    i2.addEventListener('input',()=>{const x=ga()?.steps[ST.editIdx];if(x){x.text=i2.value;markD();}});
-    fg4.appendChild(i2);f.appendChild(fg4);
-  }
-
-  // timer
-  const tb=mk('div','tbox');
+  // ── Card 4: Timer ──
+  const tb=mk('div','ef-card tbox');
   const tr=mk('div','tog-r');
   const tg=mk('div','tog'+(s.timer.on?' on':''));tr.appendChild(tg);
-  const tl=mk('span');tl.style.cssText='font-weight:700;font-size:.78rem';tl.textContent='⏱️ Timer';tr.appendChild(tl);
+  const tl=mk('span');tl.style.cssText='font-weight:800;font-size:.82rem';tl.textContent='⏱️ Timer';tr.appendChild(tl);
   tr.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.on=!x.timer.on;save();rEdForm();}};
   tb.appendChild(tr);
   if(s.timer.on){
@@ -1715,6 +1735,7 @@ function rEdForm(){
   }
   f.appendChild(tb);
 }
+function mkCardT(icon,txt){const t=mk('div','ef-card-t');t.innerHTML=icon+' '+esc(txt);return t;}
 function mkFG(t){const g=mk('div','fg');const l=mk('label','fl');l.textContent=t;g.appendChild(l);return g;}
 function mkColon(){const c=mk('div');c.style.cssText='font-weight:900;font-size:1rem;color:var(--mut);margin-bottom:8px';c.textContent=':';return c;}
 function mkTSel(lbl,max,cur,cb){
@@ -1945,7 +1966,7 @@ function rView(){
     VS.steps.forEach((s,i)=>{
       const c=mk('div','vlc');
       const b=mk('div','vlc-b');
-      if(s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
+      if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
       else b.textContent=s.mode==='text'?'📝':'🖼️';
       const n=mk('div','vlc-n');n.textContent=i+1;b.appendChild(n);
       c.appendChild(b);
@@ -1967,7 +1988,7 @@ function rStrip(){
     const e=mk('div','vsq'+(isImmediate?' vsq-next':''));
     const n=mk('div','vsq-n');n.textContent=i+1;e.appendChild(n);
     const b=mk('div','vsq-b');
-    if(s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
+    if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
     else b.textContent=s.mode==='text'?'📝':'🖼️';
     e.appendChild(b);
     const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);
@@ -1992,9 +2013,12 @@ function rCur(){
   ['tw-ring','tw-digi','tw-bar','tw-circ'].forEach(id=>el(id).classList.add('hidden'));
   clearTi();
   vn.textContent=s.label;
+  vn.classList.remove('hidden');
   if((s.mode==='image'||s.mode==='image-text')&&s.img){vi.src=s.img;vi.classList.remove('hidden');}
-  if(s.mode==='text'||(s.mode==='image-text'&&s.text)){vt.textContent=s.text||s.label;vt.classList.remove('hidden');}
-  if(s.mode==='text'&&!s.text){vt.textContent=s.label;vt.classList.remove('hidden');}
+  if(s.mode==='text'||s.mode==='image-text'){
+    vt.textContent=s.label;vt.classList.remove('hidden');
+    vn.classList.add('hidden'); // the big title already shows the name — no need to repeat it small below
+  }
   nb.disabled=(VS.idx>=VS.steps.length-1);
   nb.textContent=VS.idx>=VS.steps.length-1?'✓ Fine':'Avanti ▶';
   if(s.timer?.on){
@@ -2607,7 +2631,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.7.2';
+const APP_VERSION='1.8.0';
 let swReg=null;
 
 function initVersionDisplay(){
