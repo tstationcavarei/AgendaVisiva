@@ -973,7 +973,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.8</div>
+  <div class="home-ver" id="tb-ver">v1.9.9</div>
 </div>
 
 <!-- USERS -->
@@ -2021,7 +2021,7 @@ function rView(){
       else b.textContent='🖼️';
       const n=mk('div','vlc-n');n.textContent=i+1;b.appendChild(n);
       c.appendChild(b);
-      if(s.mode!=='text'){const l=mk('div','vlc-l');l.textContent=s.label;c.appendChild(l);}
+      if(s.mode==='image-text'){const l=mk('div','vlc-l');l.textContent=s.label;c.appendChild(l);}
       g.appendChild(c);
       if(textPreview) fitTextToBox(textPreview,6,20,b);
     });
@@ -2045,7 +2045,7 @@ function rStrip(){
     else if(s.mode==='text'){b.classList.add('is-txt');const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
     else b.textContent='🖼️';
     e.appendChild(b);
-    if(s.mode!=='text'){const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);}
+    if(s.mode==='image-text'){const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);}
     // The card right after the current one can be tapped to advance,
     // same as tapping the current activity itself
     if(isImmediate) e.onclick=()=>tryNav('next');
@@ -2068,7 +2068,11 @@ function rCur(){
   ['tw-ring','tw-digi','tw-bar','tw-circ'].forEach(id=>el(id).classList.add('hidden'));
   clearTi();
   vn.textContent=s.label;
-  vn.classList.remove('hidden');
+  if(s.mode==='image'){
+    vn.classList.add('hidden'); // image-only: no text at all in the viewer
+  } else {
+    vn.classList.remove('hidden');
+  }
   if((s.mode==='image'||s.mode==='image-text')&&s.img){vi.src=s.img;vi.classList.remove('hidden');}
   vt.classList.remove('vtxt-solo');
   vt.style.fontSize='';
@@ -2723,7 +2727,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.8';
+const APP_VERSION='1.9.9';
 let swReg=null;
 
 function initVersionDisplay(){
