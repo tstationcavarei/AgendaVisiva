@@ -569,7 +569,7 @@ html[data-tablet=on] .vctrl{
    A single rule covers every location where a text-only step can
    appear: creation-grid, launch-grid, upcoming-activities strip,
    and the main current-activity card. No theme interference. */
-.is-txt{background:#fff !important;color:#1a2340 !important;border-color:#c8dcee !important;}
+.is-txt{background:#fff !important;color:#1a2340 !important;}
 
    On advancing to a new step, the outgoing activity card slides down
    and out of view, then the incoming one slides down into place from
@@ -745,10 +745,8 @@ html[data-tablet=on] .vctrl{
 [data-theme=dark] .vsq-n{background:rgba(15,23,42,.85);color:#cfe0f5;}
 [data-theme=dark] .vmain{background:#0f172a;}
 [data-theme=dark] .vimgbl{box-shadow:0 0 0 3px rgba(6,214,160,.28),0 3px 14px rgba(6,214,160,.3);}
-[data-theme=dark] .vtxt{color:#e2eaf8;}
 /* Text-only mode: card is always black on white regardless of theme */
 .vtxt.vtxt-solo{color:#1a2340;}
-[data-theme=dark] .vnm{color:#9db3cf;}
 [data-theme=dark] .vtimer{background:#1a2438;border-color:#31415e;box-shadow:0 -4px 16px rgba(0,0,0,.3);}
 [data-theme=dark] .vtimer::before{color:#7bbce8;}
 [data-theme=dark] .rbg{stroke:#233754;}
@@ -975,7 +973,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.6</div>
+  <div class="home-ver" id="tb-ver">v1.9.8</div>
 </div>
 
 <!-- USERS -->
@@ -2725,7 +2723,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.6';
+const APP_VERSION='1.9.8';
 let swReg=null;
 
 function initVersionDisplay(){
