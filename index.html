@@ -580,6 +580,24 @@ html[data-tablet=on] .vctrl{
   100%{transform:translateY(120%);opacity:0;}
 }
 .vimgbl.step-out{animation:stepOut 1s ease-in forwards;}
+
+/* ── BACKWARD NAVIGATION ("Indietro") ──
+   There's no visible strip of *past* activities to travel from, so
+   instead of the clone-travel technique used going forward, going
+   back uses a simple, self-contained mirror: the card exits UPWARD
+   (opposite of the forward exit) and the previous activity enters
+   from BELOW, sliding up into place — a clear "rewind" feel that
+   reads as the reverse of moving forward, at a glance. */
+@keyframes stepOutUp{
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-120%);opacity:0;}
+}
+@keyframes stepInUp{
+  0%{transform:translateY(120%);opacity:0;}
+  100%{transform:translateY(0);opacity:1;}
+}
+.vimgbl.step-out-up{animation:stepOutUp 1s ease-in forwards;}
+.vimgbl.step-in-up{animation:stepInUp 2s cubic-bezier(.4,0,.2,1) forwards;}
 /* Incoming clone: JS animates its position/size directly (left/top/
    width/height) via the Web Animations API, moving it in one
    continuous physical motion from the strip thumbnail's spot down to
@@ -973,7 +991,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.9</div>
+  <div class="home-ver" id="tb-ver">v2.0.0</div>
 </div>
 
 <!-- USERS -->
@@ -2195,7 +2213,7 @@ function nextStep(){
 function prevStep(){
   if(VS.idx<=0)return;
   clearTi();
-  animateStepChange(()=>{VS.idx--;});
+  animateStepChangeBack(()=>{VS.idx--;});
 }
 // Full 3-second sequence:
 //  0.0s–1.0s  the current activity card slides down and out
@@ -2313,6 +2331,56 @@ function animateStepChange(updateFn){
   }, 1000);
   state.timeouts.push(t1);
 }
+
+// Full 3-second sequence for "Indietro" (backward navigation):
+//  0.0s–1.0s  the current activity card slides UP and out (opposite
+//             direction from the forward exit)
+//  1.0s–3.0s  the previous activity slides UP from below into place —
+//             a self-contained mirror animation, since there's no
+//             visible "past activities" strip to travel a clone from.
+function animateStepChangeBack(updateFn){
+  const card=el('v-card-outer');
+  if(!card){ updateFn(); rView(); return; }
+
+  // Same cancel-in-flight guard as the forward animation, so rapid
+  // taps or an interruption never leave two transitions running.
+  if(animState){
+    animState.timeouts.forEach(t=>clearTimeout(t));
+    if(animState.clone) animState.clone.remove();
+    card.classList.remove('step-out','step-out-up','step-in-up');
+    card.style.visibility='visible';
+    animState=null;
+  }
+  const state={timeouts:[],clone:null};
+  animState=state;
+
+  // ── ANIMATION 1 of 2: exit upward ──
+  card.classList.add('step-out-up');
+
+  const t1=setTimeout(()=>{
+    card.style.visibility='hidden';
+    card.classList.remove('step-out-up');
+
+    // Switch to the previous step and prepare the (still hidden) card.
+    updateFn();
+    rCur();
+    // No clone masks the strip this time, so it can update in the
+    // same synchronous batch as the reveal below — everything still
+    // settles into its final state in one single coordinated moment.
+    rStrip();
+
+    // ── ANIMATION 2 of 2: entrance from below ──
+    card.style.visibility='visible';
+    card.classList.add('step-in-up');
+    const t2=setTimeout(()=>{
+      card.classList.remove('step-in-up');
+      if(animState===state) animState=null;
+    },2000);
+    state.timeouts.push(t2);
+  },1000);
+  state.timeouts.push(t1);
+}
+
 function resetAgenda(){
   clearTi();
   cancelAnimState();
@@ -2332,7 +2400,7 @@ function cancelAnimState(){
   animState.timeouts.forEach(t=>clearTimeout(t));
   if(animState.clone) animState.clone.remove();
   const card=el('v-card-outer');
-  if(card){ card.classList.remove('step-out'); card.style.visibility='visible'; }
+  if(card){ card.classList.remove('step-out','step-out-up','step-in-up'); card.style.visibility='visible'; }
   animState=null;
 }
 
@@ -2727,7 +2795,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.9';
+const APP_VERSION='2.0.0';
 let swReg=null;
 
 function initVersionDisplay(){
