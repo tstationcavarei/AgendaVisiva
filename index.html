@@ -266,7 +266,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .sc-box{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px solid var(--brd);background:var(--bg2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
 .sc-box.has-img{background:#fff;}
 .sc-box img{width:100%;height:100%;object-fit:cover;background:#fff;}
-.sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;width:100%;min-width:0;}
+.sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;width:100%;min-width:0;color:inherit;}
 .sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;display:flex;align-items:center;justify-content:center;gap:5px;}
 .sc-num2{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:#06D6A0;color:#fff;font-size:.56rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
 .sc-x{position:absolute;top:3px;right:4px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
@@ -396,7 +396,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .vl-g{flex:1;min-height:0;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
 .vlc{display:flex;flex-direction:column;align-items:center;gap:3px;width:clamp(58px,9%,92px);}
 .vlc-b{width:100%;aspect-ratio:1/1;background:#b8dff0;border:2px solid #7ab8d8;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:1.3rem;}
-.vlc-txt{font-size:.5rem;font-weight:800;color:#2d5470;text-align:center;padding:5px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
+.vlc-txt{font-size:.5rem;font-weight:800;color:inherit;text-align:center;padding:5px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
 .vlc-b img{width:100%;height:100%;object-fit:cover;}
 .vlc-n{position:absolute;top:2px;left:3px;background:rgba(255,255,255,.88);color:#1a3060;border-radius:3px;font-size:.5rem;font-weight:900;padding:0 2px;}
 .vlc-l{font-size:.5rem;font-weight:700;color:#3a5070;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -521,7 +521,7 @@ html[data-tablet=on] .vctrl{
   font-size:.85rem;color:#5a8aa0;
 }
 .vsq-b img{width:100%;height:100%;object-fit:cover;}
-.vsq-txt{font-size:7px;font-weight:800;color:#2d5470;text-align:center;padding:3px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
+.vsq-txt{font-size:7px;font-weight:800;color:inherit;text-align:center;padding:3px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
 .vsq-l{flex-shrink:0;font-size:11px;line-height:1.25;font-weight:700;color:#4a6880;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .vsq-n{position:absolute;top:2px;left:2px;background:rgba(255,255,255,.9);color:#1a3060;border-radius:4px;font-size:10px;font-weight:900;padding:0 3px;z-index:2;}
 /* The card immediately after "current" is tappable to advance too */
@@ -565,7 +565,12 @@ html[data-tablet=on] .vctrl{
 .vtxt.vtxt-solo{flex:1;min-height:0;min-width:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .vnm{font-size:clamp(.56rem,1.4vh,.74rem);font-weight:700;color:#6a82a0;text-align:center;flex-shrink:0;}
 
-/* ── STEP TRANSITION ANIMATION ──
+/* ── TEXT-ONLY MODE: always white background, black text everywhere ──
+   A single rule covers every location where a text-only step can
+   appear: creation-grid, launch-grid, upcoming-activities strip,
+   and the main current-activity card. No theme interference. */
+.is-txt{background:#fff !important;color:#1a2340 !important;border-color:#c8dcee !important;}
+
    On advancing to a new step, the outgoing activity card slides down
    and out of view, then the incoming one slides down into place from
    just above, mimicking "the next one takes its spot". */
@@ -970,7 +975,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.5</div>
+  <div class="home-ver" id="tb-ver">v1.9.6</div>
 </div>
 
 <!-- USERS -->
@@ -1533,9 +1538,8 @@ function rEdGrid(){
     const sc=mk('div','sc');sc.dataset.i=i;
     const box=mk('div','sc-box');
     let textPreview=null;
-    if(s.mode==='text'){const t=mk('div','sc-txt');t.textContent=s.label||'';box.appendChild(t);textPreview=t;}
-    else if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}
-    else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent='🖼️';box.appendChild(p);}
+    if(s.mode==='text'){box.classList.add('is-txt');const t=mk('div','sc-txt');t.textContent=s.label||'';box.appendChild(t);textPreview=t;}
+    else{box.classList.remove('is-txt');if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent='🖼️';box.appendChild(p);}}
     const x=mk('button','sc-x');x.textContent='✕';x.onclick=e=>{e.stopPropagation();delStep(i);};box.appendChild(x);
     const dp=mk('button','sc-dup');dp.textContent='⧉';dp.title='Duplica step';dp.onclick=e=>{e.stopPropagation();dupStep(i);};box.appendChild(dp);
     const h=mk('div','sc-h');h.textContent='⠿';h.title='Trascina per riordinare';box.appendChild(h);
@@ -1671,7 +1675,8 @@ function rEdMini(){
     const e=mk('div','mn'+(i===ST.editIdx?' cur':''));
     const b=mk('div','mn-b');
     if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-    else b.textContent=s.mode==='text'?'📝':'🖼️';
+    else if(s.mode==='text'){b.classList.add('is-txt');b.textContent='📝';}
+    else b.textContent='🖼️';
     e.appendChild(b);
     const l=mk('div','mn-l');l.textContent=s.label;e.appendChild(l);
     e.onclick=()=>selStep(i);
@@ -2014,7 +2019,7 @@ function rView(){
       const b=mk('div','vlc-b');
       let textPreview=null;
       if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-      else if(s.mode==='text'){const t=mk('div','vlc-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
+      else if(s.mode==='text'){b.classList.add('is-txt');const t=mk('div','vlc-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
       else b.textContent='🖼️';
       const n=mk('div','vlc-n');n.textContent=i+1;b.appendChild(n);
       c.appendChild(b);
@@ -2039,7 +2044,7 @@ function rStrip(){
     const b=mk('div','vsq-b');
     let textPreview=null;
     if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
-    else if(s.mode==='text'){const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
+    else if(s.mode==='text'){b.classList.add('is-txt');const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
     else b.textContent='🖼️';
     e.appendChild(b);
     if(s.mode!=='text'){const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);}
@@ -2074,10 +2079,10 @@ function rCur(){
     vt.classList.add('vtxt-solo');
     vt.textContent=s.label;vt.classList.remove('hidden');
     vn.classList.add('hidden');
-    if(cardEl) cardEl.style.background='#fff'; // always white, even in dark mode
+    if(cardEl){cardEl.style.background='#fff';cardEl.classList.add('is-txt');}
     fitTextToBox(vt,14,72,vt);
   } else {
-    if(cardEl) cardEl.style.background=''; // let the theme take over
+    if(cardEl){cardEl.style.background='';cardEl.classList.remove('is-txt');}
     if(s.mode==='image-text'){
       vt.textContent=s.label;vt.classList.remove('hidden');
       vn.classList.add('hidden');
@@ -2720,7 +2725,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.5';
+const APP_VERSION='1.9.6';
 let swReg=null;
 
 function initVersionDisplay(){
