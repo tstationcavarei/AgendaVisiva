@@ -991,7 +991,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.3</div>
+  <div class="home-ver" id="tb-ver">v2.1.4</div>
 </div>
 
 <!-- USERS -->
@@ -2440,10 +2440,15 @@ function animateStepChangeBack(updateFn){
     const tf=setTimeout(()=>{
       card.style.visibility='hidden';
       card.classList.remove('step-out-up');
-      updateFn();rCur();rStrip();
+      updateFn();rCur();
       card.style.visibility='visible';
       card.classList.add('step-in-up');
-      const tf2=setTimeout(()=>{card.classList.remove('step-in-up');if(animState===state)animState=null;},2000);
+      const tf2=setTimeout(()=>{
+        card.classList.remove('step-in-up');
+        rStrip();
+        if(stripEl) stripEl.style.visibility='visible';
+        if(animState===state)animState=null;
+      },2000);
       state.timeouts.push(tf2);
     },1000);
     state.timeouts.push(tf);
@@ -2513,19 +2518,20 @@ function animateStepChangeBack(updateFn){
     state.clones.forEach(c=>c.remove());
     state.clones=[];
 
-    // Switch to the previous step now — this re-renders the strip
-    // with the correct, final layout (matching exactly where the
-    // clones just finished), and prepares the (still hidden) card.
+    // Switch to the previous step and prepare the (hidden) card.
+    // The strip is NOT revealed yet — it updates and becomes visible
+    // only at t2, in sync with the end of the card entrance, so text
+    // sizes never change while anything is visibly animating.
     updateFn();
     rCur();
-    rStrip();
-    if(stripEl) stripEl.style.visibility='visible';
 
     // ── New current activity rises from below into place ──
     card.style.visibility='visible';
     card.classList.add('step-in-up');
     const t2=setTimeout(()=>{
       card.classList.remove('step-in-up');
+      rStrip();                          // strip updates NOW — one coordinated reveal
+      if(stripEl) stripEl.style.visibility='visible';
       if(animState===state) animState=null;
     },2000);
     state.timeouts.push(t2);
@@ -2950,7 +2956,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.3';
+const APP_VERSION='2.1.4';
 let swReg=null;
 
 function initVersionDisplay(){
