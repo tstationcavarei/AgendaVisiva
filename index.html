@@ -991,7 +991,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.0</div>
+  <div class="home-ver" id="tb-ver">v2.1.2</div>
 </div>
 
 <!-- USERS -->
@@ -2122,7 +2122,44 @@ function rCur(){
     }
   }
 }
-function launchAgenda(){VS.idx=0;rView();}
+function launchAgenda(){
+  // Capture the first item's thumbnail from the launch grid BEFORE
+  // rView() tears the grid down and replaces it with the run view.
+  const firstThumb=el('v-lg')?.querySelector('.vlc .vlc-b');
+  const srcRect=firstThumb ? firstThumb.getBoundingClientRect() : null;
+  const srcHTML=firstThumb ? firstThumb.innerHTML : null;
+  const srcIsTxt=firstThumb?.classList.contains('is-txt');
+
+  VS.idx=0;
+  rView(); // replaces the launch grid with the viewer
+
+  const card=el('v-card-outer');
+  if(!card||!srcRect){ return; }
+
+  // Read the big card's final resting position (it's already rendered
+  // but we'll hide it until the clone arrives).
+  const dstRect=card.getBoundingClientRect();
+  card.style.visibility='hidden';
+
+  const clone=document.createElement('div');
+  clone.className='step-clone'+(srcIsTxt?' is-txt':'');
+  clone.style.left=srcRect.left+'px';
+  clone.style.top=srcRect.top+'px';
+  clone.style.width=srcRect.width+'px';
+  clone.style.height=srcRect.height+'px';
+  clone.innerHTML=srcHTML||'';
+  document.body.appendChild(clone);
+
+  clone.animate([
+    {left:srcRect.left+'px',top:srcRect.top+'px',width:srcRect.width+'px',height:srcRect.height+'px',borderColor:'#7ab8d8',borderWidth:'2px'},
+    {left:dstRect.left+'px',top:dstRect.top+'px',width:dstRect.width+'px',height:dstRect.height+'px',borderColor:'#06D6A0',borderWidth:'6px'}
+  ],{duration:2000,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+
+  setTimeout(()=>{
+    clone.remove();
+    card.style.visibility='visible';
+  },2000);
+}
 function fmtT(sec){
   const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
   if(h>0)return h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
@@ -2911,7 +2948,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.0';
+const APP_VERSION='2.1.2';
 let swReg=null;
 
 function initVersionDisplay(){
