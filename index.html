@@ -741,6 +741,8 @@ html[data-tablet=on] .vctrl{
 [data-theme=dark] .vmain{background:#0f172a;}
 [data-theme=dark] .vimgbl{box-shadow:0 0 0 3px rgba(6,214,160,.28),0 3px 14px rgba(6,214,160,.3);}
 [data-theme=dark] .vtxt{color:#e2eaf8;}
+/* Text-only mode: card is always black on white regardless of theme */
+.vtxt.vtxt-solo{color:#1a2340;}
 [data-theme=dark] .vnm{color:#9db3cf;}
 [data-theme=dark] .vtimer{background:#1a2438;border-color:#31415e;box-shadow:0 -4px 16px rgba(0,0,0,.3);}
 [data-theme=dark] .vtimer::before{color:#7bbce8;}
@@ -968,7 +970,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v1.9.4</div>
+  <div class="home-ver" id="tb-ver">v1.9.5</div>
 </div>
 
 <!-- USERS -->
@@ -2066,19 +2068,20 @@ function rCur(){
   vn.classList.remove('hidden');
   if((s.mode==='image'||s.mode==='image-text')&&s.img){vi.src=s.img;vi.classList.remove('hidden');}
   vt.classList.remove('vtxt-solo');
-  vt.style.fontSize=''; // clear any leftover auto-fit size from a previous text-only step
+  vt.style.fontSize='';
+  const cardEl=el('v-card-outer');
   if(s.mode==='text'){
-    // Pure text step: no image at all, so the title can freely use
-    // the whole card — shrink-to-fit keeps it as large as possible.
     vt.classList.add('vtxt-solo');
     vt.textContent=s.label;vt.classList.remove('hidden');
-    vn.classList.add('hidden'); // the big title already shows the name — no need to repeat it small below
-    fitTextToBox(vt,14,72,vt);
-  } else if(s.mode==='image-text'){
-    // Entrambe: image gets priority, text below uses the original
-    // fixed/responsive size — unchanged from previous versions.
-    vt.textContent=s.label;vt.classList.remove('hidden');
     vn.classList.add('hidden');
+    if(cardEl) cardEl.style.background='#fff'; // always white, even in dark mode
+    fitTextToBox(vt,14,72,vt);
+  } else {
+    if(cardEl) cardEl.style.background=''; // let the theme take over
+    if(s.mode==='image-text'){
+      vt.textContent=s.label;vt.classList.remove('hidden');
+      vn.classList.add('hidden');
+    }
   }
   nb.disabled=(VS.idx>=VS.steps.length-1);
   nb.textContent=VS.idx>=VS.steps.length-1?'✓ Fine':'Avanti ▶';
@@ -2717,7 +2720,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='1.9.4';
+const APP_VERSION='1.9.5';
 let swReg=null;
 
 function initVersionDisplay(){
