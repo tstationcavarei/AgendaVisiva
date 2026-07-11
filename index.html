@@ -991,7 +991,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.0.0</div>
+  <div class="home-ver" id="tb-ver">v2.1.0</div>
 </div>
 
 <!-- USERS -->
@@ -2236,8 +2236,11 @@ function animateStepChange(updateFn){
   if(animState){
     animState.timeouts.forEach(t=>clearTimeout(t));
     if(animState.clone) animState.clone.remove();
-    card.classList.remove('step-out');
+    (animState.clones||[]).forEach(c=>c.remove());
+    card.classList.remove('step-out','step-out-up','step-in-up');
     card.style.visibility='visible';
+    const stripElG=el('v-strip');
+    if(stripElG) stripElG.style.visibility='visible';
     animState=null;
   }
   const state={timeouts:[],clone:null};
@@ -2332,44 +2335,154 @@ function animateStepChange(updateFn){
   state.timeouts.push(t1);
 }
 
-// Full 3-second sequence for "Indietro" (backward navigation):
-//  0.0s–1.0s  the current activity card slides UP and out (opposite
-//             direction from the forward exit)
-//  1.0s–3.0s  the previous activity slides UP from below into place —
-//             a self-contained mirror animation, since there's no
-//             visible "past activities" strip to travel a clone from.
+// Full sequence for "Indietro" (backward navigation), mirroring the
+// forward one but geometrically correct: the current activity is
+// about to BECOME the first item in the upcoming-activities strip,
+// so instead of a generic "slide off the top" exit, its image/text
+// physically travels UP into that exact slot — after the existing
+// strip items have shifted right to make room for it, just like a
+// real deck of cards being reordered.
+//  0.0s–1.2s  existing strip items shift right by one slot; the
+//             current card simultaneously shrinks and travels into
+//             the newly-freed first slot
+//  1.2s–3.0s  the real strip (now correctly showing the previous
+//             current step first) is revealed exactly where the
+//             clones ended up, and the new current activity (the
+//             actual previous step) rises from below into the big
+//             card position
 function animateStepChangeBack(updateFn){
   const card=el('v-card-outer');
+  const stripEl=el('v-strip');
   if(!card){ updateFn(); rView(); return; }
 
-  // Same cancel-in-flight guard as the forward animation, so rapid
-  // taps or an interruption never leave two transitions running.
   if(animState){
     animState.timeouts.forEach(t=>clearTimeout(t));
+    (animState.clones||[]).forEach(c=>c.remove());
     if(animState.clone) animState.clone.remove();
     card.classList.remove('step-out','step-out-up','step-in-up');
     card.style.visibility='visible';
+    if(stripEl) stripEl.style.visibility='visible';
     animState=null;
   }
-  const state={timeouts:[],clone:null};
+  const state={timeouts:[],clones:[],clone:null};
   animState=state;
 
-  // ── ANIMATION 1 of 2: exit upward ──
-  card.classList.add('step-out-up');
+  const SHIFT_MS=1200;
+
+  // Capture the current big card's real position/size and content —
+  // this is our shrink-travel source.
+  const cardRect=card.getBoundingClientRect();
+  const curStep=VS.steps[VS.idx];
+  const curVi=el('v-img'), curVt=el('v-txt');
+  const cardIsImg = curStep.mode!=='text' && !curVi.classList.contains('hidden') && curVi.src;
+  const cardIsTxt = curStep.mode==='text';
+
+  // Capture the existing strip items (before anything changes) — we
+  // need each one's real on-screen slot so we can slide it exactly
+  // one slot to the right.
+  const oldSlots=Array.from(stripEl?stripEl.querySelectorAll('.vsq'):[]).map(itemEl=>{
+    const b=itemEl.querySelector('.vsq-b');
+    return b ? {rect:b.getBoundingClientRect(), html:b.innerHTML, isTxt:b.classList.contains('is-txt'), hasImg:b.classList.contains('has-img')} : null;
+  }).filter(Boolean);
+
+  // Work out where slot 0 (the leftmost, currently-empty-after-shift
+  // slot) sits, and how wide one slot+gap is — needed to place clones
+  // for slots that didn't exist yet in the old strip.
+  const slot0Rect = oldSlots.length ? oldSlots[0].rect : null;
+  const slotStep = oldSlots.length>1
+    ? (oldSlots[1].rect.left - oldSlots[0].rect.left)
+    : (slot0Rect ? slot0Rect.width+7 : 0);
+
+  // If there's no strip at all (edge case: this is the very first
+  // step, going back further isn't even possible — but guard anyway)
+  // fall back to the simple generic mirror animation.
+  if(!slot0Rect){
+    card.classList.add('step-out-up');
+    const tf=setTimeout(()=>{
+      card.style.visibility='hidden';
+      card.classList.remove('step-out-up');
+      updateFn();rCur();rStrip();
+      card.style.visibility='visible';
+      card.classList.add('step-in-up');
+      const tf2=setTimeout(()=>{card.classList.remove('step-in-up');if(animState===state)animState=null;},2000);
+      state.timeouts.push(tf2);
+    },1000);
+    state.timeouts.push(tf);
+    return;
+  }
+
+  // Hide the real card and real strip — clones stand in for both
+  // during the shift, so nothing doubles up on screen.
+  card.style.visibility='hidden';
+  if(stripEl) stripEl.style.visibility='hidden';
+
+  // ── Clone 1: the current card shrinking into slot 0 ──
+  const cardClone=document.createElement('div');
+  cardClone.className='step-clone';
+  cardClone.style.left=cardRect.left+'px';
+  cardClone.style.top=cardRect.top+'px';
+  cardClone.style.width=cardRect.width+'px';
+  cardClone.style.height=cardRect.height+'px';
+  cardClone.style.borderColor='#06D6A0';
+  cardClone.style.borderWidth='6px';
+  cardClone.style.background='#fff';
+  let cloneInnerTxt=null;
+  if(cardIsImg){
+    const im=document.createElement('img');im.src=curVi.src;cardClone.appendChild(im);
+  } else if(cardIsTxt){
+    cloneInnerTxt=document.createElement('div');
+    cloneInnerTxt.className='vsq-txt';
+    cloneInnerTxt.textContent=curStep.label||'';
+    cloneInnerTxt.style.fontSize=(parseFloat(curVt.style.fontSize)||22)+'px';
+    cloneInnerTxt.style.color='inherit';
+    cardClone.appendChild(cloneInnerTxt);
+    cardClone.classList.add('is-txt');
+  }
+  document.body.appendChild(cardClone);
+  state.clones.push(cardClone);
+  cardClone.animate([
+    {left:cardRect.left+'px',top:cardRect.top+'px',width:cardRect.width+'px',height:cardRect.height+'px',borderColor:'#06D6A0',borderWidth:'6px'},
+    {left:slot0Rect.left+'px',top:slot0Rect.top+'px',width:slot0Rect.width+'px',height:slot0Rect.height+'px',borderColor:'#7ab8d8',borderWidth:'2px'}
+  ],{duration:SHIFT_MS,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+  if(cloneInnerTxt){
+    const dstFontPx=7; // matches .vsq-txt's own font-size ceiling
+    cloneInnerTxt.animate(
+      [{fontSize:cloneInnerTxt.style.fontSize},{fontSize:dstFontPx+'px'}],
+      {duration:SHIFT_MS,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}
+    );
+  }
+
+  // ── Clones 2..n: existing strip items sliding one slot to the right ──
+  oldSlots.forEach((slot,i)=>{
+    const c=document.createElement('div');
+    c.className='step-clone'+(slot.isTxt?' is-txt':'');
+    c.style.left=slot.rect.left+'px';
+    c.style.top=slot.rect.top+'px';
+    c.style.width=slot.rect.width+'px';
+    c.style.height=slot.rect.height+'px';
+    c.innerHTML=slot.html;
+    document.body.appendChild(c);
+    state.clones.push(c);
+    const dstLeft=slot0Rect.left+(i+1)*slotStep;
+    c.animate([
+      {left:slot.rect.left+'px',top:slot.rect.top+'px'},
+      {left:dstLeft+'px',top:slot.rect.top+'px'}
+    ],{duration:SHIFT_MS,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+  });
 
   const t1=setTimeout(()=>{
-    card.style.visibility='hidden';
-    card.classList.remove('step-out-up');
+    state.clones.forEach(c=>c.remove());
+    state.clones=[];
 
-    // Switch to the previous step and prepare the (still hidden) card.
+    // Switch to the previous step now — this re-renders the strip
+    // with the correct, final layout (matching exactly where the
+    // clones just finished), and prepares the (still hidden) card.
     updateFn();
     rCur();
-    // No clone masks the strip this time, so it can update in the
-    // same synchronous batch as the reveal below — everything still
-    // settles into its final state in one single coordinated moment.
     rStrip();
+    if(stripEl) stripEl.style.visibility='visible';
 
-    // ── ANIMATION 2 of 2: entrance from below ──
+    // ── New current activity rises from below into place ──
     card.style.visibility='visible';
     card.classList.add('step-in-up');
     const t2=setTimeout(()=>{
@@ -2377,7 +2490,7 @@ function animateStepChangeBack(updateFn){
       if(animState===state) animState=null;
     },2000);
     state.timeouts.push(t2);
-  },1000);
+  },SHIFT_MS);
   state.timeouts.push(t1);
 }
 
@@ -2399,8 +2512,11 @@ function cancelAnimState(){
   if(!animState)return;
   animState.timeouts.forEach(t=>clearTimeout(t));
   if(animState.clone) animState.clone.remove();
+  (animState.clones||[]).forEach(c=>c.remove());
   const card=el('v-card-outer');
   if(card){ card.classList.remove('step-out','step-out-up','step-in-up'); card.style.visibility='visible'; }
+  const stripEl=el('v-strip');
+  if(stripEl) stripEl.style.visibility='visible';
   animState=null;
 }
 
@@ -2795,7 +2911,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.0.0';
+const APP_VERSION='2.1.0';
 let swReg=null;
 
 function initVersionDisplay(){
