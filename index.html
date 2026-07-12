@@ -1024,7 +1024,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.9</div>
+  <div class="home-ver" id="tb-ver">v2.2.0</div>
 </div>
 
 <!-- USERS -->
@@ -1840,7 +1840,7 @@ function rEdForm(){
     timerMain.appendChild(timerLeft);
 
     // Preview timer — stessa dimensione della preview immagine, allineata a destra
-    const pvWrap=mk('div');pvWrap.style.cssText='flex-shrink:0;display:flex;align-items:center;justify-content:center;';
+    const pvWrap=mk('div');pvWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
     const pv=mk('div');
     pv.style.cssText='width:120px;height:120px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--brd);border-radius:12px;background:var(--bg2);overflow:hidden;';
     // Build a miniature of the selected timer type at 50% progress
@@ -3051,7 +3051,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.9';
+const APP_VERSION='2.2.0';
 let swReg=null;
 
 function initVersionDisplay(){
