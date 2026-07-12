@@ -140,9 +140,10 @@ html[data-tablet=on] .acard-n{font-size:1.05rem;}
 html[data-tablet=on] .acard-m{font-size:.8rem;}
 /* Step editor cards */
 html[data-tablet=on] .sc-num2{width:22px;height:22px;font-size:.72rem;}
-html[data-tablet=on] .sc-x{width:30px;height:30px;font-size:.85rem;}
-html[data-tablet=on] .sc-h{width:34px;height:34px;font-size:1.05rem;}
-html[data-tablet=on] .sc-dup{width:36px;height:36px;font-size:.9rem;}
+html[data-tablet=on] .sc-x{width:26px;height:26px;font-size:.78rem;}
+html[data-tablet=on] .sc-h{width:30px;height:30px;font-size:.95rem;}
+html[data-tablet=on] .sc-dup{width:28px;height:28px;font-size:.78rem;}
+html[data-tablet=on] .sc-ed{width:30px;height:30px;font-size:.88rem;}
 html[data-tablet=on] .sc-l{font-size:.92rem;}
 /* Editor mini-strip and timer picker chips */
 html[data-tablet=on] .mn{width:60px;}
@@ -269,9 +270,10 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .sc-txt{font-size:.5rem;font-weight:800;text-align:center;padding:5px;line-height:1.25;width:100%;min-width:0;color:inherit;}
 .sc-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;width:100%;overflow:visible;white-space:normal;line-height:1.25;display:flex;align-items:center;justify-content:center;gap:5px;}
 .sc-num2{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:#06D6A0;color:#fff;font-size:.56rem;font-weight:900;display:flex;align-items:center;justify-content:center;}
-.sc-x{position:absolute;top:3px;right:4px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.sc-h{position:absolute;bottom:3px;right:4px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(0,0,0,.4);background:rgba(255,255,255,.85);border-radius:6px;cursor:grab;}
-.sc-dup{position:absolute;bottom:3px;left:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;background:var(--acc);border:none;border-radius:50%;cursor:pointer;}
+.sc-x{position:absolute;top:3px;right:3px;background:var(--red);color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:.55rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.sc-h{position:absolute;bottom:3px;right:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.88rem;color:rgba(0,0,0,.4);background:rgba(255,255,255,.85);border-radius:6px;cursor:grab;}
+.sc-dup{position:absolute;bottom:3px;left:3px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.62rem;color:#fff;background:var(--acc);border:none;border-radius:50%;cursor:pointer;}
+.sc-ed{position:absolute;top:3px;left:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#fff;background:var(--grn);border:none;border-radius:50%;cursor:pointer;}
 .sc.dragging{opacity:.3;}
 .sc.dover .sc-box{border-color:var(--grn);box-shadow:0 0 0 3px rgba(6,214,160,.3);}
 .sc-add .sc-box{border:2.5px dashed var(--grn);background:rgba(6,214,160,.07);font-size:1.9rem;color:var(--grn);}
@@ -991,7 +993,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.4</div>
+  <div class="home-ver" id="tb-ver">v2.1.5</div>
 </div>
 
 <!-- USERS -->
@@ -1557,6 +1559,7 @@ function rEdGrid(){
     if(s.mode==='text'){box.classList.add('is-txt');const t=mk('div','sc-txt');t.textContent=s.label||'';box.appendChild(t);textPreview=t;}
     else{box.classList.remove('is-txt');if(s.img){box.classList.add('has-img');const im=mk('img');im.src=s.img;box.appendChild(im);}else{const p=mk('div');p.style.cssText='font-size:1.5rem;opacity:.3';p.textContent='🖼️';box.appendChild(p);}}
     const x=mk('button','sc-x');x.textContent='✕';x.onclick=e=>{e.stopPropagation();delStep(i);};box.appendChild(x);
+    const ed=mk('button','sc-ed');ed.textContent='✏️';ed.title='Modifica step';ed.onclick=e=>{e.stopPropagation();selStep(i);};box.appendChild(ed);
     const dp=mk('button','sc-dup');dp.textContent='⧉';dp.title='Duplica step';dp.onclick=e=>{e.stopPropagation();dupStep(i);};box.appendChild(dp);
     const h=mk('div','sc-h');h.textContent='⠿';h.title='Trascina per riordinare';box.appendChild(h);
     sc.appendChild(box);
@@ -1569,7 +1572,7 @@ function rEdGrid(){
       l.appendChild(lblSpan);
     }
     sc.appendChild(l);
-    sc.onclick=()=>selStep(i);
+    // editing requires the explicit ✏️ button — tap on card does nothing
     // drag&drop mouse
     sc.draggable=true;
     sc.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(i));setTimeout(()=>sc.classList.add('dragging'),0);});
@@ -2963,7 +2966,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.4';
+const APP_VERSION='2.1.5';
 let swReg=null;
 
 function initVersionDisplay(){
