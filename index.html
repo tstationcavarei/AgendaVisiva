@@ -991,7 +991,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.3</div>
+  <div class="home-ver" id="tb-ver">v2.1.4</div>
 </div>
 
 <!-- USERS -->
@@ -2906,6 +2906,19 @@ function kDel(){
 document.addEventListener('focusin',e=>{
   if(e.target.classList&&e.target.classList.contains('inp'))kbdOpen(e.target);
 });
+// Tablet mode: pressing Enter on a text field dismisses the native
+// keyboard by blurring the field — the same effect as tapping outside
+// or pressing the Android back button, but directly from the keyboard.
+// Skip this for the password modal, where Enter already triggers submit.
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  if(!CFG.tablet)return;
+  const t=e.target;
+  if(!(t.classList&&t.classList.contains('inp')))return;
+  if(t===el('m-pw-inp'))return; // password modal handles Enter itself
+  e.preventDefault();
+  t.blur();
+});
 // Tablet mode: remove the topbar-docked modal positioning once focus
 // leaves every text field (with a short delay so tabbing between two
 // fields in the same modal doesn't flicker the docking off and on)
@@ -2950,7 +2963,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.3';
+const APP_VERSION='2.1.4';
 let swReg=null;
 
 function initVersionDisplay(){
