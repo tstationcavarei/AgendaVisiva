@@ -155,6 +155,7 @@ html[data-tablet=on] .iprev{width:150px;height:150px;font-size:2.6rem;}
 html[data-tablet=on] .ef-card{padding:16px 18px;gap:12px;border-radius:16px;}
 html[data-tablet=on] .ef-card-t{font-size:.92rem;}
 html[data-tablet=on] .mbtn-mode{font-size:.88rem;padding:11px 8px;}
+html[data-tablet=on] .ef-hint{font-size:.84rem;padding:10px 13px;}
 html[data-tablet=on] .ar-img{width:70px;height:70px;}
 html[data-tablet=on] .tog{width:46px;height:26px;}
 html[data-tablet=on] .tog::after{width:20px;height:20px;}
@@ -343,19 +344,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .mbtn.on{background:var(--acc);border-color:var(--acc);color:#fff;}
 .mrow-modes{display:flex;gap:7px;}
 .mbtn-mode{flex:1;padding:9px 6px;font-size:.74rem;text-align:center;}
-/* Live preview of the selected mode outcome — sits to the right of the
-   three stacked mode buttons and shows a miniature of the real result */
-.mode-prev{
-  flex-shrink:0;
-  width:90px;height:90px;
-  border:3px solid #06D6A0;border-radius:12px;
-  background:#fff;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;position:relative;font-size:.85rem;
-}
-.mode-prev-txt{
-  font-weight:900;color:#1a2340;text-align:center;
-  padding:5px;line-height:1.2;width:100%;min-width:0;
-}
+.ef-hint{font-size:.7rem;color:var(--mut);font-weight:600;line-height:1.4;background:var(--bg2);border-radius:8px;padding:8px 11px;}
 .iprev{width:120px;height:120px;border:3px dashed var(--brd);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--bg);overflow:hidden;cursor:pointer;flex-shrink:0;}
 .iprev.has-img{background:#fff;}
 .iprev img{background:#fff;}
@@ -1035,7 +1024,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.2.2</div>
+  <div class="home-ver" id="tb-ver">v2.1.7</div>
 </div>
 
 <!-- USERS -->
@@ -1774,71 +1763,41 @@ function rEdForm(){
   // ── Card 2: Modalità di visualizzazione ──
   const c2=mk('div','ef-card');
   c2.appendChild(mkCardT('👁️','Come mostrarlo'));
-  const modeRow=mk('div');modeRow.style.cssText='display:flex;gap:10px;align-items:center;';
-
-  // Far left: tiny stacked buttons
-  const modeCol=mk('div');modeCol.style.cssText='display:flex;flex-direction:column;gap:4px;flex-shrink:0;';
+  const mr=mk('div','mrow mrow-modes');
+  const modeInfo={
+    'image':   {lbl:'🖼️ Immagine',  hint:'Solo immagine, senza testo.'},
+    'text':    {lbl:'📝 Testo',     hint:'Solo il nome dello step, scritto grande — nessuna immagine (agenda testuale).'},
+    'image-text': {lbl:'🖼️+📝 Entrambe', hint:'Immagine e nome dello step insieme, ben visibili.'},
+  };
   ['image','text','image-text'].forEach(mv=>{
-    const lbl={'image':'🖼️','text':'📝','image-text':'🖼️+📝'}[mv];
-    const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));
-    b.textContent=lbl;
-    b.title={'image':'Immagine','text':'Testo','image-text':'Entrambe'}[mv];
-    b.style.cssText='padding:5px 8px;font-size:.68rem;white-space:nowrap;';
+    const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));b.textContent=modeInfo[mv].lbl;
     b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.mode=mv;save();rEdForm();rEdMini();rEdGrid();}};
-    modeCol.appendChild(b);
+    mr.appendChild(b);
   });
-  modeRow.appendChild(modeCol);
-
-  // Center: preview square, rest of space is blank white card background
-  const prevWrap=mk('div');prevWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
-  const prev=mk('div','mode-prev');
-  const previewImg=s.img ? `<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;border-radius:9px;display:block;">` : '<div style="font-size:2rem;opacity:.4">🖼️</div>';
-  const previewTxt=`<div class="mode-prev-txt">${esc(s.label||'Nome')}</div>`;
-  if(s.mode==='image'){
-    prev.innerHTML=previewImg;
-  } else if(s.mode==='text'){
-    prev.innerHTML=previewTxt;
-    prev.classList.add('is-txt');
-    requestAnimationFrame(()=>{const pt=prev.querySelector('.mode-prev-txt');if(pt)fitTextToBox(pt,7,22,prev);});
-  } else {
-    prev.style.flexDirection='column';
-    prev.innerHTML=`<div style="flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;">${previewImg}</div>${previewTxt}`;
-  }
-  prevWrap.appendChild(prev);
-  modeRow.appendChild(prevWrap);
-  c2.appendChild(modeRow);
+  c2.appendChild(mr);
+  const modeHint=mk('div','ef-hint');modeHint.textContent=modeInfo[s.mode]?.hint||'';
+  c2.appendChild(modeHint);
   f.appendChild(c2);
 
   // ── Card 3: Immagine (solo se la modalità la prevede) ──
   if(s.mode!=='text'){
     const c3=mk('div','ef-card');
     c3.appendChild(mkCardT('🖼️','Immagine'));
-    const imgRow=mk('div');imgRow.style.cssText='display:flex;gap:10px;align-items:center;';
-
-    // Far left: tiny stacked buttons
-    const imgCol=mk('div');imgCol.style.cssText='display:flex;flex-direction:column;gap:4px;flex-shrink:0;';
-    const b1=mk('button','mbtn');b1.style.cssText='padding:5px 8px;font-size:.68rem;white-space:nowrap;';b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();imgCol.appendChild(b1);
-    const b2=mk('button','mbtn');b2.style.cssText='padding:5px 8px;font-size:.68rem;white-space:nowrap;';b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();imgCol.appendChild(b2);
+    const row=mk('div');row.style.cssText='display:flex;gap:11px;align-items:flex-start;flex-wrap:wrap';
+    const pv=mk('div','iprev');pv.onclick=()=>el('f-img').click();
+    if(s.img){pv.classList.add('has-img');const im=mk('img');im.src=s.img;pv.appendChild(im);}else pv.textContent='🖼️';
+    row.appendChild(pv);
+    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex:1;min-width:140px';
+    const sr=mk('div');sr.style.cssText='display:flex;gap:6px;flex-wrap:wrap';
+    const b1=mk('button','mbtn');b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();sr.appendChild(b1);
+    const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();sr.appendChild(b2);
+    col.appendChild(sr);
     if(s.img){
-      const rm=mk('button','bsm d');rm.style.cssText='padding:5px 8px;font-size:.64rem;white-space:nowrap;';rm.textContent='✕ Rimuovi';
+      const rm=mk('button','bsm d');rm.style.alignSelf='flex-start';rm.textContent='✕ Rimuovi';
       rm.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.img=null;save();rEdForm();rEdMini();rEdGrid();}};
-      imgCol.appendChild(rm);
+      col.appendChild(rm);
     }
-    imgRow.appendChild(imgCol);
-
-    // Center: preview square
-    const ipvWrap=mk('div');ipvWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
-    const ipv=mk('div','mode-prev');ipv.style.cursor='pointer';ipv.onclick=()=>el('f-img').click();
-    if(s.img){
-      ipv.classList.add('has-img');
-      const im=mk('img');im.src=s.img;im.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:9px;display:block;';
-      ipv.appendChild(im);
-    } else {
-      ipv.innerHTML='<div style="text-align:center;"><div style="font-size:2rem;opacity:.4">🖼️</div><div style="font-size:.55rem;color:var(--mut);font-weight:700;margin-top:4px;">Tocca per aggiungere</div></div>';
-    }
-    ipvWrap.appendChild(ipv);
-    imgRow.appendChild(ipvWrap);
-    c3.appendChild(imgRow);
+    row.appendChild(col);c3.appendChild(row);
     f.appendChild(c3);
   }
 
@@ -3038,7 +2997,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.2.2';
+const APP_VERSION='2.1.7';
 let swReg=null;
 
 function initVersionDisplay(){
