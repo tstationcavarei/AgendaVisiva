@@ -155,7 +155,6 @@ html[data-tablet=on] .iprev{width:150px;height:150px;font-size:2.6rem;}
 html[data-tablet=on] .ef-card{padding:16px 18px;gap:12px;border-radius:16px;}
 html[data-tablet=on] .ef-card-t{font-size:.92rem;}
 html[data-tablet=on] .mbtn-mode{font-size:.88rem;padding:11px 8px;}
-html[data-tablet=on] .ef-hint{font-size:.84rem;padding:10px 13px;}
 html[data-tablet=on] .ar-img{width:70px;height:70px;}
 html[data-tablet=on] .tog{width:46px;height:26px;}
 html[data-tablet=on] .tog::after{width:20px;height:20px;}
@@ -344,7 +343,17 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .mbtn.on{background:var(--acc);border-color:var(--acc);color:#fff;}
 .mrow-modes{display:flex;gap:7px;}
 .mbtn-mode{flex:1;padding:9px 6px;font-size:.74rem;text-align:center;}
-.ef-hint{font-size:.7rem;color:var(--mut);font-weight:600;line-height:1.4;background:var(--bg2);border-radius:8px;padding:8px 11px;}
+/* Live preview of the selected mode outcome — sits to the right of the
+   three stacked mode buttons and shows a miniature of the real result */
+.mode-prev{
+  flex:1;min-height:90px;border:3px solid #06D6A0;border-radius:12px;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;position:relative;font-size:.85rem;
+}
+.mode-prev-txt{
+  font-weight:900;color:#1a2340;text-align:center;
+  padding:5px;line-height:1.2;width:100%;min-width:0;
+}
 .iprev{width:120px;height:120px;border:3px dashed var(--brd);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--bg);overflow:hidden;cursor:pointer;flex-shrink:0;}
 .iprev.has-img{background:#fff;}
 .iprev img{background:#fff;}
@@ -1024,7 +1033,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.7</div>
+  <div class="home-ver" id="tb-ver">v2.2.0</div>
 </div>
 
 <!-- USERS -->
@@ -1763,20 +1772,43 @@ function rEdForm(){
   // ── Card 2: Modalità di visualizzazione ──
   const c2=mk('div','ef-card');
   c2.appendChild(mkCardT('👁️','Come mostrarlo'));
-  const mr=mk('div','mrow mrow-modes');
-  const modeInfo={
-    'image':   {lbl:'🖼️ Immagine',  hint:'Solo immagine, senza testo.'},
-    'text':    {lbl:'📝 Testo',     hint:'Solo il nome dello step, scritto grande — nessuna immagine (agenda testuale).'},
-    'image-text': {lbl:'🖼️+📝 Entrambe', hint:'Immagine e nome dello step insieme, ben visibili.'},
-  };
+  const modeRow=mk('div');modeRow.style.cssText='display:flex;gap:12px;align-items:stretch;';
+
+  // Left column: three stacked mode buttons
+  const modeCol=mk('div');modeCol.style.cssText='display:flex;flex-direction:column;gap:6px;flex-shrink:0;';
   ['image','text','image-text'].forEach(mv=>{
-    const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));b.textContent=modeInfo[mv].lbl;
+    const lbl={'image':'🖼️ Immagine','text':'📝 Testo','image-text':'🖼️+📝 Entrambe'}[mv];
+    const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));
+    b.textContent=lbl;
+    b.style.cssText='width:100%;text-align:left;padding:7px 10px;font-size:.7rem;';
     b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.mode=mv;save();rEdForm();rEdMini();rEdGrid();}};
-    mr.appendChild(b);
+    modeCol.appendChild(b);
   });
-  c2.appendChild(mr);
-  const modeHint=mk('div','ef-hint');modeHint.textContent=modeInfo[s.mode]?.hint||'';
-  c2.appendChild(modeHint);
+  modeRow.appendChild(modeCol);
+
+  // Right side: live visual preview of the current mode outcome
+  const prev=mk('div','mode-prev');
+  const previewImg=s.img ? `<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;background:#fff;">` : '<div style="font-size:1.8rem;opacity:.5">🖼️</div>';
+  const previewTxt=`<div class="mode-prev-txt">${esc(s.label||'Nome attività')}</div>`;
+  if(s.mode==='image'){
+    prev.innerHTML=previewImg;
+    prev.classList.toggle('is-txt',false);
+  } else if(s.mode==='text'){
+    prev.innerHTML=previewTxt;
+    prev.classList.add('is-txt');
+    // fit text to the preview box after it's in the DOM
+    requestAnimationFrame(()=>{
+      const pt=prev.querySelector('.mode-prev-txt');
+      if(pt) fitTextToBox(pt,7,22,prev);
+    });
+  } else {
+    prev.innerHTML=`<div style="flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;">${previewImg}</div>${previewTxt}`;
+    prev.style.flexDirection='column';
+    prev.classList.toggle('is-txt',false);
+  }
+  modeRow.appendChild(prev);
+
+  c2.appendChild(modeRow);
   f.appendChild(c2);
 
   // ── Card 3: Immagine (solo se la modalità la prevede) ──
@@ -2997,7 +3029,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.7';
+const APP_VERSION='2.2.0';
 let swReg=null;
 
 function initVersionDisplay(){
