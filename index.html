@@ -1024,7 +1024,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.1.7</div>
+  <div class="home-ver" id="tb-ver">v2.1.9</div>
 </div>
 
 <!-- USERS -->
@@ -1783,21 +1783,24 @@ function rEdForm(){
   if(s.mode!=='text'){
     const c3=mk('div','ef-card');
     c3.appendChild(mkCardT('🖼️','Immagine'));
-    const row=mk('div');row.style.cssText='display:flex;gap:11px;align-items:flex-start;flex-wrap:wrap';
-    const pv=mk('div','iprev');pv.onclick=()=>el('f-img').click();
-    if(s.img){pv.classList.add('has-img');const im=mk('img');im.src=s.img;pv.appendChild(im);}else pv.textContent='🖼️';
-    row.appendChild(pv);
-    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex:1;min-width:140px';
-    const sr=mk('div');sr.style.cssText='display:flex;gap:6px;flex-wrap:wrap';
-    const b1=mk('button','mbtn');b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();sr.appendChild(b1);
-    const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();sr.appendChild(b2);
-    col.appendChild(sr);
+    const row=mk('div');row.style.cssText='display:flex;gap:14px;align-items:center;';
+    // Pulsanti in colonna a sinistra
+    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex-shrink:0;';
+    const b1=mk('button','mbtn');b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();col.appendChild(b1);
+    const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();col.appendChild(b2);
     if(s.img){
-      const rm=mk('button','bsm d');rm.style.alignSelf='flex-start';rm.textContent='✕ Rimuovi';
+      const rm=mk('button','bsm d');rm.textContent='✕ Rimuovi';
       rm.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.img=null;save();rEdForm();rEdMini();rEdGrid();}};
       col.appendChild(rm);
     }
-    row.appendChild(col);c3.appendChild(row);
+    row.appendChild(col);
+    // Preview centrata nel resto dello spazio
+    const pvWrap=mk('div');pvWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
+    const pv=mk('div','iprev');pv.onclick=()=>el('f-img').click();
+    if(s.img){pv.classList.add('has-img');const im=mk('img');im.src=s.img;pv.appendChild(im);}else pv.textContent='🖼️';
+    pvWrap.appendChild(pv);
+    row.appendChild(pvWrap);
+    c3.appendChild(row);
     f.appendChild(c3);
   }
 
@@ -1809,18 +1812,19 @@ function rEdForm(){
   tr.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.on=!x.timer.on;save();rEdForm();}};
   tb.appendChild(tr);
   if(s.timer.on){
-    // tipo
-    const fgt=mkFG('Tipo timer');fgt.firstChild.style.fontSize='.66rem';
-    const tw=mk('div','mrow');
+    const timerMain=mk('div');timerMain.style.cssText='display:flex;gap:14px;align-items:center;';
+    const timerLeft=mk('div');timerLeft.style.cssText='display:flex;flex-direction:column;gap:8px;flex:1;min-width:0;';
+    // tipo timer
+    const tw2=mk('div','mrow');tw2.style.cssText='display:flex;gap:5px;flex-wrap:wrap;';
     [['ring','⭕','Anello'],['digital','🔢','Digitale'],['bar','▬','Barra'],['circle','🔵','Cerchio']].forEach(p=>{
       const b=mk('button','ttb'+(s.timer.type===p[0]?' on':''));
       const bi=mk('span');bi.style.fontSize='1rem';bi.textContent=p[1];b.appendChild(bi);
       const bl=mk('span');bl.style.cssText='font-size:.58rem;font-weight:800';bl.textContent=p[2];b.appendChild(bl);
       b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.type=p[0];ST.lastT=p[0];save();rEdForm();}};
-      tw.appendChild(b);
+      tw2.appendChild(b);
     });
-    fgt.appendChild(tw);tb.appendChild(fgt);
-    // durata: ore/min/sec selects
+    timerLeft.appendChild(tw2);
+    // durata
     const dr=mk('div');dr.style.cssText='display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap';
     dr.appendChild(mkTSel('Ore',24,s.timer.h||0,v=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.h=v;markD();}}));
     dr.appendChild(mkColon());
@@ -1832,7 +1836,57 @@ function rEdForm(){
     ac.onchange=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.auto=ac.checked;save();}};
     al.appendChild(ac);al.appendChild(document.createTextNode(' Auto-avanza'));
     dr.appendChild(al);
-    tb.appendChild(dr);
+    timerLeft.appendChild(dr);
+    timerMain.appendChild(timerLeft);
+
+    // Preview timer — stessa dimensione della preview immagine, allineata a destra
+    const pvWrap=mk('div');pvWrap.style.cssText='flex-shrink:0;display:flex;align-items:center;justify-content:center;';
+    const pv=mk('div');
+    pv.style.cssText='width:120px;height:120px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--brd);border-radius:12px;background:var(--bg2);overflow:hidden;';
+    // Build a miniature of the selected timer type at 50% progress
+    const tot=(s.timer.h||0)*3600+(s.timer.m||0)*60+(s.timer.s||0)||60;
+    const rem=Math.round(tot*0.5);
+    const prog=0.5;
+    const fmtP=t=>{const m=Math.floor(t/60),sc=t%60;return m+':'+String(sc).padStart(2,'0');};
+    const tt=s.timer.type||'ring';
+    if(tt==='ring'){
+      const circ=2*Math.PI*24;
+      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:80px;height:80px;">
+        <svg viewBox="0 0 60 60" style="width:80px;height:80px;position:absolute;">
+          <circle cx="30" cy="30" r="24" fill="none" stroke="#e6e6e6" stroke-width="5"/>
+          <circle cx="30" cy="30" r="24" fill="none" stroke="#e6a000" stroke-width="5" stroke-linecap="round"
+            stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ*prog).toFixed(1)}"
+            transform="rotate(-90 30 30)"/>
+        </svg>
+        <span style="font-size:.7rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
+      </div>`;
+    } else if(tt==='digital'){
+      pv.innerHTML=`<span style="font-size:1.4rem;font-weight:900;color:#e6a000;font-variant-numeric:tabular-nums;">${fmtP(rem)}</span>`;
+    } else if(tt==='bar'){
+      pv.innerHTML=`<div style="width:90px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+        <div style="width:100%;height:12px;background:#e0e0e0;border-radius:6px;overflow:hidden;">
+          <div style="width:${Math.round(prog*100)}%;height:100%;background:linear-gradient(90deg,#06D6A0,#e6a000);border-radius:6px;"></div>
+        </div>
+        <span style="font-size:.7rem;font-weight:900;color:#1a2340;">${fmtP(rem)}</span>
+      </div>`;
+    } else { // circle
+      const angle=prog*360;
+      const rad=angle*Math.PI/180;
+      const x2=50+46*Math.sin(rad), y2=50-46*Math.cos(rad);
+      const large=angle>180?1:0;
+      const pathD=`M 50 4 A 46 46 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L 50 50 Z`;
+      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:80px;height:80px;">
+        <svg viewBox="0 0 100 100" style="width:80px;height:80px;position:absolute;">
+          <circle cx="50" cy="50" r="46" fill="#eef5fb"/>
+          <circle cx="50" cy="50" r="46" fill="#06D6A0"/>
+          <path d="${pathD}" fill="#eef5fb"/>
+        </svg>
+        <span style="font-size:.7rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
+      </div>`;
+    }
+    pvWrap.appendChild(pv);
+    timerMain.appendChild(pvWrap);
+    tb.appendChild(timerMain);
   }
   f.appendChild(tb);
 }
@@ -2997,7 +3051,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.1.7';
+const APP_VERSION='2.1.9';
 let swReg=null;
 
 function initVersionDisplay(){
