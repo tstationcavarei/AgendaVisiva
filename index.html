@@ -1035,7 +1035,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.2.1</div>
+  <div class="home-ver" id="tb-ver">v2.2.2</div>
 </div>
 
 <!-- USERS -->
@@ -1774,38 +1774,38 @@ function rEdForm(){
   // ── Card 2: Modalità di visualizzazione ──
   const c2=mk('div','ef-card');
   c2.appendChild(mkCardT('👁️','Come mostrarlo'));
-  const modeRow=mk('div');modeRow.style.cssText='display:flex;gap:12px;align-items:center;';
+  const modeRow=mk('div');modeRow.style.cssText='display:flex;gap:10px;align-items:center;';
 
-  // Left column: three stacked mode buttons
-  const modeCol=mk('div');modeCol.style.cssText='display:flex;flex-direction:column;gap:6px;flex:1;min-width:0;';
+  // Far left: tiny stacked buttons
+  const modeCol=mk('div');modeCol.style.cssText='display:flex;flex-direction:column;gap:4px;flex-shrink:0;';
   ['image','text','image-text'].forEach(mv=>{
-    const lbl={'image':'🖼️ Immagine','text':'📝 Testo','image-text':'🖼️+📝 Entrambe'}[mv];
+    const lbl={'image':'🖼️','text':'📝','image-text':'🖼️+📝'}[mv];
     const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));
     b.textContent=lbl;
-    b.style.cssText='width:100%;text-align:left;padding:7px 10px;font-size:.7rem;';
+    b.title={'image':'Immagine','text':'Testo','image-text':'Entrambe'}[mv];
+    b.style.cssText='padding:5px 8px;font-size:.68rem;white-space:nowrap;';
     b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.mode=mv;save();rEdForm();rEdMini();rEdGrid();}};
     modeCol.appendChild(b);
   });
   modeRow.appendChild(modeCol);
 
-  // Right side: compact fixed-size preview square with green border
+  // Center: preview square, rest of space is blank white card background
+  const prevWrap=mk('div');prevWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
   const prev=mk('div','mode-prev');
-  const previewImg=s.img ? `<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;background:#fff;display:block;">` : '<div style="font-size:1.8rem;opacity:.4">🖼️</div>';
-  const previewTxt=`<div class="mode-prev-txt">${esc(s.label||'Nome attività')}</div>`;
+  const previewImg=s.img ? `<img src="${s.img}" style="width:100%;height:100%;object-fit:cover;border-radius:9px;display:block;">` : '<div style="font-size:2rem;opacity:.4">🖼️</div>';
+  const previewTxt=`<div class="mode-prev-txt">${esc(s.label||'Nome')}</div>`;
   if(s.mode==='image'){
     prev.innerHTML=previewImg;
   } else if(s.mode==='text'){
     prev.innerHTML=previewTxt;
     prev.classList.add('is-txt');
-    requestAnimationFrame(()=>{
-      const pt=prev.querySelector('.mode-prev-txt');
-      if(pt) fitTextToBox(pt,7,20,prev);
-    });
+    requestAnimationFrame(()=>{const pt=prev.querySelector('.mode-prev-txt');if(pt)fitTextToBox(pt,7,22,prev);});
   } else {
     prev.style.flexDirection='column';
     prev.innerHTML=`<div style="flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;">${previewImg}</div>${previewTxt}`;
   }
-  modeRow.appendChild(prev);
+  prevWrap.appendChild(prev);
+  modeRow.appendChild(prevWrap);
   c2.appendChild(modeRow);
   f.appendChild(c2);
 
@@ -1813,29 +1813,31 @@ function rEdForm(){
   if(s.mode!=='text'){
     const c3=mk('div','ef-card');
     c3.appendChild(mkCardT('🖼️','Immagine'));
-    const imgRow=mk('div');imgRow.style.cssText='display:flex;gap:12px;align-items:center;';
+    const imgRow=mk('div');imgRow.style.cssText='display:flex;gap:10px;align-items:center;';
 
-    // Left column: action buttons stacked
-    const imgCol=mk('div');imgCol.style.cssText='display:flex;flex-direction:column;gap:7px;flex:1;min-width:0;';
-    const b1=mk('button','mbtn');b1.style.cssText='width:100%;text-align:left;';b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();imgCol.appendChild(b1);
-    const b2=mk('button','mbtn');b2.style.cssText='width:100%;text-align:left;';b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();imgCol.appendChild(b2);
+    // Far left: tiny stacked buttons
+    const imgCol=mk('div');imgCol.style.cssText='display:flex;flex-direction:column;gap:4px;flex-shrink:0;';
+    const b1=mk('button','mbtn');b1.style.cssText='padding:5px 8px;font-size:.68rem;white-space:nowrap;';b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();imgCol.appendChild(b1);
+    const b2=mk('button','mbtn');b2.style.cssText='padding:5px 8px;font-size:.68rem;white-space:nowrap;';b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();imgCol.appendChild(b2);
     if(s.img){
-      const rm=mk('button','bsm d');rm.style.cssText='width:100%;text-align:left;';rm.textContent='✕ Rimuovi';
+      const rm=mk('button','bsm d');rm.style.cssText='padding:5px 8px;font-size:.64rem;white-space:nowrap;';rm.textContent='✕ Rimuovi';
       rm.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.img=null;save();rEdForm();rEdMini();rEdGrid();}};
       imgCol.appendChild(rm);
     }
     imgRow.appendChild(imgCol);
 
-    // Right side: image preview — same size as mode preview, tappable to replace
+    // Center: preview square
+    const ipvWrap=mk('div');ipvWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
     const ipv=mk('div','mode-prev');ipv.style.cursor='pointer';ipv.onclick=()=>el('f-img').click();
     if(s.img){
       ipv.classList.add('has-img');
-      const im=mk('img');im.src=s.img;im.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:6px;display:block;';
+      const im=mk('img');im.src=s.img;im.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:9px;display:block;';
       ipv.appendChild(im);
     } else {
-      ipv.innerHTML='<div style="font-size:1.8rem;opacity:.4;text-align:center;">🖼️<div style="font-size:.55rem;margin-top:4px;color:var(--mut);font-weight:700">Tocca per aggiungere</div></div>';
+      ipv.innerHTML='<div style="text-align:center;"><div style="font-size:2rem;opacity:.4">🖼️</div><div style="font-size:.55rem;color:var(--mut);font-weight:700;margin-top:4px;">Tocca per aggiungere</div></div>';
     }
-    imgRow.appendChild(ipv);
+    ipvWrap.appendChild(ipv);
+    imgRow.appendChild(ipvWrap);
     c3.appendChild(imgRow);
     f.appendChild(c3);
   }
@@ -3036,7 +3038,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.2.1';
+const APP_VERSION='2.2.2';
 let swReg=null;
 
 function initVersionDisplay(){
