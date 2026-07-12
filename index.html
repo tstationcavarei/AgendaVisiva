@@ -1024,7 +1024,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.2.1</div>
+  <div class="home-ver" id="tb-ver">v2.2.2</div>
 </div>
 
 <!-- USERS -->
@@ -1784,8 +1784,8 @@ function rEdForm(){
     const c3=mk('div','ef-card');
     c3.appendChild(mkCardT('🖼️','Immagine'));
     const row=mk('div');row.style.cssText='display:flex;gap:14px;align-items:center;';
-    // Pulsanti in colonna a sinistra
-    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex-shrink:0;width:130px;';
+    // Pulsanti in colonna a sinistra, larghezza naturale
+    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex-shrink:0;';
     const b1=mk('button','mbtn');b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();col.appendChild(b1);
     const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();col.appendChild(b2);
     if(s.img){
@@ -1794,8 +1794,9 @@ function rEdForm(){
       col.appendChild(rm);
     }
     row.appendChild(col);
-    // Preview centrata nel resto dello spazio
-    const pvWrap=mk('div');pvWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
+    // Preview ancorata al bordo destro — stessa posizione garantita
+    // indipendentemente da quanto è larga la colonna dei pulsanti
+    const pvWrap=mk('div');pvWrap.style.cssText='margin-left:auto;flex-shrink:0;';
     const pv=mk('div','iprev');pv.onclick=()=>el('f-img').click();
     if(s.img){pv.classList.add('has-img');const im=mk('img');im.src=s.img;pv.appendChild(im);}else pv.textContent='🖼️';
     pvWrap.appendChild(pv);
@@ -1813,9 +1814,9 @@ function rEdForm(){
   tb.appendChild(tr);
   if(s.timer.on){
     const timerMain=mk('div');timerMain.style.cssText='display:flex;gap:14px;align-items:center;';
-    const timerLeft=mk('div');timerLeft.style.cssText='display:flex;flex-direction:column;gap:8px;flex-shrink:0;width:130px;';
-    // tipo timer
-    const tw2=mk('div','mrow');tw2.style.cssText='display:flex;gap:5px;flex-wrap:wrap;';
+    const timerLeft=mk('div');timerLeft.style.cssText='display:flex;flex-direction:column;gap:8px;flex-shrink:0;';
+    // tipo timer — riga orizzontale libera
+    const tw2=mk('div','mrow');tw2.style.cssText='display:flex;gap:5px;';
     [['ring','⭕','Anello'],['digital','🔢','Digitale'],['bar','▬','Barra'],['circle','🔵','Cerchio']].forEach(p=>{
       const b=mk('button','ttb'+(s.timer.type===p[0]?' on':''));
       const bi=mk('span');bi.style.fontSize='1rem';bi.textContent=p[1];b.appendChild(bi);
@@ -1824,8 +1825,8 @@ function rEdForm(){
       tw2.appendChild(b);
     });
     timerLeft.appendChild(tw2);
-    // durata
-    const dr=mk('div');dr.style.cssText='display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap';
+    // durata — riga orizzontale libera
+    const dr=mk('div');dr.style.cssText='display:flex;gap:7px;align-items:flex-end;';
     dr.appendChild(mkTSel('Ore',24,s.timer.h||0,v=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.h=v;markD();}}));
     dr.appendChild(mkColon());
     dr.appendChild(mkTSel('Minuti',60,s.timer.m||0,v=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.m=v;markD();}}));
@@ -1839,8 +1840,10 @@ function rEdForm(){
     timerLeft.appendChild(dr);
     timerMain.appendChild(timerLeft);
 
-    // Preview timer — stessa dimensione della preview immagine, allineata a destra
-    const pvWrap=mk('div');pvWrap.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
+    // Preview timer — ancorata al bordo destro come la preview immagine,
+    // stessa dimensione (120x120), contenuto interno ingrandito per
+    // riempire lo spazio come fa l'immagine
+    const pvWrap=mk('div');pvWrap.style.cssText='margin-left:auto;flex-shrink:0;';
     const pv=mk('div');
     pv.style.cssText='width:120px;height:120px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--brd);border-radius:12px;background:var(--bg2);overflow:hidden;';
     // Build a miniature of the selected timer type at 50% progress
@@ -1851,23 +1854,23 @@ function rEdForm(){
     const tt=s.timer.type||'ring';
     if(tt==='ring'){
       const circ=2*Math.PI*24;
-      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:80px;height:80px;">
-        <svg viewBox="0 0 60 60" style="width:80px;height:80px;position:absolute;">
+      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:112px;height:112px;">
+        <svg viewBox="0 0 60 60" style="width:112px;height:112px;position:absolute;">
           <circle cx="30" cy="30" r="24" fill="none" stroke="#e6e6e6" stroke-width="5"/>
           <circle cx="30" cy="30" r="24" fill="none" stroke="#e6a000" stroke-width="5" stroke-linecap="round"
             stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ*prog).toFixed(1)}"
             transform="rotate(-90 30 30)"/>
         </svg>
-        <span style="font-size:.7rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
+        <span style="font-size:1.05rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
       </div>`;
     } else if(tt==='digital'){
-      pv.innerHTML=`<span style="font-size:1.4rem;font-weight:900;color:#e6a000;font-variant-numeric:tabular-nums;">${fmtP(rem)}</span>`;
+      pv.innerHTML=`<span style="font-size:2rem;font-weight:900;color:#e6a000;font-variant-numeric:tabular-nums;">${fmtP(rem)}</span>`;
     } else if(tt==='bar'){
-      pv.innerHTML=`<div style="width:90px;display:flex;flex-direction:column;align-items:center;gap:5px;">
-        <div style="width:100%;height:12px;background:#e0e0e0;border-radius:6px;overflow:hidden;">
-          <div style="width:${Math.round(prog*100)}%;height:100%;background:linear-gradient(90deg,#06D6A0,#e6a000);border-radius:6px;"></div>
+      pv.innerHTML=`<div style="width:104px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:100%;height:20px;background:#e0e0e0;border-radius:10px;overflow:hidden;">
+          <div style="width:${Math.round(prog*100)}%;height:100%;background:linear-gradient(90deg,#06D6A0,#e6a000);border-radius:10px;"></div>
         </div>
-        <span style="font-size:.7rem;font-weight:900;color:#1a2340;">${fmtP(rem)}</span>
+        <span style="font-size:1.05rem;font-weight:900;color:#1a2340;">${fmtP(rem)}</span>
       </div>`;
     } else { // circle
       const angle=prog*360;
@@ -1875,13 +1878,13 @@ function rEdForm(){
       const x2=50+46*Math.sin(rad), y2=50-46*Math.cos(rad);
       const large=angle>180?1:0;
       const pathD=`M 50 4 A 46 46 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L 50 50 Z`;
-      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:80px;height:80px;">
-        <svg viewBox="0 0 100 100" style="width:80px;height:80px;position:absolute;">
+      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:112px;height:112px;">
+        <svg viewBox="0 0 100 100" style="width:112px;height:112px;position:absolute;">
           <circle cx="50" cy="50" r="46" fill="#eef5fb"/>
           <circle cx="50" cy="50" r="46" fill="#06D6A0"/>
           <path d="${pathD}" fill="#eef5fb"/>
         </svg>
-        <span style="font-size:.7rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
+        <span style="font-size:1.05rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
       </div>`;
     }
     pvWrap.appendChild(pv);
@@ -3051,7 +3054,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.2.1';
+const APP_VERSION='2.2.2';
 let swReg=null;
 
 function initVersionDisplay(){
