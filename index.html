@@ -152,6 +152,7 @@ html[data-tablet=on] .mn-l{font-size:.72rem;}
 html[data-tablet=on] .tsel{width:auto;min-width:74px;padding:8px 10px;font-size:1.05rem;}
 html[data-tablet=on] .ttb{min-width:78px;padding:7px 11px;font-size:.82rem;}
 html[data-tablet=on] .iprev{width:150px;height:150px;font-size:2.6rem;}
+html[data-tablet=on] .timer-prev{width:150px;height:150px;}
 html[data-tablet=on] .ef-card{padding:16px 18px;gap:12px;border-radius:16px;}
 html[data-tablet=on] .ef-card-t{font-size:.92rem;}
 html[data-tablet=on] .mbtn-mode{font-size:.88rem;padding:11px 8px;}
@@ -346,6 +347,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .mbtn-mode{flex:1;padding:9px 6px;font-size:.74rem;text-align:center;}
 .ef-hint{font-size:.7rem;color:var(--mut);font-weight:600;line-height:1.4;background:var(--bg2);border-radius:8px;padding:8px 11px;}
 .iprev{width:120px;height:120px;border:3px dashed var(--brd);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--bg);overflow:hidden;cursor:pointer;flex-shrink:0;}
+.timer-prev{width:120px;height:120px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--brd);border-radius:12px;background:var(--bg2);overflow:hidden;flex-shrink:0;}
 .iprev.has-img{background:#fff;}
 .iprev img{background:#fff;}
 .iprev img{width:100%;height:100%;object-fit:cover;border-radius:7px;}
@@ -1024,7 +1026,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.2.2</div>
+  <div class="home-ver" id="tb-ver">v2.2.3</div>
 </div>
 
 <!-- USERS -->
@@ -1844,33 +1846,36 @@ function rEdForm(){
     // stessa dimensione (120x120), contenuto interno ingrandito per
     // riempire lo spazio come fa l'immagine
     const pvWrap=mk('div');pvWrap.style.cssText='margin-left:auto;flex-shrink:0;';
-    const pv=mk('div');
-    pv.style.cssText='width:120px;height:120px;display:flex;align-items:center;justify-content:center;border:3px dashed var(--brd);border-radius:12px;background:var(--bg2);overflow:hidden;';
+    const pv=mk('div','timer-prev');
     // Build a miniature of the selected timer type at 50% progress
     const tot=(s.timer.h||0)*3600+(s.timer.m||0)*60+(s.timer.s||0)||60;
     const rem=Math.round(tot*0.5);
     const prog=0.5;
     const fmtP=t=>{const m=Math.floor(t/60),sc=t%60;return m+':'+String(sc).padStart(2,'0');};
     const tt=s.timer.type||'ring';
+    const innerPx=CFG.tablet?140:112; // fill the bigger 150px box in tablet mode too
+    const barPx=CFG.tablet?132:104;
+    const fontBig=CFG.tablet?'1.3rem':'1.05rem';
+    const fontDigi=CFG.tablet?'2.5rem':'2rem';
     if(tt==='ring'){
       const circ=2*Math.PI*24;
-      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:112px;height:112px;">
-        <svg viewBox="0 0 60 60" style="width:112px;height:112px;position:absolute;">
+      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:${innerPx}px;height:${innerPx}px;">
+        <svg viewBox="0 0 60 60" style="width:${innerPx}px;height:${innerPx}px;position:absolute;">
           <circle cx="30" cy="30" r="24" fill="none" stroke="#e6e6e6" stroke-width="5"/>
           <circle cx="30" cy="30" r="24" fill="none" stroke="#e6a000" stroke-width="5" stroke-linecap="round"
             stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ*prog).toFixed(1)}"
             transform="rotate(-90 30 30)"/>
         </svg>
-        <span style="font-size:1.05rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
+        <span style="font-size:${fontBig};font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
       </div>`;
     } else if(tt==='digital'){
-      pv.innerHTML=`<span style="font-size:2rem;font-weight:900;color:#e6a000;font-variant-numeric:tabular-nums;">${fmtP(rem)}</span>`;
+      pv.innerHTML=`<span style="font-size:${fontDigi};font-weight:900;color:#e6a000;font-variant-numeric:tabular-nums;">${fmtP(rem)}</span>`;
     } else if(tt==='bar'){
-      pv.innerHTML=`<div style="width:104px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+      pv.innerHTML=`<div style="width:${barPx}px;display:flex;flex-direction:column;align-items:center;gap:8px;">
         <div style="width:100%;height:20px;background:#e0e0e0;border-radius:10px;overflow:hidden;">
           <div style="width:${Math.round(prog*100)}%;height:100%;background:linear-gradient(90deg,#06D6A0,#e6a000);border-radius:10px;"></div>
         </div>
-        <span style="font-size:1.05rem;font-weight:900;color:#1a2340;">${fmtP(rem)}</span>
+        <span style="font-size:${fontBig};font-weight:900;color:#1a2340;">${fmtP(rem)}</span>
       </div>`;
     } else { // circle
       const angle=prog*360;
@@ -1878,13 +1883,13 @@ function rEdForm(){
       const x2=50+46*Math.sin(rad), y2=50-46*Math.cos(rad);
       const large=angle>180?1:0;
       const pathD=`M 50 4 A 46 46 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L 50 50 Z`;
-      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:112px;height:112px;">
-        <svg viewBox="0 0 100 100" style="width:112px;height:112px;position:absolute;">
+      pv.innerHTML=`<div style="position:relative;display:flex;align-items:center;justify-content:center;width:${innerPx}px;height:${innerPx}px;">
+        <svg viewBox="0 0 100 100" style="width:${innerPx}px;height:${innerPx}px;position:absolute;">
           <circle cx="50" cy="50" r="46" fill="#eef5fb"/>
           <circle cx="50" cy="50" r="46" fill="#06D6A0"/>
           <path d="${pathD}" fill="#eef5fb"/>
         </svg>
-        <span style="font-size:1.05rem;font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
+        <span style="font-size:${fontBig};font-weight:900;color:#1a2340;position:relative;">${fmtP(rem)}</span>
       </div>`;
     }
     pvWrap.appendChild(pv);
@@ -3054,7 +3059,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.2.2';
+const APP_VERSION='2.2.3';
 let swReg=null;
 
 function initVersionDisplay(){
