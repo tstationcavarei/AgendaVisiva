@@ -1024,7 +1024,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.2.0</div>
+  <div class="home-ver" id="tb-ver">v2.2.1</div>
 </div>
 
 <!-- USERS -->
@@ -1785,7 +1785,7 @@ function rEdForm(){
     c3.appendChild(mkCardT('🖼️','Immagine'));
     const row=mk('div');row.style.cssText='display:flex;gap:14px;align-items:center;';
     // Pulsanti in colonna a sinistra
-    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex-shrink:0;';
+    const col=mk('div');col.style.cssText='display:flex;flex-direction:column;gap:7px;flex-shrink:0;width:130px;';
     const b1=mk('button','mbtn');b1.textContent='📁 Dispositivo';b1.onclick=()=>el('f-img').click();col.appendChild(b1);
     const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();col.appendChild(b2);
     if(s.img){
@@ -1813,7 +1813,7 @@ function rEdForm(){
   tb.appendChild(tr);
   if(s.timer.on){
     const timerMain=mk('div');timerMain.style.cssText='display:flex;gap:14px;align-items:center;';
-    const timerLeft=mk('div');timerLeft.style.cssText='display:flex;flex-direction:column;gap:8px;flex:1;min-width:0;';
+    const timerLeft=mk('div');timerLeft.style.cssText='display:flex;flex-direction:column;gap:8px;flex-shrink:0;width:130px;';
     // tipo timer
     const tw2=mk('div','mrow');tw2.style.cssText='display:flex;gap:5px;flex-wrap:wrap;';
     [['ring','⭕','Anello'],['digital','🔢','Digitale'],['bar','▬','Barra'],['circle','🔵','Cerchio']].forEach(p=>{
@@ -3051,7 +3051,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.2.0';
+const APP_VERSION='2.2.1';
 let swReg=null;
 
 function initVersionDisplay(){
