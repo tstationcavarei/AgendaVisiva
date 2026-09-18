@@ -554,7 +554,24 @@ html[data-tablet=on] .vctrl{
   background:#b8dff0;border:2px solid #7ab8d8;border-radius:7px;
   overflow:hidden;display:flex;align-items:center;justify-content:center;
   font-size:.85rem;color:#5a8aa0;
+  position:relative;
 }
+/* ── IN-PLACE EDIT MODE (viewer) ──
+   Squares grow to give the overlay buttons room to be comfortably
+   tappable — everything else about the layout stays the same. */
+.vseq.vseq-editing{height:44%;min-height:112px;max-height:175px;}
+.vseq.vseq-editing .vsq-n{font-size:12px;padding:1px 4px;}
+.vseq.vseq-editing .vsq-l{font-size:13px;}
+.vsq.dragging{opacity:.3;}
+.vsq.dover .vsq-b{border-color:var(--grn);box-shadow:0 0 0 3px rgba(6,214,160,.3);}
+.vsq-add{cursor:pointer;}
+.vsq-add-b{
+  background:transparent!important;border:2.5px dashed var(--grn)!important;
+  color:var(--grn)!important;font-size:1.6rem!important;font-weight:900;
+}
+.vseq.vseq-editing .vsq-add-b{font-size:2rem!important;}
+/* The current activity card, while editing */
+.vimgbl.v-editing{box-shadow:0 0 0 3px rgba(255,209,102,.6),0 3px 14px rgba(6,214,160,.22);}
 .vsq-b img{width:100%;height:100%;object-fit:cover;}
 .vsq-txt{font-size:7px;font-weight:800;color:inherit;text-align:center;padding:3px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
 .vsq-l{flex-shrink:0;font-size:11px;line-height:1.25;font-weight:700;color:#4a6880;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -991,8 +1008,9 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Modifica provvisoria</div>
-        <p>In alto durante l'utilizzo trovi anche l'icona <b>✏️</b>, accanto a Ridimensiona — tienila premuta 2 secondi per aprire l'editor degli step, identico in tutto e per tutto a quello usato in fase di creazione (stesse card, stesse modalità Immagine/Testo/Entrambe, stesso timer).</p>
-        <p>La differenza è che qui le modifiche sono <b>valide solo per la sessione in corso</b>: puoi togliere uno step di troppo, cambiare un'immagine, accorciare un timer al volo — e quando premi <b>✅ Applica</b> in alto, i cambiamenti si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>. Puoi riaprire "Modifica provvisoria" più volte nella stessa sessione: ogni volta si riparte da dove avevi lasciato l'ultima modifica applicata, non dall'originale — le modifiche si sommano finché resti in quella sessione. <b>Solo uscendo dall'agenda e riaprendola da capo</b> tutto torna esattamente come salvato. Se invece premi <b>✕ Annulla</b>, si scartano solo le modifiche fatte nell'ultima apertura dell'editor, senza toccare quelle già applicate in precedenza. Questo pulsante funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
+        <p>In alto durante l'utilizzo trovi anche l'icona <b>✏️</b>, accanto a Ridimensiona — tienila premuta 2 secondi per attivarla. La schermata <b>non cambia</b>: resti esattamente sulla stessa vista (l'attività attuale grande al centro, le successive in alto), solo che ora compaiono dei piccoli pulsanti sopra ogni riquadro — <b>✏️</b> Modifica, <b>⧉</b> Duplica, <b>✕</b> Elimina, e <b>⠿</b> per trascinare e riordinare le attività successive. I riquadri si ingrandiscono leggermente per rendere questi pulsanti più facili da toccare. In fondo alla striscia trovi anche un riquadro tratteggiato <b>＋</b> per aggiungere una nuova attività.</p>
+        <p>Toccando <b>✏️</b> su un riquadro si apre una finestra con lo stesso form usato in fase di creazione (nome, modalità Immagine/Testo/Entrambe con anteprima, immagine o timer con anteprima) — premi <b>✅ Fatto</b> per chiuderla e tornare alla vista con i pulsanti.</p>
+        <p>Tutte queste modifiche sono <b>valide solo per la sessione in corso</b>: si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>. Puoi continuare a modificare quanto vuoi finché resti in questa sessione — le modifiche si sommano. <b>Solo uscendo dall'agenda e riaprendola da capo</b> tutto torna esattamente come salvato. Per uscire dalla modalità modifica, tieni premuto <b>✅ Fatto</b> al posto di ✏️ nella barra in alto. Solo le attività <b>già completate</b> non sono modificabili da qui, dato che non sono più visibili a schermo. Questo pulsante funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
@@ -1031,7 +1049,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.3.2</div>
+  <div class="home-ver" id="tb-ver">v2.4.0</div>
 </div>
 
 <!-- USERS -->
@@ -1070,9 +1088,8 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 <!-- EDITOR -->
 <div class="scr" id="s-ed">
   <div class="tbar">
-    <button class="bk" id="ed-back-btn" onclick="edBack()">← Agende</button>
+    <button class="bk" onclick="edBack()">← Agende</button>
     <div class="tb-ttl" id="ed-t">Editor</div>
-    <button class="badd hidden" id="ed-apply-btn" style="background:var(--grn)" onclick="applyTempEdit()">✅ Applica</button>
     <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="eg hidden" id="ed-grid"></div>
@@ -1115,7 +1132,8 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <button class="bk hold-btn" data-hold="stop">✕ Esci</button>
     <div class="tb-ttl" id="v-t">Agenda</div>
-    <button class="ib hold-btn" data-hold="tempedit" title="Modifica provvisoria (solo questa sessione)">✏️</button>
+    <button class="ib hold-btn" id="v-edit-start-btn" data-hold="tempedit" title="Modifica provvisoria (solo questa sessione)">✏️</button>
+    <button class="bk hold-btn hidden" id="v-editdone" data-hold="editdone" style="background:var(--grn);color:#fff;border-color:var(--grn-d)" title="Termina modifica">✅ Fatto</button>
     <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <!-- launch -->
@@ -1310,6 +1328,13 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <div class="macts"><button class="bm cn" onclick="closeM('m-ar')">Chiudi</button></div>
   </div>
 </div>
+<div class="mov hidden" id="m-stepedit">
+  <div class="mbox" style="max-width:480px;max-height:88vh;overflow-y:auto;">
+    <div class="mttl" id="stepedit-ttl">✏️ Step</div>
+    <div id="stepedit-f"></div>
+    <div class="macts"><button class="bm ok" onclick="vCloseStepModal()">✅ Fatto</button></div>
+  </div>
+</div>
 <div class="mov hidden" id="m-pw">
   <div class="mbox" style="max-width:340px">
     <div class="mttl" id="m-pw-ttl">🔒 Password</div>
@@ -1352,14 +1377,32 @@ let ST={users:[],selU:null,selA:null,editIdx:null,lastT:'ring'};
 let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false,locked:false,pw:'ADMIN'};
 let VS={steps:[],idx:-1,iv:null,rem:0,tot:0,tt:'ring',uid:null,aid:null};
 let pUC='#4A9EDB', agSel=null, dirty=false, cfCb=null;
-// ═══ MODIFICA PROVVISORIA (temporary, session-only editing) ═══
-// While active, the normal step editor is reused unchanged, but
-// save() is suppressed so nothing touches the persisted agenda —
-// changes only ever reach VS.steps (the live viewer session) when
-// explicitly applied, and never survive a reload or future reuse.
-let tempEditing=false, tempEditBackup=null, tempEditPrevSelU=null, tempEditPrevSelA=null;
+// ═══ MODIFICA PROVVISORIA (in-place, session-only editing) ═══
+// While active, edit controls appear directly on the viewer screen
+// (current activity + upcoming strip), exactly as it looks in that
+// moment. All changes go straight into VS.steps (the live session
+// array), never touching the persisted agenda — so they vanish the
+// moment the agenda is closed and reopened.
+let viewEditMode=false;   // true while the overlay controls are shown
+let viewEditIdx=null;     // non-null while the per-step detail modal is open — index into VS.steps
+// curStep()/curSave()/curRerender() let the ONE shared step-editing UI
+// (rEdForm and friends) work correctly whether it's editing the
+// persisted agenda (normal creation editor) or a session-only step
+// here in the viewer overlay, without any duplicated code.
+function curStep(){
+  if(viewEditIdx!==null) return VS.steps[viewEditIdx];
+  return ga()?.steps[ST.editIdx];
+}
+function curSave(){
+  if(viewEditIdx!==null) return; // session-only — nothing to persist
+  save();
+}
+function curRerender(){
+  if(viewEditIdx!==null){ vRenderStepModal(); vRenderOverlay(); }
+  else { rEdForm(); rEdMini(); rEdGrid(); }
+}
 
-function save(){if(tempEditing)return;try{localStorage.setItem('av8',JSON.stringify(ST));}catch(e){}}
+function save(){try{localStorage.setItem('av8',JSON.stringify(ST));}catch(e){}}
 function saveCfg(){try{localStorage.setItem('av8c',JSON.stringify(CFG));}catch(e){}}
 function load(){
   try{const d=localStorage.getItem('av8');if(d)ST={...ST,...JSON.parse(d)};}catch(e){}
@@ -1583,8 +1626,7 @@ function dupAgenda(uid2,aid){
 // ═══ EDITOR ═══
 function rEd(){
   const a=ga();if(!a)return;
-  if(tempEditing) set('ed-t','⏳ Provvisoria \u2014 '+a.name);
-  else set('ed-t','✏️ '+(gu(ST.selU)?.name||'')+' › '+a.name);
+  set('ed-t','✏️ '+(gu(ST.selU)?.name||'')+' › '+a.name);
   if(ST.editIdx===null){edMode('grid');rEdGrid();}
   else{edMode('edit');rEdForm();rEdMini();}
 }
@@ -1596,60 +1638,74 @@ function edMode(m){
 function edBack(){if(dirty)saveStep(true);kbdClose();go('s-ag');}
 function exitEdit(){if(dirty)saveStep(true);ST.editIdx=null;rEd();}
 
-// Entry point: hold the ✏️ button in the viewer. Opens the exact same
-// editor used for creating agendas, but on a throwaway copy of the
-// currently playing agenda — save() is suppressed the whole time.
-function startTempEdit(){
-  if(!VS.uid||!VS.aid)return;
-  const u=gu(VS.uid), a=u?.agendas.find(x=>x.id===VS.aid);
-  if(!a)return;
+// ═══ In-place editing overlay (viewer screen) ═══
+// Holding ✏️ in the viewer turns on overlay controls directly on the
+// SAME screen (current activity + upcoming strip) — no navigation, no
+// separate grid. Every change lands straight in VS.steps, so it's
+// automatically session-only: closing and reopening the agenda always
+// starts fresh from the real, untouched saved version.
+function enterViewEdit(){
+  if(VS.idx<0)return; // nothing to edit in place until the agenda has actually started
   clearTi();
   cancelAnimState();
-  tempEditPrevSelU=ST.selU; tempEditPrevSelA=ST.selA;
-  ST.selU=VS.uid; ST.selA=VS.aid;
-  tempEditBackup=JSON.parse(JSON.stringify(a.steps)); // true original, restored whenever we leave the editor
-  a.steps=JSON.parse(JSON.stringify(VS.steps)); // continue editing from the CURRENT session state (may already include earlier temporary edits), not from scratch
-  tempEditing=true;
-  dirty=false;
-  ST.editIdx=null;
-  go('s-ed');
-  rEd();
-  el('ed-back-btn').textContent='✕ Annulla';
-  el('ed-back-btn').onclick=cancelTempEdit;
-  el('ed-apply-btn').classList.remove('hidden');
+  viewEditMode=true;
+  el('v-edit-start-btn').classList.add('hidden');
+  el('v-editdone').classList.remove('hidden');
+  rCur();
+  rStrip();
 }
-// Confirms: whatever is in the (in-memory only) agenda right now
-// becomes the live session's steps — the persisted agenda is put
-// back exactly as it was, untouched, for all future reuses.
-function applyTempEdit(){
-  if(dirty)saveStep(true);
-  const a=ga();
-  if(a){
-    VS.steps=JSON.parse(JSON.stringify(a.steps));
-    a.steps=tempEditBackup;
+function exitViewEdit(){
+  viewEditMode=false;
+  viewEditIdx=null;
+  closeM('m-stepedit');
+  el('v-editdone').classList.add('hidden');
+  el('v-edit-start-btn').classList.remove('hidden');
+  rCur();
+  rStrip();
+}
+function vDelStep(i){
+  if(VS.steps.length<=1){ alert('Non puoi eliminare l\u2019ultimo step rimasto in questa sessione.'); return; }
+  confirm2('Eliminare questo step dalla sessione attuale?',()=>{
+    VS.steps.splice(i,1);
     if(VS.idx>=VS.steps.length) VS.idx=VS.steps.length-1;
-  }
-  endTempEdit();
+    rCur();rStrip();
+  });
 }
-// Discards: the persisted agenda is restored and nothing reaches the
-// live session either — as if "Modifica provvisoria" was never opened.
-function cancelTempEdit(){
-  const a=ga();
-  if(a) a.steps=tempEditBackup;
-  endTempEdit();
+function vDupStep(i){
+  const copy=JSON.parse(JSON.stringify(VS.steps[i]));
+  VS.steps.splice(i+1,0,copy);
+  rCur();rStrip();
 }
-function endTempEdit(){
-  tempEditing=false;
-  tempEditBackup=null;
-  ST.selU=tempEditPrevSelU; ST.selA=tempEditPrevSelA;
-  ST.editIdx=null; dirty=false;
-  el('ed-back-btn').textContent='← Agende';
-  el('ed-back-btn').onclick=edBack;
-  el('ed-apply-btn').classList.add('hidden');
-  kbdClose();
-  save(); // safe no-op-if-needed re-save of the untouched real state
-  go('s-view');
-  rView();
+function vAddStep(){
+  VS.steps.push({label:'Nuovo step',mode:'image',img:null,timer:{on:false,type:'ring',h:0,m:0,s:0,auto:false}});
+  rStrip();
+  vOpenStepModal(VS.steps.length-1);
+}
+// Opens the per-step detail form (name / mode / image / timer) as a
+// modal on top of the SAME viewer screen — reuses rEdForm exactly as
+// the creation editor does, just pointed at VS.steps via curStep().
+function vOpenStepModal(i){
+  viewEditIdx=i;
+  openM('m-stepedit');
+  vRenderStepModal();
+}
+function vRenderStepModal(){
+  if(viewEditIdx===null)return;
+  const s=VS.steps[viewEditIdx];
+  if(!s){closeM('m-stepedit');viewEditIdx=null;return;}
+  set('stepedit-ttl','✏️ '+(s.label||'Step '+(viewEditIdx+1)));
+  rEdForm('stepedit-f');
+}
+function vCloseStepModal(){
+  closeM('m-stepedit');
+  viewEditIdx=null;
+  rCur();rStrip();
+}
+// Re-renders the overlay (current card + strip) after a change made
+// from within the step-detail modal, so edits are visible immediately
+// behind it.
+function vRenderOverlay(){
+  rCur();rStrip();
 }
 
 function rEdGrid(){
@@ -1749,6 +1805,52 @@ function touchDrag(elem,idx,cont,handle){
     tdSrc=null;tdIdx=-1;
   },{passive:false});
 }
+// Touch-drag reordering for the upcoming-activities strip while in
+// in-place edit mode — same pattern as touchDrag() above, but targets
+// VS.steps (session-only) and .vsq elements instead of the creation
+// editor's .sc grid.
+function vTouchDrag(elem,absIdx,cont,handle){
+  elem.addEventListener('touchstart',e=>{
+    const t=e.touches[0],r=handle.getBoundingClientRect();
+    if(!(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom))return;
+    e.preventDefault();e.stopPropagation();
+    tdSrc=elem;tdIdx=absIdx;elem.classList.add('dragging');
+    tdClone=elem.cloneNode(true);
+    tdClone.style.cssText='position:fixed;pointer-events:none;opacity:.75;z-index:9999;width:'+elem.offsetWidth+'px;';
+    const er=elem.getBoundingClientRect();
+    tdClone.style.left=er.left+'px';tdClone.style.top=er.top+'px';
+    document.body.appendChild(tdClone);
+  },{passive:false});
+  elem.addEventListener('touchmove',e=>{
+    if(!tdSrc)return;e.preventDefault();
+    const t=e.touches[0];
+    tdClone.style.left=(t.clientX-tdClone.offsetWidth/2)+'px';
+    tdClone.style.top=(t.clientY-tdClone.offsetHeight/2)+'px';
+    tdClone.style.display='none';
+    const u=document.elementFromPoint(t.clientX,t.clientY);
+    tdClone.style.display='';
+    cont.querySelectorAll('.vsq').forEach(x=>x.classList.remove('dover'));
+    const o=u?.closest('.vsq:not(.vsq-add)');
+    if(o&&o!==tdSrc)o.classList.add('dover');
+  },{passive:false});
+  elem.addEventListener('touchend',e=>{
+    if(!tdSrc)return;
+    if(tdClone){tdClone.remove();tdClone=null;}
+    tdSrc.classList.remove('dragging');
+    const t=e.changedTouches[0];
+    const u=document.elementFromPoint(t.clientX,t.clientY);
+    const o=u?.closest('.vsq:not(.vsq-add)');
+    cont.querySelectorAll('.vsq').forEach(x=>x.classList.remove('dover'));
+    if(o&&o!==tdSrc){
+      const to=parseInt(o.dataset.absi);
+      if(!isNaN(to)&&to!==tdIdx){
+        const[mv]=VS.steps.splice(tdIdx,1);VS.steps.splice(to,0,mv);
+        rStrip();
+      }
+    }
+    tdSrc=null;tdIdx=-1;
+  },{passive:false});
+}
 
 function addStep(){
   if(dirty)saveStep(true);
@@ -1809,15 +1911,17 @@ function rEdMini(){
   if(cur)cur.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
-function rEdForm(){
-  const a=ga();if(!a||ST.editIdx===null)return;
-  const s=a.steps[ST.editIdx];if(!s)return;
-  const f=el('ed-f');f.innerHTML='';
+function rEdForm(targetId){
+  const s=curStep();if(!s)return;
+  const f=el(targetId||'ed-f');f.innerHTML='';
+  const inModal=!!targetId;
 
-  const hd=mk('div','ef-h');
-  const sp=mk('span');sp.textContent='✏️ Step '+(ST.editIdx+1);hd.appendChild(sp);
-  const db=mk('button','bsm d');db.style.marginLeft='auto';db.textContent='🗑 Elimina';db.onclick=()=>delStep(ST.editIdx);hd.appendChild(db);
-  f.appendChild(hd);
+  if(!inModal){
+    const hd=mk('div','ef-h');
+    const sp=mk('span');sp.textContent='✏️ Step '+(ST.editIdx+1);hd.appendChild(sp);
+    const db=mk('button','bsm d');db.style.marginLeft='auto';db.textContent='🗑 Elimina';db.onclick=()=>delStep(ST.editIdx);hd.appendChild(db);
+    f.appendChild(hd);
+  }
 
   // ── Card 1: Nome ──
   const c1=mk('div','ef-card');
@@ -1826,7 +1930,7 @@ function rEdForm(){
   const i1=mk('input','inp');i1.type='text';i1.placeholder='es: Pranzo...';i1.value=s.label||'';i1.autocomplete='off';i1.setAttribute('inputmode','none');i1.maxLength=NAME_MAX;
   const cnt1=mk('div','ef-count');
   const updCnt1=()=>{cnt1.textContent=i1.value.length+'/'+NAME_MAX;cnt1.classList.toggle('warn',i1.value.length>=NAME_MAX-5);};
-  i1.addEventListener('input',()=>{const x=ga()?.steps[ST.editIdx];if(x){x.label=i1.value;markD();rEdMini();}updCnt1();});
+  i1.addEventListener('input',()=>{const x=curStep();if(x){x.label=i1.value;markD();curSave();if(inModal){set('stepedit-ttl','✏️ '+(x.label||'Step'));vRenderOverlay();}else rEdMini();}updCnt1();});
   updCnt1();
   c1.appendChild(i1);
   c1.appendChild(cnt1);
@@ -1843,7 +1947,7 @@ function rEdForm(){
   };
   ['image','text','image-text'].forEach(mv=>{
     const b=mk('button','mbtn mbtn-mode'+(s.mode===mv?' on':''));b.textContent=modeInfo[mv].lbl;
-    b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.mode=mv;save();rEdForm();rEdMini();rEdGrid();}};
+    b.onclick=()=>{const x=curStep();if(x){x.mode=mv;curSave();curRerender();}};
     mr.appendChild(b);
   });
   c2.appendChild(mr);
@@ -1862,7 +1966,7 @@ function rEdForm(){
     const b2=mk('button','mbtn');b2.textContent='🔤 ARASAAC';b2.onclick=()=>openAr();col.appendChild(b2);
     if(s.img){
       const rm=mk('button','bsm d');rm.textContent='✕ Rimuovi';
-      rm.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.img=null;save();rEdForm();rEdMini();rEdGrid();}};
+      rm.onclick=()=>{const x=curStep();if(x){x.img=null;curSave();curRerender();}};
       col.appendChild(rm);
     }
     row.appendChild(col);
@@ -1882,7 +1986,7 @@ function rEdForm(){
   const tr=mk('div','tog-r');
   const tg=mk('div','tog'+(s.timer.on?' on':''));tr.appendChild(tg);
   const tl=mk('span');tl.style.cssText='font-weight:800;font-size:.82rem';tl.textContent='⏱️ Timer';tr.appendChild(tl);
-  tr.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.on=!x.timer.on;save();rEdForm();}};
+  tr.onclick=()=>{const x=curStep();if(x){x.timer.on=!x.timer.on;curSave();curRerender();}};
   tb.appendChild(tr);
   if(s.timer.on){
     const timerMain=mk('div');timerMain.style.cssText='display:flex;gap:14px;align-items:center;';
@@ -1893,20 +1997,20 @@ function rEdForm(){
       const b=mk('button','ttb'+(s.timer.type===p[0]?' on':''));
       const bi=mk('span');bi.style.fontSize='1rem';bi.textContent=p[1];b.appendChild(bi);
       const bl=mk('span');bl.style.cssText='font-size:.58rem;font-weight:800';bl.textContent=p[2];b.appendChild(bl);
-      b.onclick=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.type=p[0];ST.lastT=p[0];save();rEdForm();}};
+      b.onclick=()=>{const x=curStep();if(x){x.timer.type=p[0];ST.lastT=p[0];curSave();curRerender();}};
       tw2.appendChild(b);
     });
     timerLeft.appendChild(tw2);
     // durata — riga orizzontale libera
     const dr=mk('div');dr.style.cssText='display:flex;gap:7px;align-items:flex-end;';
-    dr.appendChild(mkTSel('Ore',24,s.timer.h||0,v=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.h=v;markD();}}));
+    dr.appendChild(mkTSel('Ore',24,s.timer.h||0,v=>{const x=curStep();if(x){x.timer.h=v;markD();curSave();}}));
     dr.appendChild(mkColon());
-    dr.appendChild(mkTSel('Minuti',60,s.timer.m||0,v=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.m=v;markD();}}));
+    dr.appendChild(mkTSel('Minuti',60,s.timer.m||0,v=>{const x=curStep();if(x){x.timer.m=v;markD();curSave();}}));
     dr.appendChild(mkColon());
-    dr.appendChild(mkTSel('Secondi',60,s.timer.s||0,v=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.s=v;markD();}}));
+    dr.appendChild(mkTSel('Secondi',60,s.timer.s||0,v=>{const x=curStep();if(x){x.timer.s=v;markD();curSave();}}));
     const al=mk('label');al.style.cssText='display:flex;align-items:center;gap:5px;font-size:.7rem;font-weight:700;cursor:pointer;margin-bottom:6px;margin-left:8px';
     const ac=mk('input');ac.type='checkbox';ac.checked=!!s.timer.auto;
-    ac.onchange=()=>{const x=ga()?.steps[ST.editIdx];if(x){x.timer.auto=ac.checked;save();}};
+    ac.onchange=()=>{const x=curStep();if(x){x.timer.auto=ac.checked;curSave();}};
     al.appendChild(ac);al.appendChild(document.createTextNode(' Auto-avanza'));
     dr.appendChild(al);
     timerLeft.appendChild(dr);
@@ -1984,12 +2088,12 @@ function mkTSel(lbl,max,cur,cb){
 function onImg(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=ev=>{const x=ga()?.steps[ST.editIdx];if(!x)return;x.img=ev.target.result;save();rEdForm();rEdMini();};
+  r.onload=ev=>{const x=curStep();if(!x)return;x.img=ev.target.result;curSave();curRerender();};
   r.readAsDataURL(f);e.target.value='';
 }
 // ARASAAC
 function openAr(){
-  const s=ga()?.steps[ST.editIdx];const l=s?.label||'';
+  const s=curStep();const l=s?.label||'';
   const q=(l&&!l.toLowerCase().startsWith('step'))?l:'';
   el('ar-q').value=q;
   el('ar-r').innerHTML='<div style="color:var(--mut);font-size:.74rem;margin:auto">Inserisci un termine</div>';
@@ -2017,11 +2121,11 @@ async function pickAr(url){
   try{
     const res=await fetch(url);const b=await res.blob();
     const rd=new FileReader();
-    rd.onload=ev=>{const x=ga()?.steps[ST.editIdx];if(!x)return;x.img=ev.target.result;save();closeM('m-ar');rEdForm();rEdMini();};
+    rd.onload=ev=>{const x=curStep();if(!x)return;x.img=ev.target.result;curSave();closeM('m-ar');curRerender();};
     rd.readAsDataURL(b);
   }catch(e){
-    const x=ga()?.steps[ST.editIdx];if(!x)return;
-    x.img=url;save();closeM('m-ar');rEdForm();rEdMini();
+    const x=curStep();if(!x)return;
+    x.img=url;curSave();closeM('m-ar');curRerender();
   }
 }
 
@@ -2216,25 +2320,53 @@ function rView(){
 }
 function rStrip(){
   const strip=el('v-strip');strip.innerHTML='';
+  strip.classList.toggle('vseq-editing',viewEditMode);
   // Show only steps AFTER the current one — the current step is
   // already shown enlarged below, so it doesn't need to repeat here.
   for(let i=VS.idx+1;i<VS.steps.length;i++){
     const s=VS.steps[i];
     const isImmediate=(i===VS.idx+1);
-    const e=mk('div','vsq'+(isImmediate?' vsq-next':''));
+    const e=mk('div','vsq'+(isImmediate&&!viewEditMode?' vsq-next':''));
+    e.dataset.absi=i;
     const n=mk('div','vsq-n');n.textContent=i+1;e.appendChild(n);
     const b=mk('div','vsq-b');
     let textPreview=null;
     if(s.mode!=='text'&&s.img){b.classList.add('has-img');const im=mk('img');im.src=s.img;b.appendChild(im);}
     else if(s.mode==='text'){b.classList.add('is-txt');const t=mk('div','vsq-txt');t.textContent=s.label||'';b.appendChild(t);textPreview=t;}
     else b.textContent='🖼️';
+    if(viewEditMode){
+      const ed=mk('button','v-edit-btn sc-ed');ed.textContent='✏️';ed.title='Modifica';ed.onclick=ev=>{ev.stopPropagation();vOpenStepModal(i);};b.appendChild(ed);
+      const dpB=mk('button','v-edit-btn sc-dup');dpB.textContent='⧉';dpB.title='Duplica';dpB.onclick=ev=>{ev.stopPropagation();vDupStep(i);};b.appendChild(dpB);
+      const xB=mk('button','v-edit-btn sc-x');xB.textContent='✕';xB.title='Elimina';xB.onclick=ev=>{ev.stopPropagation();vDelStep(i);};b.appendChild(xB);
+      const hB=mk('div','v-edit-btn sc-h');hB.textContent='⠿';hB.title='Trascina per riordinare';b.appendChild(hB);
+      e.draggable=true;
+      e.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',String(i));setTimeout(()=>e.classList.add('dragging'),0);});
+      e.addEventListener('dragend',()=>{e.classList.remove('dragging');strip.querySelectorAll('.vsq').forEach(x2=>x2.classList.remove('dover'));});
+      e.addEventListener('dragover',ev=>{ev.preventDefault();e.classList.add('dover');});
+      e.addEventListener('dragleave',()=>e.classList.remove('dover'));
+      e.addEventListener('drop',ev=>{
+        ev.preventDefault();e.classList.remove('dover');
+        const f=parseInt(ev.dataTransfer.getData('text/plain')),to=parseInt(e.dataset.absi);
+        if(isNaN(f)||isNaN(to)||f===to)return;
+        const[mv]=VS.steps.splice(f,1);VS.steps.splice(to,0,mv);
+        rStrip();
+      });
+      vTouchDrag(e,i,strip,hB);
+    }
     e.appendChild(b);
     if(s.mode==='image-text'){const l=mk('div','vsq-l');l.textContent=s.label;e.appendChild(l);}
     // The card right after the current one can be tapped to advance,
-    // same as tapping the current activity itself
-    if(isImmediate) e.onclick=()=>tryNav('next');
+    // same as tapping the current activity itself — disabled while editing
+    if(isImmediate&&!viewEditMode) e.onclick=()=>tryNav('next');
     strip.appendChild(e);
     if(textPreview) fitTextToBox(textPreview,5,14,b);
+  }
+  if(viewEditMode){
+    const add=mk('div','vsq vsq-add');
+    const addB=mk('div','vsq-b vsq-add-b');addB.textContent='＋';addB.title='Aggiungi step';
+    add.appendChild(addB);
+    add.onclick=()=>vAddStep();
+    strip.appendChild(add);
   }
   strip.scrollLeft=0;
 }
@@ -2243,6 +2375,18 @@ function rCur(){
   const vi=el('v-img'), vt=el('v-txt'), vn=el('v-nm'), vtb=el('v-timer'), nb=el('v-next'), dl=el('v-done'), dp=el('v-done-play'), dw=el('v-done-wrap'), vsp=el('v-spacer');
   const card=el('v-card-outer');
   if(card) card.classList.remove('step-out');
+  // Overlay edit buttons on the current card — added fresh each render,
+  // removed first so they never pile up across re-renders.
+  if(card){
+    card.querySelectorAll('.v-edit-btn').forEach(b=>b.remove());
+    card.classList.toggle('v-editing',viewEditMode);
+    card.onclick = viewEditMode ? null : ()=>tryNav('next');
+    if(viewEditMode){
+      const ed=mk('button','v-edit-btn sc-ed');ed.textContent='✏️';ed.title='Modifica';ed.onclick=e=>{e.stopPropagation();vOpenStepModal(VS.idx);};card.appendChild(ed);
+      const dp2=mk('button','v-edit-btn sc-dup');dp2.textContent='⧉';dp2.title='Duplica';dp2.onclick=e=>{e.stopPropagation();vDupStep(VS.idx);};card.appendChild(dp2);
+      const x=mk('button','v-edit-btn sc-x');x.textContent='✕';x.title='Elimina';x.onclick=e=>{e.stopPropagation();vDelStep(VS.idx);};card.appendChild(x);
+    }
+  }
   vi.classList.add('hidden');vt.classList.add('hidden');vtb.classList.add('hidden');
   vtb.classList.remove('pulse','pulse-green','done-only');
   dw.classList.add('hidden');
@@ -2798,7 +2942,8 @@ function setupHoldButton(btn,action,holdMs){
 document.querySelectorAll('[data-hold="fs"]').forEach(b=>setupHoldButton(b,toggleFS));
 document.querySelectorAll('[data-hold="stop"]').forEach(b=>setupHoldButton(b,stopViewer));
 document.querySelectorAll('[data-hold="reset"]').forEach(b=>setupHoldButton(b,resetAgenda));
-document.querySelectorAll('[data-hold="tempedit"]').forEach(b=>setupHoldButton(b,startTempEdit));
+document.querySelectorAll('[data-hold="tempedit"]').forEach(b=>setupHoldButton(b,enterViewEdit));
+document.querySelectorAll('[data-hold="editdone"]').forEach(b=>setupHoldButton(b,exitViewEdit));
 function stopViewer(){
   clearTi();cancelAnimState();el('fin').classList.add('hidden');VS.idx=-1;
   try{screen.orientation.unlock();}catch(e){}
@@ -3130,7 +3275,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.3.2';
+const APP_VERSION='2.4.0';
 let swReg=null;
 
 function initVersionDisplay(){
