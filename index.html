@@ -992,7 +992,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Modifica provvisoria</div>
         <p>In alto durante l'utilizzo trovi anche l'icona <b>✏️</b>, accanto a Ridimensiona — tienila premuta 2 secondi per aprire l'editor degli step, identico in tutto e per tutto a quello usato in fase di creazione (stesse card, stesse modalità Immagine/Testo/Entrambe, stesso timer).</p>
-        <p>La differenza è che qui le modifiche sono <b>valide solo per la sessione in corso</b>: puoi togliere uno step di troppo, cambiare un'immagine, accorciare un timer al volo — e quando premi <b>✅ Applica</b> in alto, i cambiamenti si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>: la prossima volta che la riapri, tutto torna come prima. Se invece premi <b>✕ Annulla</b>, i cambiamenti vengono scartati del tutto, anche per la sessione corrente. Questo pulsante funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
+        <p>La differenza è che qui le modifiche sono <b>valide solo per la sessione in corso</b>: puoi togliere uno step di troppo, cambiare un'immagine, accorciare un timer al volo — e quando premi <b>✅ Applica</b> in alto, i cambiamenti si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>. Puoi riaprire "Modifica provvisoria" più volte nella stessa sessione: ogni volta si riparte da dove avevi lasciato l'ultima modifica applicata, non dall'originale — le modifiche si sommano finché resti in quella sessione. <b>Solo uscendo dall'agenda e riaprendola da capo</b> tutto torna esattamente come salvato. Se invece premi <b>✕ Annulla</b>, si scartano solo le modifiche fatte nell'ultima apertura dell'editor, senza toccare quelle già applicate in precedenza. Questo pulsante funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
@@ -1031,7 +1031,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.3.1</div>
+  <div class="home-ver" id="tb-ver">v2.3.2</div>
 </div>
 
 <!-- USERS -->
@@ -1607,7 +1607,8 @@ function startTempEdit(){
   cancelAnimState();
   tempEditPrevSelU=ST.selU; tempEditPrevSelA=ST.selA;
   ST.selU=VS.uid; ST.selA=VS.aid;
-  tempEditBackup=JSON.parse(JSON.stringify(a.steps));
+  tempEditBackup=JSON.parse(JSON.stringify(a.steps)); // true original, restored whenever we leave the editor
+  a.steps=JSON.parse(JSON.stringify(VS.steps)); // continue editing from the CURRENT session state (may already include earlier temporary edits), not from scratch
   tempEditing=true;
   dirty=false;
   ST.editIdx=null;
@@ -3129,7 +3130,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.3.1';
+const APP_VERSION='2.3.2';
 let swReg=null;
 
 function initVersionDisplay(){
