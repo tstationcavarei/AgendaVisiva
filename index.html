@@ -990,6 +990,11 @@ html[data-tablet=on][data-theme=dark] .vctrl{
         <p>In fondo trovi sempre: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. I pulsanti Chiudi, Ripristina, Ridimensiona (⛶) e Avanti/Indietro (quando bloccati da un timer) richiedono una pressione continua di <b>2 secondi</b> per attivarsi, e pulsano mentre li tieni premuti — una protezione contro i tocchi accidentali.</p>
       </div>
       <div class="instr-sect">
+        <div class="instr-sect-t">✏️ Modifica provvisoria</div>
+        <p>In alto durante l'utilizzo trovi anche l'icona <b>✏️</b>, accanto a Ridimensiona — tienila premuta 2 secondi per aprire l'editor degli step, identico in tutto e per tutto a quello usato in fase di creazione (stesse card, stesse modalità Immagine/Testo/Entrambe, stesso timer).</p>
+        <p>La differenza è che qui le modifiche sono <b>valide solo per la sessione in corso</b>: puoi togliere uno step di troppo, cambiare un'immagine, accorciare un timer al volo — e quando premi <b>✅ Applica</b> in alto, i cambiamenti si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>: la prossima volta che la riapri, tutto torna come prima. Se invece premi <b>✕ Annulla</b>, i cambiamenti vengono scartati del tutto, anche per la sessione corrente. Questo pulsante funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
+      </div>
+      <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
         <p>Crea un profilo per ogni persona che userà l'agenda. Ogni utente ha un nome e un colore identificativo. Sulla card trovi le icone 📋, ✏️ e 🗑 (con una piccola scritta sotto ciascuna: "Agende", "Modifica", "Elimina") per andare alle sue agende, modificare nome/colore, o eliminarlo (con conferma — elimina anche tutte le sue agende).</p>
       </div>
@@ -1026,7 +1031,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.2.3</div>
+  <div class="home-ver" id="tb-ver">v2.3.1</div>
 </div>
 
 <!-- USERS -->
@@ -1065,8 +1070,9 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 <!-- EDITOR -->
 <div class="scr" id="s-ed">
   <div class="tbar">
-    <button class="bk" onclick="edBack()">← Agende</button>
+    <button class="bk" id="ed-back-btn" onclick="edBack()">← Agende</button>
     <div class="tb-ttl" id="ed-t">Editor</div>
+    <button class="badd hidden" id="ed-apply-btn" style="background:var(--grn)" onclick="applyTempEdit()">✅ Applica</button>
     <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="eg hidden" id="ed-grid"></div>
@@ -1109,6 +1115,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <button class="bk hold-btn" data-hold="stop">✕ Esci</button>
     <div class="tb-ttl" id="v-t">Agenda</div>
+    <button class="ib hold-btn" data-hold="tempedit" title="Modifica provvisoria (solo questa sessione)">✏️</button>
     <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <!-- launch -->
@@ -1343,10 +1350,16 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 // ═══ STATE ═══
 let ST={users:[],selU:null,selA:null,editIdx:null,lastT:'ring'};
 let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false,locked:false,pw:'ADMIN'};
-let VS={steps:[],idx:-1,iv:null,rem:0,tot:0,tt:'ring'};
+let VS={steps:[],idx:-1,iv:null,rem:0,tot:0,tt:'ring',uid:null,aid:null};
 let pUC='#4A9EDB', agSel=null, dirty=false, cfCb=null;
+// ═══ MODIFICA PROVVISORIA (temporary, session-only editing) ═══
+// While active, the normal step editor is reused unchanged, but
+// save() is suppressed so nothing touches the persisted agenda —
+// changes only ever reach VS.steps (the live viewer session) when
+// explicitly applied, and never survive a reload or future reuse.
+let tempEditing=false, tempEditBackup=null, tempEditPrevSelU=null, tempEditPrevSelA=null;
 
-function save(){try{localStorage.setItem('av8',JSON.stringify(ST));}catch(e){}}
+function save(){if(tempEditing)return;try{localStorage.setItem('av8',JSON.stringify(ST));}catch(e){}}
 function saveCfg(){try{localStorage.setItem('av8c',JSON.stringify(CFG));}catch(e){}}
 function load(){
   try{const d=localStorage.getItem('av8');if(d)ST={...ST,...JSON.parse(d)};}catch(e){}
@@ -1570,7 +1583,8 @@ function dupAgenda(uid2,aid){
 // ═══ EDITOR ═══
 function rEd(){
   const a=ga();if(!a)return;
-  set('ed-t','✏️ '+(gu(ST.selU)?.name||'')+' › '+a.name);
+  if(tempEditing) set('ed-t','⏳ Provvisoria \u2014 '+a.name);
+  else set('ed-t','✏️ '+(gu(ST.selU)?.name||'')+' › '+a.name);
   if(ST.editIdx===null){edMode('grid');rEdGrid();}
   else{edMode('edit');rEdForm();rEdMini();}
 }
@@ -1581,6 +1595,61 @@ function edMode(m){
 }
 function edBack(){if(dirty)saveStep(true);kbdClose();go('s-ag');}
 function exitEdit(){if(dirty)saveStep(true);ST.editIdx=null;rEd();}
+
+// Entry point: hold the ✏️ button in the viewer. Opens the exact same
+// editor used for creating agendas, but on a throwaway copy of the
+// currently playing agenda — save() is suppressed the whole time.
+function startTempEdit(){
+  if(!VS.uid||!VS.aid)return;
+  const u=gu(VS.uid), a=u?.agendas.find(x=>x.id===VS.aid);
+  if(!a)return;
+  clearTi();
+  cancelAnimState();
+  tempEditPrevSelU=ST.selU; tempEditPrevSelA=ST.selA;
+  ST.selU=VS.uid; ST.selA=VS.aid;
+  tempEditBackup=JSON.parse(JSON.stringify(a.steps));
+  tempEditing=true;
+  dirty=false;
+  ST.editIdx=null;
+  go('s-ed');
+  rEd();
+  el('ed-back-btn').textContent='✕ Annulla';
+  el('ed-back-btn').onclick=cancelTempEdit;
+  el('ed-apply-btn').classList.remove('hidden');
+}
+// Confirms: whatever is in the (in-memory only) agenda right now
+// becomes the live session's steps — the persisted agenda is put
+// back exactly as it was, untouched, for all future reuses.
+function applyTempEdit(){
+  if(dirty)saveStep(true);
+  const a=ga();
+  if(a){
+    VS.steps=JSON.parse(JSON.stringify(a.steps));
+    a.steps=tempEditBackup;
+    if(VS.idx>=VS.steps.length) VS.idx=VS.steps.length-1;
+  }
+  endTempEdit();
+}
+// Discards: the persisted agenda is restored and nothing reaches the
+// live session either — as if "Modifica provvisoria" was never opened.
+function cancelTempEdit(){
+  const a=ga();
+  if(a) a.steps=tempEditBackup;
+  endTempEdit();
+}
+function endTempEdit(){
+  tempEditing=false;
+  tempEditBackup=null;
+  ST.selU=tempEditPrevSelU; ST.selA=tempEditPrevSelA;
+  ST.editIdx=null; dirty=false;
+  el('ed-back-btn').textContent='← Agende';
+  el('ed-back-btn').onclick=edBack;
+  el('ed-apply-btn').classList.add('hidden');
+  kbdClose();
+  save(); // safe no-op-if-needed re-save of the untouched real state
+  go('s-view');
+  rView();
+}
 
 function rEdGrid(){
   const a=ga();if(!a)return;
@@ -2020,7 +2089,7 @@ function startViewer(uidArg,aidArg){
   const u=gu(uid2), a=u?.agendas.find(x=>x.id===aid);
   if(!a||!a.steps.length){alert('Agenda senza step!');return;}
   VS.steps=JSON.parse(JSON.stringify(a.steps));
-  VS.idx=-1;clearTi();
+  VS.idx=-1;VS.uid=uid2;VS.aid=aid;clearTi();
   set('v-t',u.name+' \u203a '+a.name);
   try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{});}catch(e){}
   go('s-view');
@@ -2728,6 +2797,7 @@ function setupHoldButton(btn,action,holdMs){
 document.querySelectorAll('[data-hold="fs"]').forEach(b=>setupHoldButton(b,toggleFS));
 document.querySelectorAll('[data-hold="stop"]').forEach(b=>setupHoldButton(b,stopViewer));
 document.querySelectorAll('[data-hold="reset"]').forEach(b=>setupHoldButton(b,resetAgenda));
+document.querySelectorAll('[data-hold="tempedit"]').forEach(b=>setupHoldButton(b,startTempEdit));
 function stopViewer(){
   clearTi();cancelAnimState();el('fin').classList.add('hidden');VS.idx=-1;
   try{screen.orientation.unlock();}catch(e){}
@@ -3059,7 +3129,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.2.3';
+const APP_VERSION='2.3.1';
 let swReg=null;
 
 function initVersionDisplay(){
