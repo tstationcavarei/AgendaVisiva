@@ -431,6 +431,7 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .vl-g{flex:1;min-height:0;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;align-content:flex-start;}
 .vlc{display:flex;flex-direction:column;align-items:center;gap:3px;width:clamp(58px,9%,92px);}
 .vlc-b{width:100%;aspect-ratio:1/1;background:#b8dff0;border:2px solid #7ab8d8;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:1.3rem;}
+.vlc-b.has-img{background:#fff;}
 .vlc-txt{font-size:.5rem;font-weight:800;color:inherit;text-align:center;padding:5px;line-height:1.25;overflow:hidden;width:100%;min-width:0;}
 .vlc-b img{width:100%;height:100%;object-fit:cover;}
 .vlc-n{position:absolute;top:2px;left:3px;background:rgba(255,255,255,.88);color:#1a3060;border-radius:3px;font-size:.5rem;font-weight:900;padding:0 2px;}
@@ -556,6 +557,7 @@ html[data-tablet=on] .vctrl{
   font-size:.85rem;color:#5a8aa0;
   position:relative;
 }
+.vsq-b.has-img{background:#fff;}
 /* ── IN-PLACE EDIT MODE (viewer) ──
    Squares grow to give the overlay buttons room to be comfortably
    tappable — everything else about the layout stays the same. */
@@ -1009,8 +1011,9 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Modifica provvisoria</div>
         <p>In alto durante l'utilizzo trovi anche l'icona <b>✏️</b>, accanto a Ridimensiona — tienila premuta 2 secondi per attivarla. La schermata <b>non cambia</b>: resti esattamente sulla stessa vista (l'attività attuale grande al centro, le successive in alto), solo che ora compaiono dei piccoli pulsanti sopra ogni riquadro — <b>✏️</b> Modifica, <b>⧉</b> Duplica, <b>✕</b> Elimina, e <b>⠿</b> per trascinare e riordinare le attività successive. I riquadri si ingrandiscono leggermente per rendere questi pulsanti più facili da toccare. In fondo alla striscia trovi anche un riquadro tratteggiato <b>＋</b> per aggiungere una nuova attività.</p>
+        <p>Se l'attività attuale ha un timer in corso, prima di entrare in modifica ti verrà chiesto se vuoi che continui a scorrere oppure che si fermi. Se scegli di fermarlo, resta congelato esattamente al punto in cui era arrivato e riparte da lì quando premi Fatto; se scegli di farlo continuare, va avanti normalmente anche mentre modifichi altre attività. L'unica eccezione: se modifichi proprio il timer dell'attività attuale (durata o tipo), il cambiamento si applica subito e riparte dal nuovo valore impostato, indipendentemente dalla scelta fatta all'inizio.</p>
         <p>Toccando <b>✏️</b> su un riquadro si apre una finestra con lo stesso form usato in fase di creazione (nome, modalità Immagine/Testo/Entrambe con anteprima, immagine o timer con anteprima) — premi <b>✅ Fatto</b> per chiuderla e tornare alla vista con i pulsanti.</p>
-        <p>Tutte queste modifiche sono <b>valide solo per la sessione in corso</b>: si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>. Puoi continuare a modificare quanto vuoi finché resti in questa sessione — le modifiche si sommano. <b>Solo uscendo dall'agenda e riaprendola da capo</b> tutto torna esattamente come salvato. Per uscire dalla modalità modifica, tieni premuto <b>✅ Fatto</b> al posto di ✏️ nella barra in alto. Solo le attività <b>già completate</b> non sono modificabili da qui, dato che non sono più visibili a schermo. Questo pulsante funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
+        <p>Tutte queste modifiche sono <b>valide solo per la sessione in corso</b>: si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>. Puoi continuare a modificare quanto vuoi finché resti in questa sessione — le modifiche si sommano. <b>Solo uscendo dall'agenda e riaprendola da capo</b> tutto torna esattamente come salvato. Per uscire dalla modalità modifica, tocca <b>✅ Fatto</b> al posto di ✏️ nella barra in alto (basta un tocco normale, non serve tenerlo premuto). Solo le attività <b>già completate</b> non sono modificabili da qui, dato che non sono più visibili a schermo. Il pulsante ✏️ per entrare in modifica funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
@@ -1049,7 +1052,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.4.0</div>
+  <div class="home-ver" id="tb-ver">v2.4.1</div>
 </div>
 
 <!-- USERS -->
@@ -1133,7 +1136,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <button class="bk hold-btn" data-hold="stop">✕ Esci</button>
     <div class="tb-ttl" id="v-t">Agenda</div>
     <button class="ib hold-btn" id="v-edit-start-btn" data-hold="tempedit" title="Modifica provvisoria (solo questa sessione)">✏️</button>
-    <button class="bk hold-btn hidden" id="v-editdone" data-hold="editdone" style="background:var(--grn);color:#fff;border-color:var(--grn-d)" title="Termina modifica">✅ Fatto</button>
+    <button class="bk hidden" id="v-editdone" onclick="exitViewEdit()" style="background:var(--grn);color:#fff;border-color:var(--grn-d)" title="Termina modifica">✅ Fatto</button>
     <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <!-- launch -->
@@ -1329,10 +1332,20 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   </div>
 </div>
 <div class="mov hidden" id="m-stepedit">
-  <div class="mbox" style="max-width:480px;max-height:88vh;overflow-y:auto;">
+  <div class="mbox" style="max-width:min(720px,96vw);width:96vw;max-height:92vh;overflow-y:auto;">
     <div class="mttl" id="stepedit-ttl">✏️ Step</div>
     <div id="stepedit-f"></div>
     <div class="macts"><button class="bm ok" onclick="vCloseStepModal()">✅ Fatto</button></div>
+  </div>
+</div>
+<div class="mov hidden" id="m-timerask">
+  <div class="mbox" style="max-width:360px">
+    <div class="mttl">⏱️ Timer attivo</div>
+    <div class="ssub" style="margin-top:-6px">Vuoi che il timer continui a scorrere mentre modifichi l'agenda?</div>
+    <div class="macts">
+      <button class="bm cn" onclick="answerTimerAsk(false)">No, mettilo in pausa</button>
+      <button class="bm ok" onclick="answerTimerAsk(true)">Sì, continua</button>
+    </div>
   </div>
 </div>
 <div class="mov hidden" id="m-pw">
@@ -1385,6 +1398,9 @@ let pUC='#4A9EDB', agSel=null, dirty=false, cfCb=null;
 // moment the agenda is closed and reopened.
 let viewEditMode=false;   // true while the overlay controls are shown
 let viewEditIdx=null;     // non-null while the per-step detail modal is open — index into VS.steps
+let lastRenderedStepRef=null; // tracks the actual step OBJECT last fully set up — lets overlay-only re-renders (delete/duplicate/open modal) leave a running/paused timer alone, while correctly detecting when the current slot now holds a genuinely different step (e.g. the current one was just deleted)
+let editTimerPaused=false, editTimerPausedRem=0; // "No" choice: frozen remaining time, resumed on Fatto
+let editTimerForceLive=false; // set when the CURRENT step's own timer settings are edited — overrides pause/keep-running, applies immediately
 // curStep()/curSave()/curRerender() let the ONE shared step-editing UI
 // (rEdForm and friends) work correctly whether it's editing the
 // persisted agenda (normal creation editor) or a session-only step
@@ -1646,8 +1662,29 @@ function exitEdit(){if(dirty)saveStep(true);ST.editIdx=null;rEd();}
 // starts fresh from the real, untouched saved version.
 function enterViewEdit(){
   if(VS.idx<0)return; // nothing to edit in place until the agenda has actually started
-  clearTi();
   cancelAnimState();
+  editTimerPaused=false;
+  editTimerForceLive=false;
+  if(VS.iv){
+    // A timer is actively counting down — ask before touching it.
+    // The overlay itself opens only after the person answers.
+    openM('m-timerask');
+  } else {
+    openViewEditNow();
+  }
+}
+function answerTimerAsk(keepRunning){
+  closeM('m-timerask');
+  if(keepRunning){
+    editTimerPaused=false; // leave VS.iv ticking exactly as it is
+  } else {
+    editTimerPausedRem=VS.rem;
+    editTimerPaused=true;
+    clearTi(); // freezes the displayed remaining time at its current point
+  }
+  openViewEditNow();
+}
+function openViewEditNow(){
   viewEditMode=true;
   el('v-edit-start-btn').classList.add('hidden');
   el('v-editdone').classList.remove('hidden');
@@ -1660,7 +1697,17 @@ function exitViewEdit(){
   closeM('m-stepedit');
   el('v-editdone').classList.add('hidden');
   el('v-edit-start-btn').classList.remove('hidden');
-  rCur();
+  if(editTimerPaused){
+    // Resume exactly from where it was frozen — not a fresh countdown.
+    const s=VS.steps[VS.idx];
+    editTimerPaused=false;
+    rCur({preserveTimer:true});
+    VS.rem=editTimerPausedRem;
+    updT();
+    if(s?.timer?.on) startTi(s);
+  } else {
+    rCur({preserveTimer:true});
+  }
   rStrip();
 }
 function vDelStep(i){
@@ -1705,7 +1752,14 @@ function vCloseStepModal(){
 // from within the step-detail modal, so edits are visible immediately
 // behind it.
 function vRenderOverlay(){
-  rCur();rStrip();
+  if(editTimerForceLive){
+    editTimerForceLive=false;
+    editTimerPaused=false;
+    rCur({forceTimerReset:true});
+  } else {
+    rCur();
+  }
+  rStrip();
 }
 
 function rEdGrid(){
@@ -1986,7 +2040,7 @@ function rEdForm(targetId){
   const tr=mk('div','tog-r');
   const tg=mk('div','tog'+(s.timer.on?' on':''));tr.appendChild(tg);
   const tl=mk('span');tl.style.cssText='font-weight:800;font-size:.82rem';tl.textContent='⏱️ Timer';tr.appendChild(tl);
-  tr.onclick=()=>{const x=curStep();if(x){x.timer.on=!x.timer.on;curSave();curRerender();}};
+  tr.onclick=()=>{const x=curStep();if(x){x.timer.on=!x.timer.on;curSave();if(viewEditIdx!==null&&viewEditIdx===VS.idx)editTimerForceLive=true;curRerender();}};
   tb.appendChild(tr);
   if(s.timer.on){
     const timerMain=mk('div');timerMain.style.cssText='display:flex;gap:14px;align-items:center;';
@@ -1997,17 +2051,17 @@ function rEdForm(targetId){
       const b=mk('button','ttb'+(s.timer.type===p[0]?' on':''));
       const bi=mk('span');bi.style.fontSize='1rem';bi.textContent=p[1];b.appendChild(bi);
       const bl=mk('span');bl.style.cssText='font-size:.58rem;font-weight:800';bl.textContent=p[2];b.appendChild(bl);
-      b.onclick=()=>{const x=curStep();if(x){x.timer.type=p[0];ST.lastT=p[0];curSave();curRerender();}};
+      b.onclick=()=>{const x=curStep();if(x){x.timer.type=p[0];ST.lastT=p[0];curSave();if(viewEditIdx!==null&&viewEditIdx===VS.idx)editTimerForceLive=true;curRerender();}};
       tw2.appendChild(b);
     });
     timerLeft.appendChild(tw2);
     // durata — riga orizzontale libera
     const dr=mk('div');dr.style.cssText='display:flex;gap:7px;align-items:flex-end;';
-    dr.appendChild(mkTSel('Ore',24,s.timer.h||0,v=>{const x=curStep();if(x){x.timer.h=v;markD();curSave();}}));
+    dr.appendChild(mkTSel('Ore',24,s.timer.h||0,v=>{const x=curStep();if(x){x.timer.h=v;markD();curSave();if(viewEditIdx!==null&&viewEditIdx===VS.idx){editTimerForceLive=true;vRenderOverlay();}}}));
     dr.appendChild(mkColon());
-    dr.appendChild(mkTSel('Minuti',60,s.timer.m||0,v=>{const x=curStep();if(x){x.timer.m=v;markD();curSave();}}));
+    dr.appendChild(mkTSel('Minuti',60,s.timer.m||0,v=>{const x=curStep();if(x){x.timer.m=v;markD();curSave();if(viewEditIdx!==null&&viewEditIdx===VS.idx){editTimerForceLive=true;vRenderOverlay();}}}));
     dr.appendChild(mkColon());
-    dr.appendChild(mkTSel('Secondi',60,s.timer.s||0,v=>{const x=curStep();if(x){x.timer.s=v;markD();curSave();}}));
+    dr.appendChild(mkTSel('Secondi',60,s.timer.s||0,v=>{const x=curStep();if(x){x.timer.s=v;markD();curSave();if(viewEditIdx!==null&&viewEditIdx===VS.idx){editTimerForceLive=true;vRenderOverlay();}}}));
     const al=mk('label');al.style.cssText='display:flex;align-items:center;gap:5px;font-size:.7rem;font-weight:700;cursor:pointer;margin-bottom:6px;margin-left:8px';
     const ac=mk('input');ac.type='checkbox';ac.checked=!!s.timer.auto;
     ac.onchange=()=>{const x=curStep();if(x){x.timer.auto=ac.checked;curSave();}};
@@ -2370,7 +2424,8 @@ function rStrip(){
   }
   strip.scrollLeft=0;
 }
-function rCur(){
+function rCur(opts){
+  opts=opts||{};
   const s=VS.steps[VS.idx];
   const vi=el('v-img'), vt=el('v-txt'), vn=el('v-nm'), vtb=el('v-timer'), nb=el('v-next'), dl=el('v-done'), dp=el('v-done-play'), dw=el('v-done-wrap'), vsp=el('v-spacer');
   const card=el('v-card-outer');
@@ -2387,14 +2442,7 @@ function rCur(){
       const x=mk('button','v-edit-btn sc-x');x.textContent='✕';x.title='Elimina';x.onclick=e=>{e.stopPropagation();vDelStep(VS.idx);};card.appendChild(x);
     }
   }
-  vi.classList.add('hidden');vt.classList.add('hidden');vtb.classList.add('hidden');
-  vtb.classList.remove('pulse','pulse-green','done-only');
-  dw.classList.add('hidden');
-  dl.classList.add('hidden');dl.classList.remove('blink');
-  dp.classList.add('hidden');dp.classList.remove('blink');
-  vsp.classList.add('hidden');
-  ['tw-ring','tw-digi','tw-bar','tw-circ'].forEach(id=>el(id).classList.add('hidden'));
-  clearTi();
+  vi.classList.add('hidden');vt.classList.add('hidden');
   vn.textContent=s.label;
   if(s.mode==='image'){
     vn.classList.add('hidden'); // image-only: no text at all in the viewer
@@ -2420,15 +2468,47 @@ function rCur(){
   }
   nb.disabled=(VS.idx>=VS.steps.length-1);
   nb.textContent=VS.idx>=VS.steps.length-1?'✓ Fine':'Avanti ▶';
-  if(s.timer?.on){
-    const tot=((s.timer.h||0)*3600)+((s.timer.m||0)*60)+(s.timer.s||0);
-    if(tot>0){
-      VS.tot=tot;VS.rem=tot;VS.tt=s.timer.type||'ring';
+
+  // Timer: preserve whatever state it's in (paused-frozen, or still
+  // ticking in the background) when this is just an overlay refresh on
+  // the SAME step — only a genuine step change (or an explicit force,
+  // used when editing this exact step's own timer settings) resets it
+  // to a fresh full countdown.
+  const samStep=(lastRenderedStepRef===s);
+  const preserve=!opts.forceTimerReset && (opts.preserveTimer || samStep);
+  lastRenderedStepRef=s;
+
+  if(preserve){
+    vtb.classList.add('hidden');
+    ['tw-ring','tw-digi','tw-bar','tw-circ'].forEach(id=>el(id).classList.add('hidden'));
+    if(s.timer?.on && VS.tot>0){
       vtb.classList.remove('hidden');
-      vsp.classList.remove('hidden'); // mirror spacer keeps activity centred
+      vsp.classList.remove('hidden');
       const map={ring:'tw-ring',digital:'tw-digi',bar:'tw-bar',circle:'tw-circ'};
       el(map[VS.tt]).classList.remove('hidden');
-      updT();startTi(s);
+      updT(); // redraw current values only — never resets or restarts
+    } else {
+      vsp.classList.add('hidden');
+    }
+  } else {
+    clearTi();
+    vtb.classList.add('hidden');
+    vtb.classList.remove('pulse','pulse-green','done-only');
+    dw.classList.add('hidden');
+    dl.classList.add('hidden');dl.classList.remove('blink');
+    dp.classList.add('hidden');dp.classList.remove('blink');
+    vsp.classList.add('hidden');
+    ['tw-ring','tw-digi','tw-bar','tw-circ'].forEach(id=>el(id).classList.add('hidden'));
+    if(s.timer?.on){
+      const tot=((s.timer.h||0)*3600)+((s.timer.m||0)*60)+(s.timer.s||0);
+      if(tot>0){
+        VS.tot=tot;VS.rem=tot;VS.tt=s.timer.type||'ring';
+        vtb.classList.remove('hidden');
+        vsp.classList.remove('hidden'); // mirror spacer keeps activity centred
+        const map={ring:'tw-ring',digital:'tw-digi',bar:'tw-bar',circle:'tw-circ'};
+        el(map[VS.tt]).classList.remove('hidden');
+        updT();startTi(s);
+      }
     }
   }
 }
@@ -2943,7 +3023,6 @@ document.querySelectorAll('[data-hold="fs"]').forEach(b=>setupHoldButton(b,toggl
 document.querySelectorAll('[data-hold="stop"]').forEach(b=>setupHoldButton(b,stopViewer));
 document.querySelectorAll('[data-hold="reset"]').forEach(b=>setupHoldButton(b,resetAgenda));
 document.querySelectorAll('[data-hold="tempedit"]').forEach(b=>setupHoldButton(b,enterViewEdit));
-document.querySelectorAll('[data-hold="editdone"]').forEach(b=>setupHoldButton(b,exitViewEdit));
 function stopViewer(){
   clearTi();cancelAnimState();el('fin').classList.add('hidden');VS.idx=-1;
   try{screen.orientation.unlock();}catch(e){}
@@ -3047,7 +3126,7 @@ function confirm2(txt,cb,btnLbl){
   b.onclick=()=>{if(cfCb)cfCb();closeM('m-cf');};
   openM('m-cf');
 }
-document.querySelectorAll('.mov').forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m){m.classList.add('hidden');kbdClose();}}));
+document.querySelectorAll('.mov').forEach(m=>m.addEventListener('mousedown',e=>{if(e.target===m){if(m.id==='m-stepedit'){vCloseStepModal();}else{m.classList.add('hidden');kbdClose();}}}));
 
 // ═══ CUSTOM DROPDOWN → PICKER SHEET ═══
 // Floating popups inside the rotated #stage proved unreliable, so
@@ -3275,7 +3354,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.4.0';
+const APP_VERSION='2.4.1';
 let swReg=null;
 
 function initVersionDisplay(){
