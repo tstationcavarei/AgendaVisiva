@@ -370,6 +370,14 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .sst{font-size:.7rem;font-weight:700;color:var(--mut);}
 .blist{margin-left:auto;background:var(--bg);border:2px solid var(--brd);border-radius:9px;padding:6px 12px;font-family:inherit;font-weight:700;font-size:.74rem;color:var(--txt);cursor:pointer;}
 .ar-grid{display:flex;flex-wrap:wrap;gap:6px;max-height:150px;overflow-y:auto;padding:7px;background:var(--bg);border-radius:10px;min-height:52px;}
+.agbg-sw{
+  width:64px;height:64px;border-radius:12px;cursor:pointer;
+  border:3px solid var(--brd);background-size:cover;background-position:center;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  transition:border-color .15s,transform .15s;
+}
+.agbg-sw.sel{border-color:var(--grn);transform:scale(1.06);box-shadow:0 0 0 3px rgba(6,214,160,.28);}
+.agbg-sw-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;max-width:70px;}
 .ar-img{width:54px;height:54px;object-fit:contain;border-radius:7px;border:2px solid transparent;cursor:pointer;background:#fff;}
 .ar-img:active{border-color:var(--acc);}
 
@@ -445,6 +453,17 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 .vplay svg{width:26px;height:26px;fill:#fff;margin-left:3px;}
 /* running */
 .vr{flex:1;min-height:0;display:flex;flex-direction:column;overflow:visible;background:#f0f4f8;}
+/* Custom agenda background: a dedicated layer BEHIND all content, so
+   an optional blur can be applied to it alone without ever blurring
+   the activity cards or any text sitting on top of it. */
+#s-view{position:relative;}
+#v-bg-layer{
+  position:absolute;inset:0;z-index:-1;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  pointer-events:none;
+}
+#v-bg-layer.blur{filter:blur(16px);transform:scale(1.1);} /* scaled up so the blurred edges never show a gap */
+#s-view.has-agbg .vl,#s-view.has-agbg .vr,#s-view.has-agbg .vseq{background:transparent;}
 
 /* ── TOP ROW: the full sequence, all steps close together.
    Every card (including current) lives HERE — no separate section.
@@ -1024,7 +1043,8 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">📋 Agende</div>
-        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso le icone <b>📂</b>, <b>⧉</b>, <b>🗑</b> (con le rispettive scritte "Modifica", "Duplica", "Elimina" sotto): Modifica entra nell'editor degli step, Duplica copia l'agenda intera con tutti i suoi step (utile per creare varianti simili senza ricominciare da zero), Elimina la rimuove con conferma.</p>
+        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso le icone <b>📂</b>, <b>⧉</b>, <b>🎨</b>, <b>🗑</b>: Modifica entra nell'editor degli step, Duplica copia l'agenda intera con tutti i suoi step (utile per creare varianti simili senza ricominciare da zero), Sfondo apre la scelta dello sfondo per quell'agenda, Elimina la rimuove con conferma.</p>
+        <p><b>🎨 Sfondo</b>: scegli tra neutro (come oggi), alcuni preset (sughero, tappeto verde, colori tenui) oppure una foto dalla galleria — si vede durante l'uso dell'agenda, dietro alle attività, che restano sempre ben visibili sopra. La spunta "Sfoca lo sfondo" attenua i dettagli per ridurre la distrazione visiva, se lo sfondo scelto risulta troppo ricco.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
@@ -1055,7 +1075,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.5.1</div>
+  <div class="home-ver" id="tb-ver">v2.6.0</div>
 </div>
 
 <!-- USERS -->
@@ -1135,6 +1155,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 
 <!-- VIEWER -->
 <div class="scr" id="s-view">
+  <div id="v-bg-layer"></div>
   <div class="tbar">
     <button class="bk hold-btn" data-hold="stop">✕ Esci</button>
     <div class="tb-ttl" id="v-t">Agenda</div>
@@ -1314,6 +1335,22 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <div class="mttl" id="m-ag-ttl">📋 Nuova Agenda</div>
     <div class="fg"><label class="fl">Nome</label><input type="text" class="inp" id="ma-n" placeholder="es: Lunedì..." autocomplete="off" inputmode="none"></div>
     <div class="macts"><button class="bm cn" onclick="closeM('m-ag')">Annulla</button><button class="bm ok" onclick="saveAgenda()">Salva</button></div>
+  </div>
+</div>
+<div class="mov hidden" id="m-agbg">
+  <div class="mbox" style="max-width:440px">
+    <div class="mttl">🎨 Sfondo agenda</div>
+    <div class="ssub" style="margin-top:-6px">Le attività resteranno sempre ben visibili sopra, come adesso.</div>
+    <div id="agbg-grid" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:8px 0;"></div>
+    <label style="display:flex;align-items:center;gap:8px;justify-content:center;padding:6px 4px;font-size:.78rem;font-weight:700;cursor:pointer;">
+      <input type="checkbox" id="agbg-blur-chk" onchange="toggleAgBgBlur(this.checked)">
+      🌫️ Sfoca lo sfondo (riduce la distrazione visiva)
+    </label>
+    <input type="file" id="agbg-file" accept="image/*" class="hidden" onchange="onAgBgImg(event)">
+    <div class="macts">
+      <button class="bm cn" onclick="closeM('m-agbg');agBgTarget=null;rAgGrid();">Chiudi</button>
+      <button class="bm ok" onclick="el('agbg-file').click()">📁 Immagine dalla galleria</button>
+    </div>
   </div>
 </div>
 <div class="mov hidden" id="m-cf">
@@ -1586,8 +1623,9 @@ function rAgGrid(){
     const acts=mk('div','acard-a');
     const be=mkIconAction('p','📂','Modifica','Modifica',()=>{ST.selU=u.id;ST.selA=a.id;ST.editIdx=null;dirty=false;go('s-ed');rEd();});
     const bc=mkIconAction('e','⧉','Duplica','Duplica',()=>dupAgenda(u.id,a.id));
+    const bg2=mkIconAction('e','🎨','Sfondo','Sfondo',()=>openAgBg(u.id,a.id));
     const bd=mkIconAction('d','🗑','Elimina','Elimina',()=>delAgenda(u.id,a.id));
-    acts.appendChild(be);acts.appendChild(bc);acts.appendChild(bd);
+    acts.appendChild(be);acts.appendChild(bc);acts.appendChild(bg2);acts.appendChild(bd);
     c.appendChild(nameRow);c.appendChild(m);c.appendChild(acts);
     g.appendChild(c);
   });
@@ -1640,6 +1678,107 @@ function dupAgenda(uid2,aid){
     u.agendas.splice(idx+1,0,copy);
     save();rAgGrid();rHome();
   },'Duplica');
+}
+
+// ═══ SFONDO AGENDA ═══
+// Each agenda can have its own background, shown behind the activity
+// cards during use (launch screen and running view) — a few built-in
+// presets (CSS-only, no extra assets needed) or a custom photo from
+// the gallery. The cards themselves are untouched, sitting on top
+// exactly as they always have on the neutral default.
+const BG_PRESETS={
+  sughero:'repeating-radial-gradient(circle at 18% 25%,rgba(90,55,25,.22) 0 2px,transparent 3px 11px),repeating-radial-gradient(circle at 68% 55%,rgba(90,55,25,.18) 0 2px,transparent 3px 13px),repeating-radial-gradient(circle at 40% 80%,rgba(90,55,25,.2) 0 2px,transparent 3px 12px),linear-gradient(135deg,#cda06c,#b6875a)',
+  tappeto:'radial-gradient(circle at 30% 20%,#2a8f5c,#0f5c36 70%)',
+  azzurro:'linear-gradient(135deg,#eaf4fb,#cfe6f5)',
+  crema:'linear-gradient(135deg,#faf6ec,#f0e6cf)',
+  grigio:'linear-gradient(135deg,#eef2f5,#dbe3e8)'
+};
+const BG_LABELS={sughero:'Sughero',tappeto:'Tappeto verde',azzurro:'Azzurro',crema:'Crema',grigio:'Grigio'};
+let agBgTarget=null; // {uid,aid} of the agenda currently being edited
+function openAgBg(uid2,aid){
+  const u=gu(uid2), a=u?.agendas.find(x=>x.id===aid);
+  if(!a)return;
+  agBgTarget={uid:uid2,aid};
+  renderAgBgGrid(a);
+  el('agbg-blur-chk').checked=!!(a.bg&&a.bg.blur);
+  openM('m-agbg');
+}
+function renderAgBgGrid(a){
+  const g=el('agbg-grid');g.innerHTML='';
+  const cur=a.bg||{type:'none',value:null};
+  const addSwatch=(css,label,sel,onclick,emoji)=>{
+    const wrap=mk('div');wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';
+    const sw=mk('div','agbg-sw'+(sel?' sel':''));
+    if(css)sw.style.background=css;
+    if(emoji)sw.textContent=emoji;
+    sw.onclick=onclick;
+    const lbl=mk('div','agbg-sw-l');lbl.textContent=label;
+    wrap.appendChild(sw);wrap.appendChild(lbl);
+    g.appendChild(wrap);
+  };
+  addSwatch('var(--bg2)','Neutro',cur.type==='none',()=>setAgBg('none',null),'⬜');
+  Object.keys(BG_PRESETS).forEach(k=>{
+    addSwatch(BG_PRESETS[k],BG_LABELS[k],cur.type==='preset'&&cur.value===k,()=>setAgBg('preset',k));
+  });
+  if(cur.type==='image'&&cur.value){
+    const wrap=mk('div');wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';
+    const sw=mk('div','agbg-sw sel');sw.style.backgroundImage='url('+cur.value+')';
+    const lbl=mk('div','agbg-sw-l');lbl.textContent='Personalizzata';
+    wrap.appendChild(sw);wrap.appendChild(lbl);
+    g.appendChild(wrap);
+  }
+}
+function setAgBg(type,value){
+  if(!agBgTarget)return;
+  const u=gu(agBgTarget.uid), a=u?.agendas.find(x=>x.id===agBgTarget.aid);
+  if(!a)return;
+  const blur=!!(a.bg&&a.bg.blur);
+  a.bg={type,value,blur};
+  save();
+  renderAgBgGrid(a); // keep the modal open, just refresh the selection highlight
+}
+function toggleAgBgBlur(checked){
+  if(!agBgTarget)return;
+  const u=gu(agBgTarget.uid), a=u?.agendas.find(x=>x.id===agBgTarget.aid);
+  if(!a)return;
+  if(!a.bg) a.bg={type:'none',value:null};
+  a.bg.blur=checked;
+  save();
+}
+function onAgBgImg(e){
+  const f=e.target.files[0];if(!f)return;
+  compressImageFile(f,1600,0.82).then(dataUrl=>{
+    setAgBg('image',dataUrl);
+  }).catch(()=>{
+    const r=new FileReader();
+    r.onload=ev=>setAgBg('image',ev.target.result);
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+// Applies (or clears) the agenda's chosen background on the viewer
+// screen — called once whenever a viewer session starts.
+function applyAgendaBg(a){
+  const scr=el('s-view'), layer=el('v-bg-layer');
+  const bg=a?.bg;
+  if(!bg||bg.type==='none'){
+    layer.style.backgroundImage='';
+    layer.classList.remove('blur');
+    scr.classList.remove('has-agbg');
+    return;
+  }
+  let img='';
+  if(bg.type==='preset') img=BG_PRESETS[bg.value]||'';
+  else if(bg.type==='image'&&bg.value) img='url('+bg.value+')';
+  if(!img){
+    layer.style.backgroundImage='';
+    layer.classList.remove('blur');
+    scr.classList.remove('has-agbg');
+    return;
+  }
+  scr.classList.add('has-agbg');
+  layer.style.backgroundImage=img;
+  layer.classList.toggle('blur',!!bg.blur);
 }
 
 // ═══ EDITOR ═══
@@ -2142,11 +2281,47 @@ function mkTSel(lbl,max,cur,cb){
 }
 
 // image upload
+// Resizes and re-compresses an uploaded image before it's ever stored.
+// Camera photos can be several MB — keeping them full-size makes the
+// app sluggish (saving, animating, cloning) for no visual benefit,
+// since nothing in the app ever shows an image bigger than a few
+// hundred pixels (or, for agenda backgrounds, a full screen — hence
+// the caller-supplied maxDim).
+function compressImageFile(file,maxDim,quality){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        if(w>maxDim||h>maxDim){
+          if(w>=h){h=Math.round(h*maxDim/w);w=maxDim;}
+          else{w=Math.round(w*maxDim/h);h=maxDim;}
+        }
+        const canvas=document.createElement('canvas');
+        canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.onerror=()=>reject(new Error('decode failed'));
+      img.src=ev.target.result;
+    };
+    reader.onerror=()=>reject(new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
 function onImg(e){
   const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{const x=curStep();if(!x)return;x.img=ev.target.result;curSave();curRerender();};
-  r.readAsDataURL(f);e.target.value='';
+  compressImageFile(f,900,0.82).then(dataUrl=>{
+    const x=curStep();if(!x)return;
+    x.img=dataUrl;curSave();curRerender();
+  }).catch(()=>{
+    const r=new FileReader();
+    r.onload=ev=>{const x=curStep();if(!x)return;x.img=ev.target.result;curSave();curRerender();};
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
 }
 // ARASAAC
 function openAr(){
@@ -2253,6 +2428,7 @@ function startViewer(uidArg,aidArg){
   VS.steps=JSON.parse(JSON.stringify(a.steps));
   VS.idx=-1;VS.uid=uid2;VS.aid=aid;clearTi();
   set('v-t',u.name+' \u203a '+a.name);
+  applyAgendaBg(a);
   try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{});}catch(e){}
   go('s-view');
   rView();
@@ -3357,7 +3533,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.5.1';
+const APP_VERSION='2.6.0';
 let swReg=null;
 
 function initVersionDisplay(){
