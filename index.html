@@ -1027,7 +1027,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
         <div class="instr-sect-t">✏️ Editor degli step</div>
         <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere, con un numero verde prima del nome. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare lo step (con conferma, copia identica), <b>⠿</b> per trascinare e riordinare gli step.</p>
         <p>Il nome dello step ha un limite di 40 caratteri, con un contatore che scala mentre scrivi — così il titolo resta sempre leggibile nelle miniature senza uscire dai riquadri.</p>
-        <p>Nel form di modifica scegli come mostrare lo step: <b>🖼️ Immagine</b> (solo immagine), <b>📝 Testo</b> (solo il nome scritto grande, senza immagine — utile per un'agenda testuale invece che visiva), oppure <b>🖼️+📝 Entrambe</b> (immagine e nome insieme). Puoi caricare un'immagine dal dispositivo o cercarla su ARASAAC, e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro. Le foto caricate dal dispositivo vengono automaticamente ridimensionate e compresse, così l'app resta veloce e le animazioni scorrono senza ritardi anche con molte immagini.</p>
+        <p>Nel form di modifica scegli come mostrare lo step: <b>🖼️ Immagine</b> (solo immagine), <b>📝 Testo</b> (solo il nome scritto grande, senza immagine — utile per un'agenda testuale invece che visiva), oppure <b>🖼️+📝 Entrambe</b> (immagine e nome insieme). Puoi caricare un'immagine dal dispositivo o cercarla su ARASAAC, e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔒 Blocco con password</div>
@@ -1052,7 +1052,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.4.5</div>
+  <div class="home-ver" id="tb-ver">v2.4.2</div>
 </div>
 
 <!-- USERS -->
@@ -1441,26 +1441,15 @@ function mk(t,c){const e=document.createElement(t||'div');if(c)e.className=c;ret
 function fitTextToBox(el,minPx,maxPx,boxEl){
   const box = boxEl || el.parentElement;
   if(!box)return;
-  // Binary search for the largest size that fits, instead of stepping
-  // down 1px at a time. Each check forces a synchronous browser layout
-  // recalculation (reading scrollHeight/scrollWidth right after a
-  // style write) — stepping through up to ~60 sizes one at a time
-  // meant up to ~60 forced reflows on EVERY text-mode step render,
-  // which is exactly the kind of thing that causes multi-second lag
-  // during step-change animations, regardless of image weight. Binary
-  // search needs only ~6-7 checks for the same range.
-  const fits=size=>{
-    el.style.fontSize=size+'px';
-    return el.scrollHeight<=box.clientHeight && el.scrollWidth<=box.clientWidth;
-  };
-  if(fits(maxPx)) return; // best case: the max size already fits, one check total
-  let lo=minPx, hi=maxPx, best=minPx;
-  while(lo<=hi){
-    const mid=(lo+hi)>>1;
-    if(fits(mid)){ best=mid; lo=mid+1; }
-    else { hi=mid-1; }
+  let size = maxPx;
+  el.style.fontSize = size+'px';
+  let guard=0;
+  while(size>minPx && guard<100){
+    guard++;
+    if(el.scrollHeight<=box.clientHeight && el.scrollWidth<=box.clientWidth) break;
+    size -= 1;
+    el.style.fontSize = size+'px';
   }
-  el.style.fontSize=best+'px';
 }
 // Icon button + tiny caption below it, e.g. "🗑" with "Elimina" underneath.
 // Keeps the button itself small while making its action unambiguous.
@@ -2150,52 +2139,11 @@ function mkTSel(lbl,max,cur,cb){
 }
 
 // image upload
-// Resizes and re-compresses an uploaded image before it's ever stored.
-// Camera photos can be several MB — that raw weight gets copied
-// around on every animation (cloned into the moving thumbnails, most
-// of all in "Indietro" which clones several strip items at once),
-// which is exactly what causes a multi-second lag between pressing a
-// button and the animation actually starting. Shrinking to a sensible
-// max dimension keeps images crisp on-screen (they're never shown
-// bigger than a few hundred pixels anywhere in the app) while cutting
-// typical file size down to tens of KB instead of several MB.
-function compressImageFile(file,maxDim,quality){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      const img=new Image();
-      img.onload=()=>{
-        let w=img.width,h=img.height;
-        if(w>maxDim||h>maxDim){
-          if(w>=h){h=Math.round(h*maxDim/w);w=maxDim;}
-          else{w=Math.round(w*maxDim/h);h=maxDim;}
-        }
-        const canvas=document.createElement('canvas');
-        canvas.width=w;canvas.height=h;
-        const ctx=canvas.getContext('2d');
-        ctx.drawImage(img,0,0,w,h);
-        resolve(canvas.toDataURL('image/jpeg',quality));
-      };
-      img.onerror=()=>reject(new Error('decode failed'));
-      img.src=ev.target.result;
-    };
-    reader.onerror=()=>reject(new Error('read failed'));
-    reader.readAsDataURL(file);
-  });
-}
 function onImg(e){
   const f=e.target.files[0];if(!f)return;
-  compressImageFile(f,900,0.82).then(dataUrl=>{
-    const x=curStep();if(!x)return;
-    x.img=dataUrl;curSave();curRerender();
-  }).catch(()=>{
-    // Fallback: if resizing fails for any reason, store the original
-    // rather than losing the image entirely.
-    const r=new FileReader();
-    r.onload=ev=>{const x=curStep();if(!x)return;x.img=ev.target.result;curSave();curRerender();};
-    r.readAsDataURL(f);
-  });
-  e.target.value='';
+  const r=new FileReader();
+  r.onload=ev=>{const x=curStep();if(!x)return;x.img=ev.target.result;curSave();curRerender();};
+  r.readAsDataURL(f);e.target.value='';
 }
 // ARASAAC
 function openAr(){
@@ -2566,26 +2514,17 @@ function rCur(opts){
 }
 function launchAgenda(){
   // Capture the first item's thumbnail from the launch grid BEFORE
-  // switching views.
+  // rView() tears the grid down and replaces it with the run view.
   const firstThumb=el('v-lg')?.querySelector('.vlc .vlc-b');
   const srcRect=firstThumb ? firstThumb.getBoundingClientRect() : null;
   const srcHTML=firstThumb ? firstThumb.innerHTML : null;
   const srcIsTxt=firstThumb?.classList.contains('is-txt');
 
   VS.idx=0;
-  // Switch to the run view WITHOUT building the full upcoming-strip
-  // yet — with many steps/images, rStrip() can take a noticeable
-  // moment, and doing it here would block the very first frame of
-  // the animation from ever appearing. Only the lightweight current
-  // card (rCur, a single image) is set up now; the strip is built
-  // after the animation, at reveal time — same pattern already used
-  // for every other step transition.
-  el('v-launch').classList.add('hidden');
-  el('v-run').classList.remove('hidden');
-  rCur();
+  rView(); // replaces the launch grid with the viewer
 
   const card=el('v-card-outer');
-  if(!card||!srcRect){ rStrip(); return; }
+  if(!card||!srcRect){ return; }
 
   // Read the big card's final resting position (it's already rendered
   // but we'll hide it until the clone arrives).
@@ -2609,7 +2548,6 @@ function launchAgenda(){
   setTimeout(()=>{
     clone.remove();
     card.style.visibility='visible';
-    rStrip(); // build the (potentially heavier) upcoming strip only now
   },2000);
 }
 function fmtT(sec){
@@ -3416,7 +3354,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.4.5';
+const APP_VERSION='2.4.2';
 let swReg=null;
 
 function initVersionDisplay(){
