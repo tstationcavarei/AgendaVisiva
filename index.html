@@ -378,6 +378,24 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;}
 }
 .agbg-sw.sel{border-color:var(--grn);transform:scale(1.06);box-shadow:0 0 0 3px rgba(6,214,160,.28);}
 .agbg-sw-l{font-size:.62rem;font-weight:700;color:var(--mut);text-align:center;max-width:70px;}
+html[data-tablet=on] .agbg-sw{width:84px;height:84px;font-size:1.6rem;}
+html[data-tablet=on] .agbg-sw-l{font-size:.8rem;}
+/* Live preview — mirrors the real #v-bg-layer setup: a separate
+   background sub-layer so blur never touches the little card mockup
+   sitting on top of it. */
+#agbg-preview{
+  position:relative;width:100%;max-width:380px;aspect-ratio:16/9;
+  border-radius:14px;border:3px solid var(--brd);background:var(--bg2);
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+#agbg-preview-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;}
+#agbg-preview-bg.blur{filter:blur(10px);transform:scale(1.12);}
+#agbg-preview-card{
+  position:relative;z-index:1;width:34%;aspect-ratio:1/1;
+  background:#fff;border:4px solid #06D6A0;border-radius:10px;
+  box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+html[data-tablet=on] #agbg-preview{max-width:460px;}
 .ar-img{width:54px;height:54px;object-fit:contain;border-radius:7px;border:2px solid transparent;cursor:pointer;background:#fff;}
 .ar-img:active{border-color:var(--acc);}
 
@@ -930,7 +948,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
    field + confirm buttons are what's visible above the keys */
 #stage.kbd-open .mbox > .fg ~ .fg{display:none;}
 .mttl{font-size:.95rem;font-weight:900;}
-.macts{display:flex;gap:8px;justify-content:flex-end;}
+.macts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
 .bm{border:none;border-radius:9px;padding:7px 15px;font-family:inherit;font-weight:800;font-size:.78rem;cursor:pointer;}
 .bm.ok{background:var(--acc);color:#fff;}
 .bm.cn{background:var(--bg);color:var(--txt);border:2px solid var(--brd);}
@@ -1075,7 +1093,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.6.0</div>
+  <div class="home-ver" id="tb-ver">v2.6.1</div>
 </div>
 
 <!-- USERS -->
@@ -1338,18 +1356,25 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   </div>
 </div>
 <div class="mov hidden" id="m-agbg">
-  <div class="mbox" style="max-width:440px">
+  <div class="mbox" style="max-width:min(640px,96vw);width:96vw;max-height:92vh;overflow-y:auto;">
     <div class="mttl">🎨 Sfondo agenda</div>
     <div class="ssub" style="margin-top:-6px">Le attività resteranno sempre ben visibili sopra, come adesso.</div>
-    <div id="agbg-grid" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:8px 0;"></div>
+    <div style="display:flex;justify-content:center;padding:4px 0;">
+      <div id="agbg-preview">
+        <div id="agbg-preview-bg"></div>
+        <div id="agbg-preview-card"></div>
+      </div>
+    </div>
+    <div id="agbg-grid" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:6px 0;"></div>
     <label style="display:flex;align-items:center;gap:8px;justify-content:center;padding:6px 4px;font-size:.78rem;font-weight:700;cursor:pointer;">
-      <input type="checkbox" id="agbg-blur-chk" onchange="toggleAgBgBlur(this.checked)">
+      <input type="checkbox" id="agbg-blur-chk" onchange="stageAgBgBlur(this.checked)">
       🌫️ Sfoca lo sfondo (riduce la distrazione visiva)
     </label>
     <input type="file" id="agbg-file" accept="image/*" class="hidden" onchange="onAgBgImg(event)">
     <div class="macts">
-      <button class="bm cn" onclick="closeM('m-agbg');agBgTarget=null;rAgGrid();">Chiudi</button>
-      <button class="bm ok" onclick="el('agbg-file').click()">📁 Immagine dalla galleria</button>
+      <button class="bm cn" onclick="cancelAgBg()">✕ Annulla</button>
+      <button class="bm ok" onclick="el('agbg-file').click()">📁 Galleria</button>
+      <button class="bm ok" style="background:var(--grn)" onclick="saveAgBg()">💾 Salva</button>
     </div>
   </div>
 </div>
@@ -1694,18 +1719,20 @@ const BG_PRESETS={
   grigio:'linear-gradient(135deg,#eef2f5,#dbe3e8)'
 };
 const BG_LABELS={sughero:'Sughero',tappeto:'Tappeto verde',azzurro:'Azzurro',crema:'Crema',grigio:'Grigio'};
-let agBgTarget=null; // {uid,aid} of the agenda currently being edited
+let agBgTarget=null;  // {uid,aid} of the agenda currently being edited
+let agBgStaged=null;  // working copy {type,value,blur} — only written to the real agenda on Salva
 function openAgBg(uid2,aid){
   const u=gu(uid2), a=u?.agendas.find(x=>x.id===aid);
   if(!a)return;
   agBgTarget={uid:uid2,aid};
-  renderAgBgGrid(a);
-  el('agbg-blur-chk').checked=!!(a.bg&&a.bg.blur);
+  agBgStaged=a.bg?JSON.parse(JSON.stringify(a.bg)):{type:'none',value:null,blur:false};
+  renderAgBgGrid();
+  el('agbg-blur-chk').checked=!!agBgStaged.blur;
+  updateAgBgPreview();
   openM('m-agbg');
 }
-function renderAgBgGrid(a){
+function renderAgBgGrid(){
   const g=el('agbg-grid');g.innerHTML='';
-  const cur=a.bg||{type:'none',value:null};
   const addSwatch=(css,label,sel,onclick,emoji)=>{
     const wrap=mk('div');wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';
     const sw=mk('div','agbg-sw'+(sel?' sel':''));
@@ -1716,45 +1743,62 @@ function renderAgBgGrid(a){
     wrap.appendChild(sw);wrap.appendChild(lbl);
     g.appendChild(wrap);
   };
-  addSwatch('var(--bg2)','Neutro',cur.type==='none',()=>setAgBg('none',null),'⬜');
+  addSwatch('var(--bg2)','Neutro',agBgStaged.type==='none',()=>stageAgBg('none',null),'⬜');
   Object.keys(BG_PRESETS).forEach(k=>{
-    addSwatch(BG_PRESETS[k],BG_LABELS[k],cur.type==='preset'&&cur.value===k,()=>setAgBg('preset',k));
+    addSwatch(BG_PRESETS[k],BG_LABELS[k],agBgStaged.type==='preset'&&agBgStaged.value===k,()=>stageAgBg('preset',k));
   });
-  if(cur.type==='image'&&cur.value){
+  if(agBgStaged.type==='image'&&agBgStaged.value){
     const wrap=mk('div');wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';
-    const sw=mk('div','agbg-sw sel');sw.style.backgroundImage='url('+cur.value+')';
+    const sw=mk('div','agbg-sw sel');sw.style.backgroundImage='url('+agBgStaged.value+')';
     const lbl=mk('div','agbg-sw-l');lbl.textContent='Personalizzata';
     wrap.appendChild(sw);wrap.appendChild(lbl);
     g.appendChild(wrap);
   }
 }
-function setAgBg(type,value){
-  if(!agBgTarget)return;
-  const u=gu(agBgTarget.uid), a=u?.agendas.find(x=>x.id===agBgTarget.aid);
-  if(!a)return;
-  const blur=!!(a.bg&&a.bg.blur);
-  a.bg={type,value,blur};
-  save();
-  renderAgBgGrid(a); // keep the modal open, just refresh the selection highlight
+// Stages a choice locally — updates the preview and swatch highlight
+// immediately, but nothing is written to the agenda until Salva.
+function stageAgBg(type,value){
+  agBgStaged.type=type;
+  agBgStaged.value=value;
+  renderAgBgGrid();
+  updateAgBgPreview();
 }
-function toggleAgBgBlur(checked){
-  if(!agBgTarget)return;
-  const u=gu(agBgTarget.uid), a=u?.agendas.find(x=>x.id===agBgTarget.aid);
-  if(!a)return;
-  if(!a.bg) a.bg={type:'none',value:null};
-  a.bg.blur=checked;
-  save();
+function stageAgBgBlur(checked){
+  agBgStaged.blur=checked;
+  updateAgBgPreview();
+}
+function updateAgBgPreview(){
+  const bgEl=el('agbg-preview-bg');
+  let img='';
+  if(agBgStaged.type==='preset') img=BG_PRESETS[agBgStaged.value]||'';
+  else if(agBgStaged.type==='image'&&agBgStaged.value) img='url('+agBgStaged.value+')';
+  bgEl.style.backgroundImage=img;
+  bgEl.classList.toggle('blur',!!agBgStaged.blur);
 }
 function onAgBgImg(e){
   const f=e.target.files[0];if(!f)return;
   compressImageFile(f,1600,0.82).then(dataUrl=>{
-    setAgBg('image',dataUrl);
+    stageAgBg('image',dataUrl);
   }).catch(()=>{
     const r=new FileReader();
-    r.onload=ev=>setAgBg('image',ev.target.result);
+    r.onload=ev=>stageAgBg('image',ev.target.result);
     r.readAsDataURL(f);
   });
   e.target.value='';
+}
+function saveAgBg(){
+  if(!agBgTarget||!agBgStaged)return;
+  const u=gu(agBgTarget.uid), a=u?.agendas.find(x=>x.id===agBgTarget.aid);
+  if(a) a.bg=agBgStaged;
+  save();
+  closeM('m-agbg');
+  agBgTarget=null;agBgStaged=null;
+  rAgGrid();
+}
+function cancelAgBg(){
+  closeM('m-agbg');
+  agBgTarget=null;agBgStaged=null;
+  rAgGrid();
 }
 // Applies (or clears) the agenda's chosen background on the viewer
 // screen — called once whenever a viewer session starts.
@@ -3533,7 +3577,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.6.0';
+const APP_VERSION='2.6.1';
 let swReg=null;
 
 function initVersionDisplay(){
