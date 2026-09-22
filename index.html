@@ -49,7 +49,10 @@ body{font-family:'Nunito',sans-serif;touch-action:manipulation;-webkit-tap-highl
 #stage{
   position:fixed;background:var(--bg);color:var(--txt);
   display:flex;flex-direction:column;overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
 }
+/* Text fields are the one place selection/callout should work normally */
+input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default;}
 @media (orientation:landscape){
   #stage{inset:0;width:100vw;width:100dvw;height:100vh;height:100dvh;}
 }
@@ -1052,7 +1055,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.4.2</div>
+  <div class="home-ver" id="tb-ver">v2.5.1</div>
 </div>
 
 <!-- USERS -->
@@ -3354,7 +3357,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.4.2';
+const APP_VERSION='2.5.1';
 let swReg=null;
 
 function initVersionDisplay(){
@@ -3423,6 +3426,42 @@ function checkForUpdate(){
       if(st) st.textContent='❌ Impossibile verificare (offline?)';
     });
 }
+
+// ═══ INSTANT-TAP FOR "USA AGENDA" (accessibility) ═══
+// A normal "click" only fires when the finger lifts off — if the
+// touch lingers even a little (as can happen for someone with
+// apraxia, who may not manage a fast tap-and-release), some browsers
+// interpret the pause as the start of a text-selection or long-press
+// gesture instead of ever firing the click. This makes the relevant
+// buttons fire the INSTANT the finger touches down instead, so how
+// long the touch lasts never matters.
+// Scope is deliberately narrow: only the ▶️ "Usa Agenda" button, the
+// user/agenda picker screen, and actually following the agenda
+// (launching it, tapping to advance) — this is specifically for
+// whoever is USING the agenda day-to-day. The creation/editing
+// screens (Utenti, Agende, Editor, Impostazioni) and the in-viewer
+// "Modifica provvisoria" overlay are all operator-facing tools where
+// changing the tap timing isn't needed and could only add confusion,
+// so they're left on normal click behaviour.
+document.addEventListener('touchstart',e=>{
+  const t=e.target.closest('button,[onclick],.xpk-opt');
+  if(!t)return;
+  if(t.closest('.hold-btn'))return; // hold buttons manage their own timing
+  if(t.draggable)return;            // the matched element ITSELF is meant to be dragged
+
+  const inUseScreen = el('s-use')?.classList.contains('on');
+  const inViewScreen = el('s-view')?.classList.contains('on');
+  const inUseFlow =
+    t.classList.contains('hc-big') ||
+    (inUseScreen) ||
+    (inViewScreen && !viewEditMode && !t.closest('.v-edit-btn,#v-edit-start-btn,#v-editdone,#m-stepedit,#m-timerask'));
+  if(!inUseFlow)return;
+
+  if(t.closest('.vseq,.mini'))return; // horizontal swipe-to-browse strip — a scroll gesture commonly starts right on top of a tappable item here, so native tap-vs-scroll detection needs to stay in charge
+  if(t.disabled)return;
+  e.preventDefault();
+  t.click();
+},{passive:false});
 
 // ═══ INIT ═══
 load();applyTheme();applyTablet();rHome();initVersionDisplay();registerSW();updateLockIcon();
