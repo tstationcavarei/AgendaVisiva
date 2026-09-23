@@ -960,7 +960,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   padding:0; display:block;
 }
 #stage.kbd-open .mbox{
-  width:100%; max-width:100%; max-height:none;
+  width:100% !important; max-width:100% !important; max-height:none;
   border-radius:0 0 12px 12px;
   box-shadow:0 3px 10px rgba(0,0,0,.12);
   padding:8px 12px;
@@ -1013,24 +1013,28 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   padding:3px 4px 5px;display:none;
 }
 #kbd.open{display:block;}
-.krow{display:flex;gap:2px;justify-content:stretch;margin-top:2px;padding:0 3px;}
+.krow{display:flex;gap:4px;justify-content:stretch;margin-top:4px;padding:0 4px;}
 .kk{
   flex:1;height:29px;min-width:0;
-  border:1.5px solid var(--brd);border-radius:6px;background:var(--bg);
+  border:2px solid var(--mut);border-radius:7px;background:var(--bg);
+  box-shadow:0 2px 0 rgba(0,0,0,.1);
   font-family:inherit;font-weight:700;font-size:.74rem;color:var(--txt);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:background .05s,transform .05s,box-shadow .05s;
 }
-.kk:active{background:var(--acc);color:#fff;transform:scale(.92);}
+.kk.kk-press{background:var(--acc);color:#fff;transform:scale(.92) translateY(1px);box-shadow:0 0 0 rgba(0,0,0,0);border-color:var(--acc-d);}
 .kk.w{flex:1.6;font-size:.64rem;}
 .kk.xw{flex:5;font-size:.66rem;}
-.kk.del{background:#fde8ec;color:var(--red);border-color:#f4c0cc;flex:1.3;}
+.kk.del{background:#fde8ec;color:var(--red);border-color:#e8a5b8;flex:1.3;}
+.kk.del.kk-press{background:var(--red);color:#fff;border-color:var(--red);}
 .kk.sh{flex:1.3;font-size:.7rem;}
-.kk.sh.on{background:var(--acc);color:#fff;border-color:var(--acc);}
+.kk.sh.on{background:var(--acc);color:#fff;border-color:var(--acc-d);}
 .kk.sh.caps{background:var(--pur);color:#fff;border-color:var(--pur);}
 .kk.sy{flex:1.3;font-size:.6rem;}
 .kk.sy.on{background:var(--pur);color:#fff;border-color:var(--pur);}
-.kk.ok{background:var(--grn);color:#fff;border-color:var(--grn);flex:1.5;font-size:.68rem;}
+.kk.ok{background:var(--grn);color:#fff;border-color:var(--grn-d);flex:1.5;font-size:.68rem;}
+.kk.ok.kk-press{background:var(--grn-d);border-color:var(--grn-d);}
 
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px;}
@@ -1130,7 +1134,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.7.2</div>
+  <div class="home-ver" id="tb-ver">v2.8.0</div>
 </div>
 
 <!-- USERS -->
@@ -3586,8 +3590,17 @@ function kbdBuild(){
   });
 }
 function kOn(b,fn){
-  b.addEventListener('mousedown',e=>{e.preventDefault();fn();});
-  b.addEventListener('touchstart',e=>{e.preventDefault();fn();},{passive:false});
+  const press=()=>{
+    b.classList.add('kk-press');
+    if(navigator.vibrate) navigator.vibrate(10);
+  };
+  const release=()=>b.classList.remove('kk-press');
+  b.addEventListener('mousedown',e=>{e.preventDefault();press();fn();});
+  b.addEventListener('mouseup',release);
+  b.addEventListener('mouseleave',release);
+  b.addEventListener('touchstart',e=>{e.preventDefault();press();fn();},{passive:false});
+  b.addEventListener('touchend',release,{passive:true});
+  b.addEventListener('touchcancel',release,{passive:true});
 }
 function kType(ch){
   if(!kA)return;
@@ -3666,7 +3679,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.7.2';
+const APP_VERSION='2.8.0';
 let swReg=null;
 
 function initVersionDisplay(){
