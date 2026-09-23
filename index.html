@@ -518,7 +518,7 @@ html[data-tablet=on] #agbg-preview{width:220px;}
    was completely hiding the custom layer behind it — clear it, along
    with the same opaque default on the launch/running sub-areas. */
 #s-view.has-agbg{background:transparent;}
-#s-view.has-agbg .vl,#s-view.has-agbg .vr,#s-view.has-agbg .vseq{background:transparent;}
+#s-view.has-agbg .vl,#s-view.has-agbg .vr,#s-view.has-agbg .vseq,#s-view.has-agbg .vmain{background:transparent;}
 /* Custom text color for labels that sit OUTSIDE the framed task
    image/thumbnail (i.e. directly on the agenda's background) —
    independent of whether a custom background image is also set. */
@@ -1134,7 +1134,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.9.2</div>
+  <div class="home-ver" id="tb-ver">v2.9.3</div>
 </div>
 
 <!-- USERS -->
@@ -1573,6 +1573,15 @@ function haptic(){
     navigator.vibrate([pulse,25,pulse]);
   }
 }
+// For hold-to-activate buttons: vibrates continuously for the whole
+// press, started the instant the hold begins so it naturally runs out
+// right as the action fires — not just a brief pulse at completion.
+function hapticHold(ms){
+  if(CFG.hapticInt>0 && navigator.vibrate) navigator.vibrate(ms);
+}
+function hapticStop(){
+  if(navigator.vibrate) navigator.vibrate(0);
+}
 function load(){
   try{const d=localStorage.getItem('av8');if(d)ST={...ST,...JSON.parse(d)};}catch(e){}
   try{const d=localStorage.getItem('av8c');if(d)CFG={...CFG,...JSON.parse(d)};}catch(e){}
@@ -1806,7 +1815,7 @@ const BG_PRESETS={
 const BG_LABELS={sughero:'Sughero',tappeto:'Tappeto verde',lavagna:'Lavagna',crema:'Crema',grigio:'Grigio'};
 const TXT_COLORS=[
   {v:null,label:'Predefinito',css:'#4a6880'},
-  {v:'#1a2340',label:'Blu scuro',css:'#1a2340'},
+  {v:'#4A9EDB',label:'Azzurro',css:'#4A9EDB'},
   {v:'#ffffff',label:'Bianco',css:'#ffffff'},
   {v:'#000000',label:'Nero',css:'#000000'},
   {v:'#ffd166',label:'Giallo',css:'#ffd166'}
@@ -3333,18 +3342,18 @@ function setupHoldNav(btn,dir){
   const start=e=>{
     held=false;
     btn.classList.add('holding');
+    hapticHold(HOLD_MS); // vibrates for the full hold duration, ending right as the action fires
     timer=setTimeout(()=>{
       held=true;
       btn.classList.remove('holding');
-      haptic();
       if(dir==='next') nextStep(); else prevStep();
     },HOLD_MS);
   };
-  const cancel=()=>{ clearTimeout(timer); btn.classList.remove('holding'); };
+  const cancel=()=>{ clearTimeout(timer); btn.classList.remove('holding'); hapticStop(); };
   const release=e=>{
     clearTimeout(timer);
     btn.classList.remove('holding');
-    if(!held){ haptic(); tryNav(dir); } // short tap → normal gated navigation
+    if(!held){ hapticStop(); haptic(); tryNav(dir); } // short tap → stop the hold-vibration, quick confirm buzz, normal gated navigation
   };
   btn.addEventListener('mousedown',start);
   btn.addEventListener('mouseup',release);
@@ -3366,13 +3375,13 @@ function setupHoldButton(btn,action,holdMs){
   let timer=null;
   const start=e=>{
     btn.classList.add('holding');
+    hapticHold(holdMs); // vibrates for the full hold duration, ending right as the action fires
     timer=setTimeout(()=>{
       btn.classList.remove('holding');
-      haptic();
       action();
     },holdMs);
   };
-  const cancel=()=>{ clearTimeout(timer); btn.classList.remove('holding'); };
+  const cancel=()=>{ clearTimeout(timer); btn.classList.remove('holding'); hapticStop(); };
   btn.addEventListener('mousedown',start);
   btn.addEventListener('mouseup',cancel);
   btn.addEventListener('mouseleave',cancel);
@@ -3738,7 +3747,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.9.2';
+const APP_VERSION='2.9.3';
 let swReg=null;
 
 function initVersionDisplay(){
