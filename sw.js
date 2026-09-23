@@ -1,7 +1,7 @@
 // Agenda Visiva — Service Worker
 // Bump CACHE_NAME on every release so old caches are discarded and the
 // browser fetches fresh files from GitHub Pages on next check.
-const CACHE_NAME = 'agenda-visiva-v2.6.2';
+const CACHE_NAME = 'agenda-visiva-v2.7.0';
 const ASSETS = [
   './',
   './index.html',
