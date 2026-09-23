@@ -1134,7 +1134,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.9.3</div>
+  <div class="home-ver" id="tb-ver">v2.9.4</div>
 </div>
 
 <!-- USERS -->
@@ -1576,8 +1576,19 @@ function haptic(){
 // For hold-to-activate buttons: vibrates continuously for the whole
 // press, started the instant the hold begins so it naturally runs out
 // right as the action fires — not just a brief pulse at completion.
+// Builds a vibrate-pause-vibrate-pause... pattern spanning the full
+// hold duration, instead of one continuous buzz.
+function buildHoldPattern(totalMs){
+  const buzz=150, pause=100, cycle=buzz+pause;
+  const fullCycles=Math.floor(totalMs/cycle);
+  const pattern=[];
+  for(let i=0;i<fullCycles;i++){ pattern.push(buzz,pause); }
+  const remaining=totalMs-fullCycles*cycle;
+  if(remaining>0) pattern.push(Math.min(remaining,buzz));
+  return pattern.length?pattern:[totalMs];
+}
 function hapticHold(ms){
-  if(CFG.hapticInt>0 && navigator.vibrate) navigator.vibrate(ms);
+  if(CFG.hapticInt>0 && navigator.vibrate) navigator.vibrate(buildHoldPattern(ms));
 }
 function hapticStop(){
   if(navigator.vibrate) navigator.vibrate(0);
@@ -3747,7 +3758,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.9.3';
+const APP_VERSION='2.9.4';
 let swReg=null;
 
 function initVersionDisplay(){
