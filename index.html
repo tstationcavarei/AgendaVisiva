@@ -1120,6 +1120,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
         <div class="instr-sect-t">⚙️ Impostazioni</div>
         <p><b>Aspetto</b>: tema chiaro/scuro, 6 colori accento, e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi.</p>
         <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata, con pulsante di prova.</p>
+        <p><b>Feedback aptico</b>: intensità della vibrazione ad ogni pressione di un pulsante, con una barra da "Disattivata" a "Forte" — funziona su tutti i pulsanti dell'app, sia in modalità telefono che tablet.</p>
         <p><b>Dati</b>: esporta/importa un backup completo, oppure cancella tutto.</p>
         <p><b>Info</b>: versione installata e controllo aggiornamenti.</p>
       </div>
@@ -1134,7 +1135,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.8.0</div>
+  <div class="home-ver" id="tb-ver">v2.8.1</div>
 </div>
 
 <!-- USERS -->
@@ -1347,6 +1348,17 @@ html[data-tablet=on][data-theme=dark] .vctrl{
           </div></div>
         <div class="srow"><div class="slbl">Test</div><button class="ba" onclick="playAlarm()">▶ Prova</button></div>
       </div>
+      <div class="sect">
+        <div class="sect-t">📳 Feedback aptico</div>
+        <div class="srow"><div><div class="slbl">Vibrazione al tocco</div><div class="ssub">Intensità della vibrazione quando premi un pulsante, in entrambe le modalità</div></div></div>
+        <div class="srow" style="flex-direction:column;align-items:stretch;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="range" id="haptic-range" min="0" max="40" step="5" value="20" oninput="onHapticSlide(this.value)" style="flex:1;">
+            <span id="haptic-val" style="font-size:.78rem;font-weight:800;min-width:60px;text-align:right;">Media</span>
+          </div>
+          <button class="ba" style="align-self:flex-start" onclick="haptic()">📳 Prova</button>
+        </div>
+      </div>
     </div>
     <div class="pane" id="p-data">
       <div class="sect">
@@ -1506,7 +1518,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 'use strict';
 // ═══ STATE ═══
 let ST={users:[],selU:null,selA:null,editIdx:null,lastT:'ring'};
-let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false,locked:false,pw:'ADMIN'};
+let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false,locked:false,pw:'ADMIN',hapticInt:20};
 let VS={steps:[],idx:-1,iv:null,rem:0,tot:0,tt:'ring',uid:null,aid:null};
 let pUC='#4A9EDB', agSel=null, dirty=false, cfCb=null;
 // ═══ MODIFICA PROVVISORIA (in-place, session-only editing) ═══
@@ -1539,6 +1551,14 @@ function curRerender(){
 
 function save(){try{localStorage.setItem('av8',JSON.stringify(ST));}catch(e){}}
 function saveCfg(){try{localStorage.setItem('av8c',JSON.stringify(CFG));}catch(e){}}
+// ═══ HAPTIC FEEDBACK ═══
+// Single entry point for the little vibration on every button press —
+// respects the intensity chosen in Impostazioni (0 = off) and does
+// nothing where the Vibration API isn't available (iOS Safari, desktop).
+function haptic(){
+  const ms=CFG.hapticInt;
+  if(ms>0 && navigator.vibrate) navigator.vibrate(ms);
+}
 function load(){
   try{const d=localStorage.getItem('av8');if(d)ST={...ST,...JSON.parse(d)};}catch(e){}
   try{const d=localStorage.getItem('av8c');if(d)CFG={...CFG,...JSON.parse(d)};}catch(e){}
@@ -3293,6 +3313,7 @@ function setupHoldNav(btn,dir){
     timer=setTimeout(()=>{
       held=true;
       btn.classList.remove('holding');
+      haptic();
       if(dir==='next') nextStep(); else prevStep();
     },HOLD_MS);
   };
@@ -3300,7 +3321,7 @@ function setupHoldNav(btn,dir){
   const release=e=>{
     clearTimeout(timer);
     btn.classList.remove('holding');
-    if(!held) tryNav(dir); // short tap → normal gated navigation
+    if(!held){ haptic(); tryNav(dir); } // short tap → normal gated navigation
   };
   btn.addEventListener('mousedown',start);
   btn.addEventListener('mouseup',release);
@@ -3324,6 +3345,7 @@ function setupHoldButton(btn,action,holdMs){
     btn.classList.add('holding');
     timer=setTimeout(()=>{
       btn.classList.remove('holding');
+      haptic();
       action();
     },holdMs);
   };
@@ -3372,8 +3394,23 @@ function rtLabel(v){const o=rtOpts.find(x=>x.v===v);return o?o.t:v;}
 function rSet(){
   el('s-rt').dataset.val=CFG.rt; set('s-rt-txt',rtLabel(CFG.rt));
   el('s-sd').dataset.val=String(CFG.sd); set('s-sd-txt',CFG.sd+'s');
+  el('haptic-range').value=CFG.hapticInt;
+  set('haptic-val',hapticLabel(CFG.hapticInt));
   applyTheme();
   applyTablet();
+}
+function hapticLabel(v){
+  v=parseInt(v);
+  if(v<=0) return 'Disattivata';
+  if(v<=10) return 'Leggera';
+  if(v<=25) return 'Media';
+  return 'Forte';
+}
+function onHapticSlide(v){
+  CFG.hapticInt=parseInt(v)||0;
+  set('haptic-val',hapticLabel(CFG.hapticInt));
+  saveCfg();
+  haptic(); // instant preview of the new intensity as you drag
 }
 function saveSnd(){CFG.rt=el('s-rt').dataset.val;CFG.sd=parseInt(el('s-sd').dataset.val)||2;saveCfg();}
 function swTab(btn){
@@ -3592,7 +3629,7 @@ function kbdBuild(){
 function kOn(b,fn){
   const press=()=>{
     b.classList.add('kk-press');
-    if(navigator.vibrate) navigator.vibrate(10);
+    haptic();
   };
   const release=()=>b.classList.remove('kk-press');
   b.addEventListener('mousedown',e=>{e.preventDefault();press();fn();});
@@ -3679,7 +3716,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.8.0';
+const APP_VERSION='2.8.1';
 let swReg=null;
 
 function initVersionDisplay(){
@@ -3784,6 +3821,21 @@ document.addEventListener('touchstart',e=>{
   e.preventDefault();
   t.click();
 },{passive:false});
+
+// ═══ HAPTIC FEEDBACK ON EVERY BUTTON (all modes) ═══
+// A short vibration confirms a press went through — everywhere in the
+// app, phone and tablet alike, not just the accessibility-focused
+// instant-tap buttons above. Hooks the native 'click' event, so it
+// naturally covers mouse, touch, and the synthetic clicks the
+// instant-tap system above already dispatches, with no double-buzz.
+// Hold-to-activate buttons and the custom keyboard don't fire a
+// native click at all, so they call haptic() explicitly where their
+// own press/activation completes instead.
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,[onclick],.xpk-opt,.agbg-sw-card,.agtxt-sw,.vimgbl,.vsq,.vlc,.ui,.mn,.mn-add,.sc-add,.iprev,.mode-prev,.tog-r,.tsel,.ar-img,.sw');
+  if(!t||t.disabled)return;
+  haptic();
+});
 
 // ═══ INIT ═══
 load();applyTheme();applyTablet();rHome();initVersionDisplay();registerSW();updateLockIcon();
