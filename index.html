@@ -789,8 +789,8 @@ html[data-tablet=on] .vctrl{
 
 /* ── HOLD-TO-ACTIVATE (2s) VISUAL FEEDBACK ──
    Applied to any button that requires a 2-second press-and-hold
-   before its action fires (Esci, Chiudi, Ripristina, Ridimensiona,
-   and Avanti/Indietro when a timer blocks normal taps). While held,
+   before its action fires (Esci, Chiudi, Ripristina, and
+   Avanti/Indietro when a timer blocks normal taps). While held,
    the button pulses so the person knows their press is registering
    and how long they still need to keep holding. */
 @keyframes holdPulse{
@@ -1051,7 +1051,6 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <button class="ib" onclick="toggleInstr()" title="Istruzioni">ℹ️</button>
     <button class="ib" id="lock-btn" onclick="onLockIconTap()" title="Blocco impostazioni">🔓</button>
     <button class="ib" onclick="goSettings(this)">⚙️</button>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="body body-main">
     <div class="hc-big" onclick="goUse()">
@@ -1083,7 +1082,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <div class="instr-body" id="instr-body">
       <div class="instr-sect">
         <div class="instr-sect-t">🏠 Home</div>
-        <p>In alto a destra: <b>ℹ️ Info</b> (queste istruzioni), <b>🔓/🔒 Lucchetto</b> (blocco con password), <b>⚙️ Impostazioni</b>, <b>⛶ Ridimensiona</b> (schermo intero).</p>
+        <p>In alto a destra: <b>ℹ️ Info</b> (queste istruzioni), <b>🔓/🔒 Lucchetto</b> (blocco con password), <b>⚙️ Impostazioni</b>. L'app resta sempre a schermo intero, senza bisogno di attivarlo manualmente.</p>
         <p>Al centro, il grande pulsante verde <b>▶️ Usa Agenda</b> avvia subito una sessione. Sotto, due pulsanti più piccoli portano a <b>👤 Utenti</b> e <b>📋 Agende</b>, dove si creano e modificano i profili e le loro agende.</p>
       </div>
       <div class="instr-sect">
@@ -1093,7 +1092,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="instr-sect">
         <div class="instr-sect-t">📋 Agende</div>
         <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Accanto al nome: <b>✎</b> Rinomina. In basso: <b>📂</b> Modifica (apre l'editor degli step), <b>⧉</b> Duplica (copia l'agenda intera con tutti gli step), <b>🎨</b> Sfondo, <b>🗑</b> Elimina.</p>
-        <p><b>🎨 Sfondo</b>: si vede durante l'uso dell'agenda, dietro alle attività (che restano sempre ben visibili sopra). Si sceglie tra neutro, alcuni preset (sughero, tappeto verde, colori tenui) o una foto dalla galleria; l'anteprima mostra subito il risultato. La spunta "Sfoca lo sfondo" attenua i dettagli, con una barra per regolarne l'intensità — utile se lo sfondo scelto è troppo ricco e rischia di distrarre. C'è anche una scelta del <b>colore del testo</b> per le etichette che stanno fuori dalle immagini (es. il nome sotto le miniature), per restare leggibili su qualsiasi sfondo. Tutto si conferma con <b>💾 Salva</b>.</p>
+        <p><b>🎨 Sfondo</b>: si vede durante l'uso dell'agenda, dietro alle attività (che restano sempre ben visibili sopra). Si sceglie tra neutro, alcuni preset con texture realistica (sughero, tappeto verde da biliardo, lavagna consumata, colori tenui) o una foto dalla galleria; l'anteprima mostra subito il risultato. La spunta "Sfoca lo sfondo" attenua i dettagli, con una barra per regolarne l'intensità — utile se lo sfondo scelto è troppo ricco e rischia di distrarre. C'è anche una scelta del <b>colore del testo</b> per le etichette che stanno fuori dalle immagini (es. il nome sotto le miniature), per restare leggibili su qualsiasi sfondo. Tutto si conferma con <b>💾 Salva</b>.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
@@ -1105,7 +1104,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
         <p>Il grande pulsante verde in Home avvia subito una sessione. Se c'è <b>un solo utente con una sola agenda</b> in tutta l'app, parte tutto in automatico; altrimenti si apre una schermata per scegliere utente e agenda (e se un utente ha una sola agenda, quella si seleziona da sola). Premi il pulsante ▶ verde per iniziare davvero.</p>
         <p>Durante l'uso, l'attività attuale appare grande al centro con bordo verde; le successive scorrono in una striscia in alto. Si avanza toccando l'immagine attuale, oppure la tessera successiva nella striscia.</p>
         <p>Se un'attività ha un <b>timer</b>, appare in un pannello a destra. Mentre è in corso, un tocco normale su Avanti/Indietro non funziona (il pannello lampeggia in blu) — si può comunque forzare l'avanzamento tenendo premuto 2 secondi. Al termine del tempo suona un allarme, il pannello lampeggia in verde e compare "AVANTI" (o "FINE" sull'ultimo step) per proseguire.</p>
-        <p>In fondo: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. Chiudi, Ripristina, Ridimensiona, e Avanti/Indietro quando bloccati da un timer, richiedono una pressione continua di <b>2 secondi</b> — una protezione contro i tocchi accidentali, con un effetto visivo mentre li tieni premuti.</p>
+        <p>In fondo: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. Chiudi, Ripristina, e Avanti/Indietro quando bloccati da un timer, richiedono una pressione continua di <b>2 secondi</b> — una protezione contro i tocchi accidentali, con un effetto visivo mentre li tieni premuti.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Modifica provvisoria</div>
@@ -1114,13 +1113,13 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔒 Blocco con password</div>
-        <p>Il lucchetto in alto attiva o disattiva un blocco a password per Utenti, Agende e Impostazioni — utile contro modifiche accidentali. Password predefinita: <b>ADMIN</b>. Quando è attivo, toccare un'area bloccata non chiede nulla: pulsante e lucchetto pulsano in rosso. L'unico modo per entrare, o per disattivare il blocco, è toccare il lucchetto e inserire la password lì.</p>
+        <p>Il lucchetto in alto attiva o disattiva un blocco a password per Utenti, Agende e Impostazioni — utile contro modifiche accidentali. Password predefinita: <b>ADMIN</b>, cambiabile in Impostazioni → 🔒 Sicurezza. Quando il blocco è attivo, toccare un'area bloccata non chiede nulla: pulsante e lucchetto pulsano in rosso. L'unico modo per entrare, o per disattivare il blocco, è toccare il lucchetto e inserire la password lì.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">⚙️ Impostazioni</div>
         <p><b>Aspetto</b>: tema chiaro/scuro, 6 colori accento, e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi.</p>
-        <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata, con pulsante di prova.</p>
-        <p><b>Feedback aptico</b>: intensità della vibrazione ad ogni pressione di un pulsante, con una barra da "Disattivata" a "Forte" — funziona su tutti i pulsanti dell'app, sia in modalità telefono che tablet.</p>
+        <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata, con pulsante di prova. Nella stessa scheda, il <b>feedback aptico</b>: intensità della vibrazione ad ogni pressione di un pulsante, da "Disattivata" a "Forte" — funziona su tutti i pulsanti dell'app, sia in modalità telefono che tablet.</p>
+        <p><b>Sicurezza</b>: qui si cambia la password del blocco — richiede quella attuale più la nuova, ripetuta due volte per conferma.</p>
         <p><b>Dati</b>: esporta/importa un backup completo, oppure cancella tutto.</p>
         <p><b>Info</b>: versione installata e controllo aggiornamenti.</p>
       </div>
@@ -1135,7 +1134,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.8.1</div>
+  <div class="home-ver" id="tb-ver">v2.9.0</div>
 </div>
 
 <!-- USERS -->
@@ -1144,7 +1143,6 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <button class="bk" onclick="go('s-home')">← Home</button>
     <div class="tb-ttl">👤 Utenti</div>
     <button class="badd" onclick="openAddUser()">+ Nuovo</button>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="grid" id="u-grid"></div>
 </div>
@@ -1154,7 +1152,6 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <button class="bk" onclick="go('s-home')">← Home</button>
     <div class="tb-ttl">📋 Agende</div>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="two">
     <div class="colL">
@@ -1176,7 +1173,6 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <button class="bk" onclick="edBack()">← Agende</button>
     <div class="tb-ttl" id="ed-t">Editor</div>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="eg hidden" id="ed-grid"></div>
   <div class="ev hidden" id="ed-ev">
@@ -1195,7 +1191,6 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <button class="bk" onclick="go('s-home')">← Home</button>
     <div class="tb-ttl">▶️ Usa Agenda</div>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="body">
     <div class="ubox">
@@ -1221,7 +1216,6 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <div class="tb-ttl" id="v-t">Agenda</div>
     <button class="ib hold-btn" id="v-edit-start-btn" data-hold="tempedit" title="Modifica provvisoria (solo questa sessione)">✏️</button>
     <button class="bk hidden" id="v-editdone" onclick="exitViewEdit()" style="background:var(--grn);color:#fff;border-color:var(--grn-d)" title="Termina modifica">✅ Fatto</button>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <!-- launch -->
   <div class="vl hidden" id="v-launch">
@@ -1296,11 +1290,11 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   <div class="tbar">
     <button class="bk" onclick="go('s-home')">← Home</button>
     <div class="tb-ttl">⚙️ Impostazioni</div>
-    <button class="ib hold-btn" data-hold="fs">⛶</button>
   </div>
   <div class="tabs">
     <button class="tab on" data-p="p-look" onclick="swTab(this)">🎨 Aspetto</button>
     <button class="tab" data-p="p-snd" onclick="swTab(this)">🔔 Suono</button>
+    <button class="tab" data-p="p-sec" onclick="swTab(this)">🔒 Sicurezza</button>
     <button class="tab" data-p="p-data" onclick="swTab(this)">💾 Dati</button>
     <button class="tab" data-p="p-info" onclick="swTab(this)">ℹ️ Info</button>
   </div>
@@ -1353,11 +1347,23 @@ html[data-tablet=on][data-theme=dark] .vctrl{
         <div class="srow"><div><div class="slbl">Vibrazione al tocco</div><div class="ssub">Intensità della vibrazione quando premi un pulsante, in entrambe le modalità</div></div></div>
         <div class="srow" style="flex-direction:column;align-items:stretch;gap:8px;">
           <div style="display:flex;align-items:center;gap:10px;">
-            <input type="range" id="haptic-range" min="0" max="40" step="5" value="20" oninput="onHapticSlide(this.value)" style="flex:1;">
+            <input type="range" id="haptic-range" min="0" max="100" step="10" value="30" oninput="onHapticSlide(this.value)" style="flex:1;">
             <span id="haptic-val" style="font-size:.78rem;font-weight:800;min-width:60px;text-align:right;">Media</span>
           </div>
           <button class="ba" style="align-self:flex-start" onclick="haptic()">📳 Prova</button>
         </div>
+      </div>
+    </div>
+    <div class="pane" id="p-sec">
+      <div class="sect">
+        <div class="sect-t">🔒 Password del blocco</div>
+        <div class="ssub" style="margin-bottom:6px;">Usata per attivare/disattivare il blocco su Utenti, Agende e Impostazioni. Predefinita: <b>ADMIN</b>.</div>
+        <div class="fg"><label class="fl">Password attuale</label><input type="password" class="inp" id="pw-cur" placeholder="Password attuale" autocomplete="off" inputmode="none"></div>
+        <div class="fg"><label class="fl">Nuova password</label><input type="password" class="inp" id="pw-new1" placeholder="Nuova password" autocomplete="off" inputmode="none"></div>
+        <div class="fg"><label class="fl">Conferma nuova password</label><input type="password" class="inp" id="pw-new2" placeholder="Ripeti nuova password" autocomplete="off" inputmode="none"></div>
+        <div class="ssub hidden" id="pw-chg-err" style="color:var(--red);font-weight:800"></div>
+        <div class="ssub hidden" id="pw-chg-ok" style="color:var(--grn-d);font-weight:800">✓ Password aggiornata</div>
+        <div class="srow"><div></div><button class="ba" onclick="changePw()">💾 Salva nuova password</button></div>
       </div>
     </div>
     <div class="pane" id="p-data">
@@ -1518,7 +1524,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
 'use strict';
 // ═══ STATE ═══
 let ST={users:[],selU:null,selA:null,editIdx:null,lastT:'ring'};
-let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false,locked:false,pw:'ADMIN',hapticInt:20};
+let CFG={theme:'light',acc:'blue',rt:'beep',sd:2,tablet:false,locked:false,pw:'ADMIN',hapticInt:30};
 let VS={steps:[],idx:-1,iv:null,rem:0,tot:0,tt:'ring',uid:null,aid:null};
 let pUC='#4A9EDB', agSel=null, dirty=false, cfCb=null;
 // ═══ MODIFICA PROVVISORIA (in-place, session-only editing) ═══
@@ -1557,7 +1563,15 @@ function saveCfg(){try{localStorage.setItem('av8c',JSON.stringify(CFG));}catch(e
 // nothing where the Vibration API isn't available (iOS Safari, desktop).
 function haptic(){
   const ms=CFG.hapticInt;
-  if(ms>0 && navigator.vibrate) navigator.vibrate(ms);
+  if(ms<=0 || !navigator.vibrate) return;
+  if(ms<=40){
+    navigator.vibrate(ms);
+  } else {
+    // Stronger settings: a short pulse-pause-pulse pattern instead of
+    // one long buzz — feels noticeably punchier than duration alone.
+    const pulse=Math.round(ms*0.5);
+    navigator.vibrate([pulse,25,pulse]);
+  }
 }
 function load(){
   try{const d=localStorage.getItem('av8');if(d)ST={...ST,...JSON.parse(d)};}catch(e){}
@@ -1612,12 +1626,6 @@ function go(id){
   if(id==='s-use')rUse();
   if(id==='s-set')rSet();
 }
-function toggleFS(){
-  const d=document.documentElement;
-  if(!document.fullscreenElement)(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d);
-  else (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document);
-}
-
 // ═══ HOME ═══
 function rHome(){
   const nu=ST.users.length, na=ST.users.reduce((s,u)=>s+(u.agendas?.length||0),0);
@@ -1786,13 +1794,20 @@ function dupAgenda(uid2,aid){
 // the gallery. The cards themselves are untouched, sitting on top
 // exactly as they always have on the neutral default.
 const BG_PRESETS={
-  sughero:'repeating-radial-gradient(circle at 18% 25%,rgba(90,55,25,.22) 0 2px,transparent 3px 11px),repeating-radial-gradient(circle at 68% 55%,rgba(90,55,25,.18) 0 2px,transparent 3px 13px),repeating-radial-gradient(circle at 40% 80%,rgba(90,55,25,.2) 0 2px,transparent 3px 12px),linear-gradient(135deg,#cda06c,#b6875a)',
-  tappeto:'radial-gradient(circle at 30% 20%,#2a8f5c,#0f5c36 70%)',
-  azzurro:'linear-gradient(135deg,#eaf4fb,#cfe6f5)',
+  // Cork board: warm tan/brown base with a mottled, speckled noise
+  // layer tinted brown — mimics real cork's organic grain instead of
+  // the previous regular dot pattern.
+  sughero:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 0.36 0 0 0 0 0.22 0 0 0 0 0.09 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"),radial-gradient(ellipse at 35% 25%,#d9ae7c,#c08f5c 55%,#a3714a 100%)",
+  // Billiard-table felt: rich green with a fine fibre-like noise and
+  // a soft vignette toward the edges, like real cloth under light.
+  tappeto:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 0.04 0 0 0 0 0.22 0 0 0 0 0.12 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"),radial-gradient(ellipse at 40% 25%,#2f9c62,#1c7c49 55%,#0f5c34 100%)",
+  // Worn chalkboard: dark green-black base with pale, patchy chalk-dust
+  // noise — a used-classroom-blackboard feel.
+  lavagna:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 0.85 0 0 0 0 0.87 0 0 0 0 0.85 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\"),radial-gradient(ellipse at 50% 40%,#2a3d33,#1c2b24 60%,#14201a 100%)",
   crema:'linear-gradient(135deg,#faf6ec,#f0e6cf)',
   grigio:'linear-gradient(135deg,#eef2f5,#dbe3e8)'
 };
-const BG_LABELS={sughero:'Sughero',tappeto:'Tappeto verde',azzurro:'Azzurro',crema:'Crema',grigio:'Grigio'};
+const BG_LABELS={sughero:'Sughero',tappeto:'Tappeto verde',lavagna:'Lavagna',crema:'Crema',grigio:'Grigio'};
 const TXT_COLORS=[
   {v:null,label:'Predefinito',css:'#4a6880'},
   {v:'#1a2340',label:'Blu scuro',css:'#1a2340'},
@@ -2671,6 +2686,18 @@ function submitPw(){
   }
   pwPendingAction=null;
 }
+function changePw(){
+  const cur=el('pw-cur').value, n1=el('pw-new1').value, n2=el('pw-new2').value;
+  const err=el('pw-chg-err'), ok=el('pw-chg-ok');
+  ok.classList.add('hidden'); err.classList.add('hidden');
+  if(cur!==CFG.pw){ err.textContent='La password attuale non è corretta.'; err.classList.remove('hidden'); return; }
+  if(!n1.trim()){ err.textContent='Inserisci una nuova password.'; err.classList.remove('hidden'); return; }
+  if(n1!==n2){ err.textContent='Le due password non coincidono.'; err.classList.remove('hidden'); return; }
+  CFG.pw=n1;
+  saveCfg();
+  el('pw-cur').value='';el('pw-new1').value='';el('pw-new2').value='';
+  ok.classList.remove('hidden');
+}
 // Enter key submits the password modal
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter' && !el('m-pw').classList.contains('hidden')){
@@ -3334,8 +3361,8 @@ setupHoldNav(el('v-next'),'next');
 setupHoldNav(el('v-prev'),'prev');
 
 // ═══ GENERIC HOLD-TO-ACTIVATE (2s) BUTTONS ══
-// Esci, Chiudi, Ripristina, and Ridimensiona (fullscreen) all require
-// a deliberate 2-second press-and-hold before they fire — no action
+// Esci, Chiudi, and Ripristina all require a deliberate 2-second
+// press-and-hold before they fire — no action
 // on a quick tap. While held, the button pulses so there's always a
 // clear "yes, this is registering, keep holding" signal.
 function setupHoldButton(btn,action,holdMs){
@@ -3357,7 +3384,6 @@ function setupHoldButton(btn,action,holdMs){
   btn.addEventListener('touchend',e=>{e.preventDefault();cancel();},{passive:false});
   btn.addEventListener('touchcancel',cancel);
 }
-document.querySelectorAll('[data-hold="fs"]').forEach(b=>setupHoldButton(b,toggleFS));
 document.querySelectorAll('[data-hold="stop"]').forEach(b=>setupHoldButton(b,stopViewer));
 document.querySelectorAll('[data-hold="reset"]').forEach(b=>setupHoldButton(b,resetAgenda));
 document.querySelectorAll('[data-hold="tempedit"]').forEach(b=>setupHoldButton(b,enterViewEdit));
@@ -3402,8 +3428,8 @@ function rSet(){
 function hapticLabel(v){
   v=parseInt(v);
   if(v<=0) return 'Disattivata';
-  if(v<=10) return 'Leggera';
-  if(v<=25) return 'Media';
+  if(v<=25) return 'Leggera';
+  if(v<=55) return 'Media';
   return 'Forte';
 }
 function onHapticSlide(v){
@@ -3716,7 +3742,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.8.1';
+const APP_VERSION='2.9.0';
 let swReg=null;
 
 function initVersionDisplay(){
