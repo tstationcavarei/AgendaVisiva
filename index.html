@@ -403,7 +403,7 @@ html[data-tablet=on] .agbg-sw-card{width:94px;}
   padding:8px;
 }
 #agbg-preview-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;}
-#agbg-preview-bg.blur{filter:blur(8px);transform:scale(1.12);}
+#agbg-preview-bg.blur{filter:blur(var(--blur-amt,8px));transform:scale(1.12);}
 #agbg-preview-card{
   position:relative;z-index:1;width:58%;aspect-ratio:1/1;
   background:#fff;border:3px solid #06D6A0;border-radius:10px;
@@ -513,7 +513,7 @@ html[data-tablet=on] #agbg-preview{width:220px;}
   background-size:cover;background-position:center;background-repeat:no-repeat;
   pointer-events:none;
 }
-#v-bg-layer.blur{filter:blur(16px);transform:scale(1.1);} /* scaled up so the blurred edges never show a gap */
+#v-bg-layer.blur{filter:blur(var(--blur-amt,16px));transform:scale(1.1);} /* scaled up so the blurred edges never show a gap */
 /* #s-view's own base background (#f0f4f8, set above) is opaque and
    was completely hiding the custom layer behind it — clear it, along
    with the same opaque default on the launch/running sub-areas. */
@@ -1103,7 +1103,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       <div class="instr-sect">
         <div class="instr-sect-t">📋 Agende</div>
         <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso le icone <b>📂</b>, <b>⧉</b>, <b>🎨</b>, <b>🗑</b>: Modifica entra nell'editor degli step, Duplica copia l'agenda intera con tutti i suoi step (utile per creare varianti simili senza ricominciare da zero), Sfondo apre la scelta dello sfondo per quell'agenda, Elimina la rimuove con conferma.</p>
-        <p><b>🎨 Sfondo</b>: scegli tra neutro (come oggi), alcuni preset (sughero, tappeto verde, colori tenui) oppure una foto dalla galleria — si vede durante l'uso dell'agenda, dietro alle attività, che restano sempre ben visibili sopra. La spunta "Sfoca lo sfondo" attenua i dettagli per ridurre la distrazione visiva, se lo sfondo scelto risulta troppo ricco. Puoi anche scegliere il <b>colore del testo</b> delle etichette che stanno fuori dalle immagini (es. il nome sotto le miniature nella striscia), per restare leggibili su qualsiasi sfondo — l'anteprima mostra subito il risultato prima di salvare.</p>
+        <p><b>🎨 Sfondo</b>: scegli tra neutro (come oggi), alcuni preset (sughero, tappeto verde, colori tenui) oppure una foto dalla galleria — si vede durante l'uso dell'agenda, dietro alle attività, che restano sempre ben visibili sopra. La spunta "Sfoca lo sfondo" attenua i dettagli per ridurre la distrazione visiva, se lo sfondo scelto risulta troppo ricco — una volta attivata, compare una barra per regolare quanto sfocare. Puoi anche scegliere il <b>colore del testo</b> delle etichette che stanno fuori dalle immagini (es. il nome sotto le miniature nella striscia), per restare leggibili su qualsiasi sfondo — l'anteprima mostra subito il risultato prima di salvare.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
@@ -1134,7 +1134,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.7.0</div>
+  <div class="home-ver" id="tb-ver">v2.7.1</div>
 </div>
 
 <!-- USERS -->
@@ -1411,6 +1411,10 @@ html[data-tablet=on][data-theme=dark] .vctrl{
           <input type="checkbox" id="agbg-blur-chk" onchange="stageAgBgBlur(this.checked)">
           🌫️ Sfoca lo sfondo
         </label>
+        <div id="agbg-blur-row" class="hidden" style="display:flex;align-items:center;gap:6px;width:100%;max-width:190px;">
+          <input type="range" id="agbg-blur-range" min="2" max="30" step="1" value="10" oninput="stageAgBgBlurAmount(this.value)" style="flex:1;min-width:0;">
+          <span id="agbg-blur-val" style="font-size:.62rem;font-weight:800;color:var(--mut);min-width:20px;text-align:right;">10</span>
+        </div>
       </div>
       <div style="flex:1;min-width:170px;display:flex;flex-direction:column;gap:6px;">
         <div id="agbg-grid" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
@@ -1782,10 +1786,14 @@ function openAgBg(uid2,aid){
   const u=gu(uid2), a=u?.agendas.find(x=>x.id===aid);
   if(!a)return;
   agBgTarget={uid:uid2,aid};
-  agBgStaged=a.bg?JSON.parse(JSON.stringify(a.bg)):{type:'none',value:null,blur:false,textColor:null};
+  agBgStaged=a.bg?JSON.parse(JSON.stringify(a.bg)):{type:'none',value:null,blur:false,blurAmount:10,textColor:null};
+  if(agBgStaged.blurAmount==null) agBgStaged.blurAmount=10; // agendas saved before this option existed
   renderAgBgGrid();
   renderAgTxtGrid();
   el('agbg-blur-chk').checked=!!agBgStaged.blur;
+  el('agbg-blur-row').classList.toggle('hidden',!agBgStaged.blur);
+  el('agbg-blur-range').value=agBgStaged.blurAmount;
+  el('agbg-blur-val').textContent=agBgStaged.blurAmount;
   updateAgBgPreview();
   openM('m-agbg');
 }
@@ -1833,6 +1841,12 @@ function stageAgBg(type,value){
 }
 function stageAgBgBlur(checked){
   agBgStaged.blur=checked;
+  el('agbg-blur-row').classList.toggle('hidden',!checked);
+  updateAgBgPreview();
+}
+function stageAgBgBlurAmount(value){
+  agBgStaged.blurAmount=parseInt(value)||10;
+  el('agbg-blur-val').textContent=agBgStaged.blurAmount;
   updateAgBgPreview();
 }
 function stageAgTxtColor(color){
@@ -1847,6 +1861,7 @@ function updateAgBgPreview(){
   else if(agBgStaged.type==='image'&&agBgStaged.value) img='url('+agBgStaged.value+')';
   bgEl.style.backgroundImage=img;
   bgEl.classList.toggle('blur',!!agBgStaged.blur);
+  bgEl.style.setProperty('--blur-amt',((agBgStaged.blurAmount||10)*0.5)+'px');
   const lbl=el('agbg-preview-label');
   lbl.style.color=agBgStaged.textColor||'#4a6880';
 }
@@ -1888,6 +1903,7 @@ function applyAgendaBg(a){
     scr.classList.add('has-agbg');
     layer.style.backgroundImage=img;
     layer.classList.toggle('blur',!!bg.blur);
+    layer.style.setProperty('--blur-amt',(bg.blurAmount||16)+'px');
   } else {
     scr.classList.remove('has-agbg');
     layer.style.backgroundImage='';
@@ -3654,7 +3670,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.7.0';
+const APP_VERSION='2.7.1';
 let swReg=null;
 
 function initVersionDisplay(){
