@@ -384,18 +384,18 @@ html[data-tablet=on] .agbg-sw-l{font-size:.8rem;}
    background sub-layer so blur never touches the little card mockup
    sitting on top of it. */
 #agbg-preview{
-  position:relative;width:100%;max-width:380px;aspect-ratio:16/9;
-  border-radius:14px;border:3px solid var(--brd);background:var(--bg2);
+  position:relative;width:170px;aspect-ratio:4/3;
+  border-radius:12px;border:3px solid var(--brd);background:var(--bg2);
   overflow:hidden;display:flex;align-items:center;justify-content:center;
 }
 #agbg-preview-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;}
-#agbg-preview-bg.blur{filter:blur(10px);transform:scale(1.12);}
+#agbg-preview-bg.blur{filter:blur(8px);transform:scale(1.12);}
 #agbg-preview-card{
-  position:relative;z-index:1;width:34%;aspect-ratio:1/1;
-  background:#fff;border:4px solid #06D6A0;border-radius:10px;
+  position:relative;z-index:1;width:36%;aspect-ratio:1/1;
+  background:#fff;border:3px solid #06D6A0;border-radius:8px;
   box-shadow:0 4px 14px rgba(0,0,0,.18);
 }
-html[data-tablet=on] #agbg-preview{max-width:460px;}
+html[data-tablet=on] #agbg-preview{width:230px;}
 .ar-img{width:54px;height:54px;object-fit:contain;border-radius:7px;border:2px solid transparent;cursor:pointer;background:#fff;}
 .ar-img:active{border-color:var(--acc);}
 
@@ -473,14 +473,24 @@ html[data-tablet=on] #agbg-preview{max-width:460px;}
 .vr{flex:1;min-height:0;display:flex;flex-direction:column;overflow:visible;background:#f0f4f8;}
 /* Custom agenda background: a dedicated layer BEHIND all content, so
    an optional blur can be applied to it alone without ever blurring
-   the activity cards or any text sitting on top of it. */
-#s-view{position:relative;}
+   the activity cards or any text sitting on top of it.
+   IMPORTANT: #s-view needs an explicit z-index (not just
+   position:relative) to actually establish its OWN stacking context
+   — without that, this layer's negative z-index escapes to a higher
+   ancestor's stacking level instead of staying local, and can end up
+   rendering behind an opaque ancestor's background, making it
+   invisible regardless of what image is set on it. */
+#s-view{position:relative;z-index:0;}
 #v-bg-layer{
   position:absolute;inset:0;z-index:-1;
   background-size:cover;background-position:center;background-repeat:no-repeat;
   pointer-events:none;
 }
 #v-bg-layer.blur{filter:blur(16px);transform:scale(1.1);} /* scaled up so the blurred edges never show a gap */
+/* #s-view's own base background (#f0f4f8, set above) is opaque and
+   was completely hiding the custom layer behind it — clear it, along
+   with the same opaque default on the launch/running sub-areas. */
+#s-view.has-agbg{background:transparent;}
 #s-view.has-agbg .vl,#s-view.has-agbg .vr,#s-view.has-agbg .vseq{background:transparent;}
 
 /* ── TOP ROW: the full sequence, all steps close together.
@@ -1093,7 +1103,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.6.1</div>
+  <div class="home-ver" id="tb-ver">v2.6.2</div>
 </div>
 
 <!-- USERS -->
@@ -1356,20 +1366,22 @@ html[data-tablet=on][data-theme=dark] .vctrl{
   </div>
 </div>
 <div class="mov hidden" id="m-agbg">
-  <div class="mbox" style="max-width:min(640px,96vw);width:96vw;max-height:92vh;overflow-y:auto;">
+  <div class="mbox" style="max-width:min(680px,96vw);width:96vw;max-height:94vh;overflow-y:auto;">
     <div class="mttl">🎨 Sfondo agenda</div>
     <div class="ssub" style="margin-top:-6px">Le attività resteranno sempre ben visibili sopra, come adesso.</div>
-    <div style="display:flex;justify-content:center;padding:4px 0;">
-      <div id="agbg-preview">
-        <div id="agbg-preview-bg"></div>
-        <div id="agbg-preview-card"></div>
+    <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:8px;align-items:center;">
+        <div id="agbg-preview">
+          <div id="agbg-preview-bg"></div>
+          <div id="agbg-preview-card"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:.68rem;font-weight:700;cursor:pointer;max-width:200px;">
+          <input type="checkbox" id="agbg-blur-chk" onchange="stageAgBgBlur(this.checked)">
+          🌫️ Sfoca lo sfondo
+        </label>
       </div>
+      <div id="agbg-grid" style="flex:1;min-width:170px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;"></div>
     </div>
-    <div id="agbg-grid" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:6px 0;"></div>
-    <label style="display:flex;align-items:center;gap:8px;justify-content:center;padding:6px 4px;font-size:.78rem;font-weight:700;cursor:pointer;">
-      <input type="checkbox" id="agbg-blur-chk" onchange="stageAgBgBlur(this.checked)">
-      🌫️ Sfoca lo sfondo (riduce la distrazione visiva)
-    </label>
     <input type="file" id="agbg-file" accept="image/*" class="hidden" onchange="onAgBgImg(event)">
     <div class="macts">
       <button class="bm cn" onclick="cancelAgBg()">✕ Annulla</button>
@@ -3577,7 +3589,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.6.1';
+const APP_VERSION='2.6.2';
 let swReg=null;
 
 function initVersionDisplay(){
