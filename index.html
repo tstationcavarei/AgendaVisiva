@@ -1079,62 +1079,58 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <div class="instr-body" id="instr-body">
       <div class="instr-sect">
         <div class="instr-sect-t">🏠 Home</div>
-        <p>In alto a destra trovi quattro icone, in quest'ordine: <b>ℹ️ Info</b> (queste istruzioni), <b>🔓/🔒 Lucchetto</b> (blocco con password), <b>⚙️ Impostazioni</b>, <b>⛶ Ridimensiona</b> (schermo intero).</p>
-        <p>Al centro, il grande pulsante verde <b>▶️ Usa Agenda</b> avvia subito una sessione. Sotto, due pulsanti più piccoli portano a <b>👤 Utenti</b> (bordo blu) e <b>📋 Agende</b> (bordo viola).</p>
-      </div>
-      <div class="instr-sect">
-        <div class="instr-sect-t">▶️ Usa Agenda</div>
-        <p>Il grande pulsante verde avvia subito la sessione. Se in tutta l'app c'è <b>un solo utente con una sola agenda</b>, premendolo parte tutto in automatico, senza chiedere nulla. Altrimenti si apre una schermata dove scegliere utente e/o agenda (ogni agenda mostra accanto al nome un cerchietto colorato con l'iniziale del suo utente) — e anche lì, se per un utente esiste una sola agenda, quella viene scelta da sola senza doverla selezionare.</p>
-        <p>Premi il pulsante ▶ verde per iniziare. Durante l'uso, lo step corrente appare grande al centro con un bordo verde; gli step successivi scorrono in alto. Tocca l'immagine attuale, oppure la tessera successiva nella striscia in alto, per avanzare.</p>
-        <p>Se uno step ha un timer attivo, appare nel pannello a destra. <b>Mentre il timer è in corso non puoi passare allo step successivo</b> con un tocco normale (il pannello lampeggerà in blu per avvisarti) — puoi comunque forzare l'avanzamento tenendo premuto per 2 secondi i pulsanti "Avanti"/"Indietro" (pulsano in verde mentre li tieni premuti). Quando il timer scade, suona un allarme, il pannello lampeggia in verde, e poi appare la scritta "AVANTI" (o "FINE" se è l'ultimo step) con un pulsante ▶ per proseguire.</p>
-        <p>In fondo trovi sempre: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. I pulsanti Chiudi, Ripristina, Ridimensiona (⛶) e Avanti/Indietro (quando bloccati da un timer) richiedono una pressione continua di <b>2 secondi</b> per attivarsi, e pulsano mentre li tieni premuti — una protezione contro i tocchi accidentali.</p>
-      </div>
-      <div class="instr-sect">
-        <div class="instr-sect-t">✏️ Modifica provvisoria</div>
-        <p>In alto durante l'utilizzo trovi anche l'icona <b>✏️</b>, accanto a Ridimensiona — tienila premuta 2 secondi per attivarla. La schermata <b>non cambia</b>: resti esattamente sulla stessa vista (l'attività attuale grande al centro, le successive in alto), solo che ora compaiono dei piccoli pulsanti sopra ogni riquadro — <b>✏️</b> Modifica, <b>⧉</b> Duplica, <b>✕</b> Elimina, e <b>⠿</b> per trascinare e riordinare le attività successive. I riquadri si ingrandiscono leggermente per rendere questi pulsanti più facili da toccare. In fondo alla striscia trovi anche un riquadro tratteggiato <b>＋</b> per aggiungere una nuova attività.</p>
-        <p>Se l'attività attuale ha un timer in corso, prima di entrare in modifica ti verrà chiesto se vuoi che continui a scorrere oppure che si fermi. Se scegli di fermarlo, resta congelato esattamente al punto in cui era arrivato e riparte da lì quando premi Fatto; se scegli di farlo continuare, va avanti normalmente anche mentre modifichi altre attività. L'unica eccezione: se modifichi proprio il timer dell'attività attuale (durata o tipo), il cambiamento si applica subito e riparte dal nuovo valore impostato, indipendentemente dalla scelta fatta all'inizio.</p>
-        <p>Toccando <b>✏️</b> su un riquadro si apre una finestra con lo stesso form usato in fase di creazione (nome, modalità Immagine/Testo/Entrambe con anteprima, immagine o timer con anteprima) — premi <b>✅ Fatto</b> per chiuderla e tornare alla vista con i pulsanti.</p>
-        <p>Tutte queste modifiche sono <b>valide solo per la sessione in corso</b>: si vedono subito nell'agenda che stai usando in quel momento, ma <b>l'agenda salvata resta quella di sempre</b>. Puoi continuare a modificare quanto vuoi finché resti in questa sessione — le modifiche si sommano. <b>Solo uscendo dall'agenda e riaprendola da capo</b> tutto torna esattamente come salvato. Per uscire dalla modalità modifica, tocca <b>✅ Fatto</b> al posto di ✏️ nella barra in alto (basta un tocco normale, non serve tenerlo premuto). Solo le attività <b>già completate</b> non sono modificabili da qui, dato che non sono più visibili a schermo. Il pulsante ✏️ per entrare in modifica funziona sempre tenendolo premuto 2 secondi, anche se il blocco con password è attivo.</p>
+        <p>In alto a destra: <b>ℹ️ Info</b> (queste istruzioni), <b>🔓/🔒 Lucchetto</b> (blocco con password), <b>⚙️ Impostazioni</b>, <b>⛶ Ridimensiona</b> (schermo intero).</p>
+        <p>Al centro, il grande pulsante verde <b>▶️ Usa Agenda</b> avvia subito una sessione. Sotto, due pulsanti più piccoli portano a <b>👤 Utenti</b> e <b>📋 Agende</b>, dove si creano e modificano i profili e le loro agende.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">👤 Utenti</div>
-        <p>Crea un profilo per ogni persona che userà l'agenda. Ogni utente ha un nome e un colore identificativo. Sulla card trovi le icone 📋, ✏️ e 🗑 (con una piccola scritta sotto ciascuna: "Agende", "Modifica", "Elimina") per andare alle sue agende, modificare nome/colore, o eliminarlo (con conferma — elimina anche tutte le sue agende).</p>
+        <p>Crea un profilo per ogni persona che userà l'agenda, con nome e colore identificativo. Sulla card: <b>📋</b> Agende, <b>✏️</b> Modifica, <b>🗑</b> Elimina (con conferma — elimina anche tutte le sue agende).</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">📋 Agende</div>
-        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Su ogni card agenda trovi, accanto al nome, <b>✎</b> Rinomina; in basso le icone <b>📂</b>, <b>⧉</b>, <b>🎨</b>, <b>🗑</b>: Modifica entra nell'editor degli step, Duplica copia l'agenda intera con tutti i suoi step (utile per creare varianti simili senza ricominciare da zero), Sfondo apre la scelta dello sfondo per quell'agenda, Elimina la rimuove con conferma.</p>
-        <p><b>🎨 Sfondo</b>: scegli tra neutro (come oggi), alcuni preset (sughero, tappeto verde, colori tenui) oppure una foto dalla galleria — si vede durante l'uso dell'agenda, dietro alle attività, che restano sempre ben visibili sopra. La spunta "Sfoca lo sfondo" attenua i dettagli per ridurre la distrazione visiva, se lo sfondo scelto risulta troppo ricco — una volta attivata, compare una barra per regolare quanto sfocare. Puoi anche scegliere il <b>colore del testo</b> delle etichette che stanno fuori dalle immagini (es. il nome sotto le miniature nella striscia), per restare leggibili su qualsiasi sfondo — l'anteprima mostra subito il risultato prima di salvare.</p>
+        <p>Seleziona un utente a sinistra per vedere o creare le sue agende (es. "Lunedì", "Routine mattutina"). Accanto al nome: <b>✎</b> Rinomina. In basso: <b>📂</b> Modifica (apre l'editor degli step), <b>⧉</b> Duplica (copia l'agenda intera con tutti gli step), <b>🎨</b> Sfondo, <b>🗑</b> Elimina.</p>
+        <p><b>🎨 Sfondo</b>: si vede durante l'uso dell'agenda, dietro alle attività (che restano sempre ben visibili sopra). Si sceglie tra neutro, alcuni preset (sughero, tappeto verde, colori tenui) o una foto dalla galleria; l'anteprima mostra subito il risultato. La spunta "Sfoca lo sfondo" attenua i dettagli, con una barra per regolarne l'intensità — utile se lo sfondo scelto è troppo ricco e rischia di distrarre. C'è anche una scelta del <b>colore del testo</b> per le etichette che stanno fuori dalle immagini (es. il nome sotto le miniature), per restare leggibili su qualsiasi sfondo. Tutto si conferma con <b>💾 Salva</b>.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">✏️ Editor degli step</div>
-        <p>Nella vista a griglia vedi tutti gli step dell'agenda come tessere, con un numero verde prima del nome. Tocca ＋ per aggiungerne uno nuovo, tocca una tessera per modificarla. Su ogni tessera trovi: <b>✕</b> per eliminare (con conferma), <b>⧉</b> per duplicare lo step (con conferma, copia identica), <b>⠿</b> per trascinare e riordinare gli step.</p>
-        <p>Il nome dello step ha un limite di 40 caratteri, con un contatore che scala mentre scrivi — così il titolo resta sempre leggibile nelle miniature senza uscire dai riquadri.</p>
-        <p>Nel form di modifica scegli come mostrare lo step: <b>🖼️ Immagine</b> (solo immagine), <b>📝 Testo</b> (solo il nome scritto grande, senza immagine — utile per un'agenda testuale invece che visiva), oppure <b>🖼️+📝 Entrambe</b> (immagine e nome insieme). Puoi caricare un'immagine dal dispositivo o cercarla su ARASAAC, e attivare un timer con durata in ore/minuti/secondi, tipo (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto. Le immagini restano sempre con i loro colori originali, anche in tema scuro.</p>
+        <p>Vista a griglia con tutte le attività dell'agenda come tessere numerate. Tocca <b>＋</b> per aggiungerne una, tocca una tessera per modificarla. Su ogni tessera: <b>✕</b> Elimina, <b>⧉</b> Duplica, <b>⠿</b> per trascinare e riordinare.</p>
+        <p>Nel form di modifica: il <b>nome</b> (max 40 caratteri), la <b>modalità</b> — 🖼️ solo immagine, 📝 solo testo grande (per un'agenda testuale invece che visiva), oppure 🖼️+📝 entrambe — con anteprima dal vivo. L'immagine si carica dal dispositivo o si cerca su ARASAAC. Il <b>timer</b> ha durata in ore/minuti/secondi, quattro stili (anello, digitale, barra, cerchio) e l'opzione "auto-avanza" per passare da solo allo step successivo a tempo scaduto.</p>
+      </div>
+      <div class="instr-sect">
+        <div class="instr-sect-t">▶️ Usa Agenda</div>
+        <p>Il grande pulsante verde in Home avvia subito una sessione. Se c'è <b>un solo utente con una sola agenda</b> in tutta l'app, parte tutto in automatico; altrimenti si apre una schermata per scegliere utente e agenda (e se un utente ha una sola agenda, quella si seleziona da sola). Premi il pulsante ▶ verde per iniziare davvero.</p>
+        <p>Durante l'uso, l'attività attuale appare grande al centro con bordo verde; le successive scorrono in una striscia in alto. Si avanza toccando l'immagine attuale, oppure la tessera successiva nella striscia.</p>
+        <p>Se un'attività ha un <b>timer</b>, appare in un pannello a destra. Mentre è in corso, un tocco normale su Avanti/Indietro non funziona (il pannello lampeggia in blu) — si può comunque forzare l'avanzamento tenendo premuto 2 secondi. Al termine del tempo suona un allarme, il pannello lampeggia in verde e compare "AVANTI" (o "FINE" sull'ultimo step) per proseguire.</p>
+        <p>In fondo: <b>✕ Chiudi</b>, <b>◀ Indietro</b>, <b>↺ Ripristina</b>, <b>Avanti ▶</b>. Chiudi, Ripristina, Ridimensiona, e Avanti/Indietro quando bloccati da un timer, richiedono una pressione continua di <b>2 secondi</b> — una protezione contro i tocchi accidentali, con un effetto visivo mentre li tieni premuti.</p>
+      </div>
+      <div class="instr-sect">
+        <div class="instr-sect-t">✏️ Modifica provvisoria</div>
+        <p>In alto durante l'utilizzo, l'icona <b>✏️</b> (tienila premuta 2 secondi) attiva delle modifiche rapide senza mai cambiare schermata: sopra l'attività attuale e ogni tessera successiva compaiono <b>✏️</b> Modifica, <b>⧉</b> Duplica, <b>✕</b> Elimina, <b>⠿</b> per riordinare, più un riquadro <b>＋</b> per aggiungerne una nuova. Toccando ✏️ su una tessera si apre lo stesso form usato in creazione (nome, modalità, immagine o timer) da confermare con <b>✅ Fatto</b>.</p>
+        <p>Queste modifiche valgono <b>solo per la sessione in corso</b> e si sommano finché resti dentro: l'agenda salvata non cambia mai, e tutto torna come prima uscendo e riaprendola. Le attività già completate non sono modificabili da qui. Se l'attività attuale ha un timer in corso, all'apertura ti verrà chiesto se farlo continuare o metterlo in pausa (riprende da dove si era fermato); modificando invece proprio quel timer, il nuovo valore si applica subito. Per uscire dalla modalità modifica, tocca <b>✅ Fatto</b> al posto di ✏️ — un tocco normale, senza bisogno di tenerlo premuto.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔒 Blocco con password</div>
-        <p>L'icona lucchetto in alto attiva o disattiva un blocco a password per le aree Utenti, Agende e Impostazioni — utile per evitare modifiche accidentali. La password predefinita è <b>ADMIN</b>. Lucchetto aperto 🔓 = blocco disattivo, lucchetto chiuso 🔒 = blocco attivo.</p>
-        <p>Quando il blocco è attivo, toccare Utenti, Agende o Impostazioni <b>non chiede la password</b>: il pulsante toccato e il lucchetto in alto pulsano semplicemente in rosso, segnalando che l'area è bloccata. L'unico modo per entrare è toccare il lucchetto stesso e inserire la password lì — è anche l'unico modo per disattivare il blocco.</p>
+        <p>Il lucchetto in alto attiva o disattiva un blocco a password per Utenti, Agende e Impostazioni — utile contro modifiche accidentali. Password predefinita: <b>ADMIN</b>. Quando è attivo, toccare un'area bloccata non chiede nulla: pulsante e lucchetto pulsano in rosso. L'unico modo per entrare, o per disattivare il blocco, è toccare il lucchetto e inserire la password lì.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">⚙️ Impostazioni</div>
-        <p><b>Aspetto</b>: tema chiaro/scuro, 6 colori accento (blu, viola, verde, arancio, rosso, turchese), e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi (usa la tastiera di sistema invece di quella integrata, e ridisegna la schermata di utilizzo).</p>
-        <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata (1-5 secondi), con pulsante di prova.</p>
-        <p><b>Dati</b>: esporta/importa un backup completo in JSON, oppure cancella tutto (utenti e agende).</p>
-        <p><b>Info</b>: versione installata e pulsante per controllare e installare aggiornamenti.</p>
+        <p><b>Aspetto</b>: tema chiaro/scuro, 6 colori accento, e "Modalità tablet" per un'interfaccia più grande adatta a schermi grandi.</p>
+        <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata, con pulsante di prova.</p>
+        <p><b>Dati</b>: esporta/importa un backup completo, oppure cancella tutto.</p>
+        <p><b>Info</b>: versione installata e controllo aggiornamenti.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔐 Bloccare il tablet solo su questa app</div>
-        <p>Il blocco con password qui sopra protegge le impostazioni <i>dentro</i> l'app, ma non impedisce di uscire e usare il tablet per altro (giochi, altre app). Per impedirlo davvero serve una funzione del sistema operativo del tablet, chiamata di solito <b>"Fissa app"</b>, <b>"Blocco app"</b> o <b>"App pinning"</b> — gratuita e già presente su ogni tablet Android o iPad, non serve installare nulla.</p>
-        <p>Una volta attivata, il tablet mostra <b>solo</b> questa app: niente tasto Home, niente altre app, niente notifiche. Per uscire serve un PIN che decidi tu. Il percorso esatto cambia leggermente da marca a marca; ecco un esempio reale (Samsung, One UI 6.1):</p>
-        <p><b>1)</b> Impostazioni → Sicurezza → Altre impostazioni di sicurezza → attiva il flag <b>"Aggiungi applicazione"</b> sotto la voce "Trust agent".<br>
-        <b>2)</b> Apri le app recenti, tocca l'icona dell'applicazione desiderata (Agenda Visiva) e premi <b>"Aggiungi applicazione"</b>.<br>
-        <b>3)</b> Da quel momento il tablet resta bloccato su questa app. Per sbloccarlo, premi <b>contemporaneamente</b> "App recenti" e "Indietro".</p>
-        <p>Se il tuo tablet non mostra questa voce, cerca "fissa" o "pin" nella barra di ricerca delle Impostazioni: quasi tutti i produttori (Samsung, Xiaomi, Huawei, Lenovo, stock Android, iPad) hanno una funzione equivalente, a volte nascosta finché non si imposta un PIN/sequenza come blocco schermo del tablet stesso.</p>
+        <p>Il blocco con password protegge le impostazioni <i>dentro</i> l'app, ma non impedisce di uscire e usare il tablet per altro. Per impedirlo davvero serve una funzione del sistema operativo, di solito chiamata <b>"Fissa app"</b> o <b>"App pinning"</b> — gratuita e già presente su ogni tablet Android o iPad.</p>
+        <p>Una volta attivata, il tablet mostra <b>solo</b> questa app: niente tasto Home, niente altre app o notifiche; per uscire serve un PIN scelto da te. Il percorso cambia da marca a marca; esempio (Samsung, One UI 6.1):</p>
+        <p><b>1)</b> Impostazioni → Sicurezza → Altre impostazioni di sicurezza → attiva "Aggiungi applicazione" sotto "Trust agent".<br>
+        <b>2)</b> Apri le app recenti, tocca l'icona di Agenda Visiva e premi "Aggiungi applicazione".<br>
+        <b>3)</b> Da quel momento il tablet resta bloccato su questa app; per sbloccarlo premi insieme "App recenti" e "Indietro".</p>
+        <p>Se il tuo tablet non mostra questa voce, cerca "fissa" o "pin" nelle Impostazioni: quasi tutti i produttori hanno una funzione equivalente.</p>
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.7.1</div>
+  <div class="home-ver" id="tb-ver">v2.7.2</div>
 </div>
 
 <!-- USERS -->
@@ -3670,7 +3666,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.7.1';
+const APP_VERSION='2.7.2';
 let swReg=null;
 
 function initVersionDisplay(){
