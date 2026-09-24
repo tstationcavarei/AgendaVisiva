@@ -79,6 +79,10 @@ input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:d
   box-shadow:0 1px 6px rgba(0,0,0,.06);
 }
 .tb-logo{font-size:1.05rem;font-weight:900;color:var(--acc);}
+.upd-banner{
+  background:var(--grn);color:#fff;font-weight:800;font-size:.8rem;
+  text-align:center;padding:8px 12px;cursor:pointer;
+}
 .tb-logo span{color:var(--grn);}
 /* ── INSTRUCTIONS: ℹ️ icon in the topbar opens a full-page overlay ── */
 
@@ -1052,6 +1056,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     <button class="ib" id="lock-btn" onclick="onLockIconTap()" title="Blocco impostazioni">🔓</button>
     <button class="ib" onclick="goSettings(this)">⚙️</button>
   </div>
+  <div class="upd-banner hidden" id="home-upd-banner" onclick="goToUpdateSettings()">✅ Nuova versione disponibile — tocca per installare</div>
   <div class="body body-main">
     <div class="hc-big" onclick="goUse()">
       <div class="hc-big-i">▶️</div>
@@ -1121,7 +1126,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
         <p><b>Suono</b>: tipo di suoneria di fine timer (Bip classico, Campanella, Carillon, Alert) e durata, con pulsante di prova. Nella stessa scheda, il <b>feedback aptico</b>: intensità della vibrazione ad ogni pressione di un pulsante, da "Disattivata" a "Forte" — funziona su tutti i pulsanti dell'app, sia in modalità telefono che tablet.</p>
         <p><b>Sicurezza</b>: qui si cambia la password del blocco — richiede quella attuale più la nuova, ripetuta due volte per conferma.</p>
         <p><b>Dati</b>: esporta/importa un backup completo, oppure cancella tutto.</p>
-        <p><b>Info</b>: versione installata e controllo aggiornamenti.</p>
+        <p><b>Info</b>: versione installata e controllo aggiornamenti — l'app controlla automaticamente anche all'avvio, e se ne trova uno mostra un banner verde in Home per installarlo con un tocco.</p>
       </div>
       <div class="instr-sect">
         <div class="instr-sect-t">🔐 Bloccare il tablet solo su questa app</div>
@@ -1134,7 +1139,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
       </div>
     </div>
   </div>
-  <div class="home-ver" id="tb-ver">v2.9.4</div>
+  <div class="home-ver" id="tb-ver">v3.0.0</div>
 </div>
 
 <!-- USERS -->
@@ -1579,7 +1584,10 @@ function haptic(){
 // Builds a vibrate-pause-vibrate-pause... pattern spanning the full
 // hold duration, instead of one continuous buzz.
 function buildHoldPattern(totalMs){
-  const buzz=150, pause=100, cycle=buzz+pause;
+  // Pulse length follows the configured intensity (0-100) instead of
+  // always buzzing at max strength — floor of 20ms since shorter
+  // pulses are barely perceptible on most devices.
+  const buzz=Math.max(20,Math.round(CFG.hapticInt*1.5)), pause=100, cycle=buzz+pause;
   const fullCycles=Math.floor(totalMs/cycle);
   const pattern=[];
   for(let i=0;i<fullCycles;i++){ pattern.push(buzz,pause); }
@@ -3758,7 +3766,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='2.9.4';
+const APP_VERSION='3.0.0';
 let swReg=null;
 
 function initVersionDisplay(){
@@ -3781,6 +3789,11 @@ function registerSW(){
         }
       });
     });
+    // Force a fresh check against the server right at startup, rather
+    // than waiting for the browser's own (often infrequent) update
+    // schedule — so a caregiver opening Settings shortly after
+    // launching the app already sees an update flagged if one exists.
+    reg.update().catch(()=>{});
   }).catch(()=>{});
   // Reload automatically once the new service worker takes control
   let refreshed=false;
@@ -3792,9 +3805,15 @@ function registerSW(){
 }
 
 function markUpdateAvailable(){
-  const st=el('upd-status'), btn=el('upd-btn');
+  const st=el('upd-status'), btn=el('upd-btn'), banner=el('home-upd-banner');
   if(st) st.textContent='✅ Nuova versione disponibile!';
   if(btn) btn.textContent='⬇ Installa aggiornamento';
+  if(banner) banner.classList.remove('hidden');
+}
+function goToUpdateSettings(){
+  goSettings();
+  const infoTab=document.querySelector('[data-p="p-info"]');
+  if(infoTab) swTab(infoTab);
 }
 
 function checkForUpdate(){
