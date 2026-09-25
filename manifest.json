@@ -3,7 +3,7 @@
   "name": "Visual Schedule",
   "short_name": "Visual Schedule",
   "description": "Visual schedule for planning daily activities, designed for landscape use on smartphones and tablets.",
-  "version": "3.3.0",
+  "version": "3.4.1",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
