@@ -539,26 +539,31 @@ html[data-tablet=on] #agbg-preview{width:220px;}
    Every card (including current) lives HERE — no separate section.
    Cards shrink to fit any count, stay close, always readable. */
 /* ── TABLET MODE: viewer layout ──
-   - Sequence strip gets much more room and wraps into 2 rows when
-     there are many upcoming steps (cards are bigger and stay close
-     together, wrapping instead of scrolling in a single line).
+   - Sequence strip stays a SINGLE row, scrolling horizontally just
+     like phone mode — but with noticeably bigger cards, since a
+     single row needs far less vertical space than the old 2-row
+     wrapping layout did. That freed height goes to the current
+     activity below, which grows proportionally larger too while
+     staying visibly bigger than the upcoming cards.
    - The current activity becomes a SQUARE card, centred toward the
      bottom-left of the remaining space.
    - The timer becomes a SQUARE panel of its own, shifted further
      right, clearly separated from the activity card.
 */
 html[data-tablet=on] .vseq{
-  height:46%;min-height:210px;max-height:310px;
-  flex-wrap:wrap;align-content:flex-start;align-items:flex-start;
-  padding:12px 16px;gap:12px 14px;
-  overflow-y:auto;overflow-x:hidden;
+  height:26%;min-height:150px;max-height:210px;
+  flex-wrap:nowrap;align-items:flex-end;
+  padding:10px 16px;gap:14px;
+  overflow-x:auto;overflow-y:hidden;
 }
-html[data-tablet=on] .vsq{height:auto;}
+html[data-tablet=on] .vsq{height:100%;}
 html[data-tablet=on] .vsq-b{
-  /* Bigger thumbnails for upcoming activities — closer to matching
-     the launch grid's own size, so activities don't visibly shrink
-     the moment you press play. */
-  height:auto;width:16vh;max-width:155px;aspect-ratio:1/1;
+  /* Bigger thumbnails for upcoming activities, now that a single
+     scrolling row frees up much more height to give them. Sized as a
+     share of the card's own height (like phone mode) rather than a
+     fixed viewport-relative value, so the caption below it always
+     keeps its reserved space instead of being squeezed out. */
+  height:80%;max-height:190px;aspect-ratio:1/1;
 }
 html[data-tablet=on] .vsq-l{font-size:16px;}
 html[data-tablet=on] .vsq-txt{font-size:13px;padding:7px;}
@@ -581,17 +586,18 @@ html[data-tablet=on] .vmain{
 html[data-tablet=on] .vspacer{display:none;}
 
 html[data-tablet=on] .vimgbl{
-  /* Capped lower than before so the card visually sits close to the
-     dock, instead of stretching up to nearly fill the whole area */
+  /* Now that the strip above takes a single row instead of two, this
+     card gets noticeably more room while still staying capped so it
+     doesn't crowd the dock or the timer. */
   flex:0 0 auto;
-  width:auto;height:min(24vh,60%);
+  width:auto;height:min(34vh,68%);
   aspect-ratio:1/1;
   margin:0 0 2.5%;
-  border-width:7px;
-  padding:5px 8px;
-  gap:2px;
+  border-width:8px;
+  padding:6px 10px;
+  gap:3px;
 }
-html[data-tablet=on] .vnm{font-size:clamp(.68rem,1.6vh,.94rem);}
+html[data-tablet=on] .vnm{font-size:clamp(.8rem,2vh,1.1rem);}
 
 html[data-tablet=on] .vtimer{
   /* 30% smaller than before (48vh × 0.7 ≈ 33.6vh).
@@ -638,7 +644,7 @@ html[data-tablet=on] .vctrl{
   position:relative;z-index:1;
 }
 .vseq::-webkit-scrollbar{height:3px;}
-html[data-tablet=on] .vseq::-webkit-scrollbar{width:5px;height:5px;}
+html[data-tablet=on] .vseq::-webkit-scrollbar{height:6px;}
 html[data-tablet=on] .vseq::-webkit-scrollbar-thumb{background:rgba(0,0,0,.18);border-radius:3px;}
 .vsq{
   flex-shrink:0;position:relative;height:100%;
@@ -1104,7 +1110,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     </div>
     <div class="instr-body" id="instr-body"></div>
   </div>
-  <div class="home-ver" id="tb-ver">v3.5.0</div>
+  <div class="home-ver" id="tb-ver">v3.6.0</div>
 </div>
 
 <!-- USERS -->
@@ -3850,7 +3856,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='3.5.0';
+const APP_VERSION='3.6.0';
 let swReg=null;
 
 function initVersionDisplay(){
