@@ -247,7 +247,17 @@ html[data-tablet=on] .mini-btn{padding:18px 20px;}
 .bic.p{background:var(--acc);color:#fff;}
 .bic.d{background:#fde8ec;color:var(--red);}
 .bic.v{background:#fff0d6;color:#b8860b;}
-.bic.bic-active{box-shadow:0 0 0 2px var(--grn);}
+.bic.bic-active{box-shadow:0 0 0 2px #fff,0 0 0 5px var(--grn);}
+.bic-col{position:relative;}
+.bic-active-dot{
+  position:absolute;top:-3px;right:-3px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--grn);border:2px solid #fff;
+  color:#fff;font-size:.6rem;font-weight:900;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.35);
+  z-index:1;
+}
 /* Icon button + tiny caption underneath (e.g. 🗑 / "Elimina") — the
    caption is kept small enough to roughly match the button's own
    width, so the row doesn't grow much taller or wider than before. */
@@ -323,15 +333,15 @@ html[data-tablet=on] .bic-cap{font-size:.58rem;max-width:60px;}
   border-radius:8px 0 10px 0;
 }
 .sc.dragging{opacity:.3;}
-.sc-box.has-timer{border-color:#e6a000;border-width:3px;box-shadow:0 0 0 2px rgba(230,160,0,.35);}
+.sc-box.has-timer{border:3px solid #fff;box-shadow:0 0 0 3px #e6a000,0 2px 6px rgba(230,160,0,.4);}
 .sc-timer-badge{
-  position:absolute;top:-2px;left:50%;transform:translateX(-50%);
-  width:24px;height:24px;font-size:.86rem;
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  width:28px;height:28px;font-size:1rem;
   display:flex;align-items:center;justify-content:center;
   background:#e6a000;border-radius:50%;
-  border:2px solid rgba(255,255,255,.9);
-  box-shadow:0 1px 4px rgba(0,0,0,.25);
-  z-index:1;
+  border:3px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+  z-index:2;
 }
 .sc.dover .sc-box{border-color:var(--grn);box-shadow:0 0 0 3px rgba(6,214,160,.3);}
 .sc-add .sc-box{border:2.5px dashed var(--grn);background:rgba(6,214,160,.07);font-size:1.9rem;color:var(--grn);}
@@ -1133,7 +1143,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     </div>
     <div class="instr-body" id="instr-body"></div>
   </div>
-  <div class="home-ver" id="tb-ver">v4.0.0</div>
+  <div class="home-ver" id="tb-ver">v4.0.1</div>
 </div>
 
 <!-- USERS -->
@@ -1741,8 +1751,13 @@ function fitTextToBox(el,minPx,maxPx,boxEl){
 function mkIconAction(cls,icon,title,caption,onclick,active){
   const wrap=mk('div','bic-col');
   const b=mk('button','bic '+cls+(active?' bic-active':''));b.textContent=icon;b.title=title;b.onclick=onclick;
+  wrap.appendChild(b);
+  if(active){
+    const dot=mk('div','bic-active-dot');dot.textContent='✓';
+    wrap.appendChild(dot);
+  }
   const cap=mk('span','bic-cap');cap.textContent=caption;
-  wrap.appendChild(b);wrap.appendChild(cap);
+  wrap.appendChild(cap);
   return wrap;
 }
 function el(id){return document.getElementById(id);}
@@ -1900,6 +1915,7 @@ function saveAgVoice(){
   const u=gu(agVoiceTarget.uid), a=u?.agendas.find(x=>x.id===agVoiceTarget.aid);
   if(a){ a.tts=agVoiceStaged; save(); }
   closeM('m-voice');
+  rAgGrid();
 }
 // ═══ STEP TRANSLATION (via Google Translate's public web endpoint) ═══
 // This is the same free, unofficial endpoint the Google Translate
@@ -4149,7 +4165,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='4.0.0';
+const APP_VERSION='4.0.1';
 let swReg=null;
 
 function initVersionDisplay(){
