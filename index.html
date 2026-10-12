@@ -1210,7 +1210,7 @@ html[data-tablet=on][data-theme=dark] .vctrl{
     </div>
     <div class="instr-body" id="instr-body"></div>
   </div>
-  <div class="home-ver" id="tb-ver">v4.2.7</div>
+  <div class="home-ver" id="tb-ver">v4.2.8</div>
 </div>
 
 <!-- USERS -->
@@ -4088,7 +4088,8 @@ document.querySelectorAll('[data-hold="fullscreen"]').forEach(b=>setupHoldButton
 let _fsOn=false,_fsTimer=null,_fsTipShown=false;
 function _fsScr(){return el('s-view');}
 function _fsRefit(){setTimeout(()=>{try{fitSbtnPanel();}catch(e){}},320);}
-function closeFsTip(){ el('fs-tip').classList.add('hidden'); _fsArm(); }
+function _fsHideNow(){ clearTimeout(_fsTimer); if(_fsOn){_fsScr().classList.add('fs-hide');_fsRefit();} }
+function closeFsTip(){ el('fs-tip').classList.add('hidden'); _fsHideNow(); }
 function _fsArm(){
   clearTimeout(_fsTimer);
   if(!_fsOn)return;
@@ -4102,7 +4103,7 @@ function enterImmersive(){
   _fsOn=true;
   _fsScr().classList.add('fs-on');
   if(!_fsTipShown){ _fsTipShown=true; el('fs-tip').classList.remove('hidden'); }
-  _fsArm();
+  else _fsHideNow();   // dalla 2ª volta: barre nascoste subito
 }
 function exitImmersive(fromBrowser){
   _fsOn=false;clearTimeout(_fsTimer);el('fs-tip').classList.add('hidden');
@@ -4513,7 +4514,7 @@ document.addEventListener('keydown',e=>{
 },true);
 
 // ═══ VERSION & UPDATES (PWA) ═══
-const APP_VERSION='4.2.7';
+const APP_VERSION='4.2.8';
 let swReg=null;
 
 function initVersionDisplay(){
