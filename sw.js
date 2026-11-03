@@ -1,62 +1,66 @@
-const CACHE_VERSION = '1.6.9';
-const CACHE_NAME = `valutapp-v${CACHE_VERSION}`;
+// Agenda Visiva — Service Worker
+// Bump CACHE_NAME on every release so old caches are discarded and the
+// browser fetches fresh files from GitHub Pages on next check.
+const CACHE_NAME = 'agenda-visiva-v4.2.8';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-192-maskable.png',
+  './icon-512-maskable.png'
+];
 
-// ── Install: cache the app shell ──
+// Install: pre-cache the app shell
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache =>
-      cache.addAll(['./index.html'])
-    )
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).catch(()=>{})
   );
-  // Don't auto-skip waiting — let the client decide via SKIP_WAITING message
+  // Don't auto-activate — wait for the page to explicitly ask
+  // (via SKIP_WAITING) so the update happens at a moment chosen
+  // by the user via the "Aggiorna" button in Impostazioni.
 });
 
-// ── Activate: delete old caches, claim clients, notify about new version ──
+// Activate: clean up old caches from previous versions
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
-     .then(() => notifyClients())
   );
 });
 
-function notifyClients() {
-  return self.clients.matchAll({ includeUncontrolled: true, type: 'window' })
-    .then(clients => {
-      clients.forEach(client =>
-        client.postMessage({ type: 'NEW_VERSION', version: CACHE_VERSION })
-      );
-    });
-}
-
-// ── Fetch: network-first, fallback to cache ──
+// Fetch: network-first for the HTML (so updates are detected quickly),
+// cache-first for everything else (icons, manifest) for offline speed.
 self.addEventListener('fetch', event => {
-  // Only handle same-origin GET requests
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  if (req.method !== 'GET') return;
 
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Clone and store in cache
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
-  );
+  const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+        return res;
+      }).catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
+    );
+  } else {
+    event.respondWith(
+      caches.match(req).then(cached => cached || fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+        return res;
+      }).catch(() => cached))
+    );
+  }
 });
 
-// ── Messages from clients ──
+// Let the page trigger activation of a waiting update on demand
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') {
+  if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
-  }
-  if (event.data?.type === 'GET_VERSION') {
-    event.source?.postMessage({ type: 'VERSION_RESPONSE', version: CACHE_VERSION });
   }
 });
